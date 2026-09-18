@@ -2,6 +2,7 @@
 // License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html).
 import { Component, onMounted, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { loadCSS, loadJS } from "@web/core/assets";
+import { deserializeDateTime, formatDateTime } from "@web/core/l10n/dates";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
@@ -114,10 +115,13 @@ export class FuelMap extends Component {
         const minLabel = _t("Min");
         const maxLabel = _t("Max");
         const openLabel = _t("Open");
+        const updatedLabel = _t("Updated");
+        const updated = row.current_date ? formatDateTime(deserializeDateTime(row.current_date)) : "";
         return `<div class="o_fuel_map_popup">
             <b>${esc(row.display_name)}</b><br/>
             <small>${esc(row.brand)} ${esc(row.city)}</small><br/>
             <span class="fs-4">${row.current_price.toFixed(3)} €</span><br/>
+            <small>${esc(updatedLabel)} ${esc(updated)}</small><br/>
             <small>${esc(minLabel)} ${row.min_price.toFixed(3)} · ${esc(maxLabel)} ${row.max_price.toFixed(3)}</small><br/>
             <button class="btn btn-sm btn-primary mt-2" data-id="${row.id}">${esc(openLabel)}</button>
         </div>`;

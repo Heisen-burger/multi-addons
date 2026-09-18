@@ -521,6 +521,12 @@ msgid "Update Stations"
 msgstr "Aggiorna impianti"
 
 #. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.js:0
+msgid "Updated"
+msgstr "Aggiornato"
+
+#. module: fuel_price_observatory
 #: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__current_date
 msgid "When the station communicated the current price."
 msgstr "Quando l'impianto ha comunicato il prezzo corrente."

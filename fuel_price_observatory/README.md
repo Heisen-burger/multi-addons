@@ -20,8 +20,8 @@ lists you follow.
   the old and new price; followers receive it by email or in their Odoo inbox according to
   their own notification preference.
 - **Map**: stations in the current viewport as circles colored from green (lowest price
-  in view) to red, one fuel and service mode at a time, popup with current, min and max
-  price and a button to the record. Followed price lists get a thicker border. Leaflet
+  in view) to red, one fuel and service mode at a time, popup with current price and its
+  communication date, min and max price and a button to the record. Followed price lists get a thicker border. Leaflet
   with OpenStreetMap tiles, no API key. Markers appear from zoom level 9, 500 at most.
 - **Two scheduled jobs** plus manual triggers under *Fuel Prices > Configuration*.
 
@@ -96,6 +96,10 @@ python3 odoo-bin -c odoo19.conf -d test_fpo19 -i fuel_price_observatory --test-e
 Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
+
+### 19.0.1.1.2
+
+- Map popup shows when the station communicated the current price.
 
 ### 19.0.1.1.1
 
