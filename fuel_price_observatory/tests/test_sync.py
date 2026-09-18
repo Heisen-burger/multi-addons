@@ -53,6 +53,10 @@ class TestSync(TransactionCase):
         self.assertEqual(fuel.current_date.isoformat(), '2026-09-18T06:00:00')
         self.assertRecordValues(fuel.price_ids, [{'price': 1.799, 'previous_price': 0.0}])
         self.assertEqual(fuel.display_name, "ENI VIA ROMA - Gasolio Self")
+        # station 1002 lists Benzina self twice: the higher communication id wins
+        self.assertRecordValues(self._fuel(1002, 'Benzina', True), [{
+            'current_price': 1.879, 'mimit_price_id': 5004,
+        }])
 
     def test_resync_same_ids_is_noop(self):
         self._sync(self.dump)

@@ -119,46 +119,52 @@ class FuelStationFuel(models.Model):
             for row in self.search_read([], ['station_id', 'fuel_type', 'is_self',
                                              'current_price', 'mimit_price_id'])
         }
-        to_create = []
-        history = []
-        touched = []
+        # a station can list the same (fuel, self) twice: keep the latest communication
+        incoming = {}
         for station in results:
             station_id = stations[station['id']]
             date = self._parse_date(station.get('insertDate'))
             for fuel in station.get('fuels') or []:
-                price = float(fuel['price'])
                 key = (station_id, fuel['name'], bool(fuel['isSelf']))
-                row = current.get(key)
-                if row is None:
-                    to_create.append({
-                        'station_id': station_id,
-                        'fuel_type': fuel['name'],
-                        'fuel_code': fuel.get('fuelId', 0),
-                        'is_self': key[2],
-                        'current_price': price,
-                        'current_date': date,
-                        'mimit_price_id': fuel['id'],
-                        'price_ids': [fields.Command.create({
-                            'price': price,
-                            'previous_price': 0.0,
-                            'date_communicated': date,
-                            'mimit_price_id': fuel['id'],
-                        })],
-                    })
-                    continue
-                if fuel['id'] == row['mimit_price_id']:
-                    continue
-                vals = {'current_date': date, 'mimit_price_id': fuel['id']}
-                if float_compare(price, row['current_price'], precision_digits=PRICE_DIGITS):
-                    vals['current_price'] = price
-                    history.append({
-                        'station_fuel_id': row['id'],
+                if key not in incoming or fuel['id'] > incoming[key][0]['id']:
+                    incoming[key] = (fuel, date)
+
+        to_create = []
+        history = []
+        touched = []
+        for key, (fuel, date) in incoming.items():
+            price = float(fuel['price'])
+            row = current.get(key)
+            if row is None:
+                to_create.append({
+                    'station_id': key[0],
+                    'fuel_type': fuel['name'],
+                    'fuel_code': fuel.get('fuelId', 0),
+                    'is_self': key[2],
+                    'current_price': price,
+                    'current_date': date,
+                    'mimit_price_id': fuel['id'],
+                    'price_ids': [fields.Command.create({
                         'price': price,
-                        'previous_price': row['current_price'],
+                        'previous_price': 0.0,
                         'date_communicated': date,
                         'mimit_price_id': fuel['id'],
-                    })
-                touched.append((row['id'], vals))
+                    })],
+                })
+                continue
+            if fuel['id'] == row['mimit_price_id']:
+                continue
+            vals = {'current_date': date, 'mimit_price_id': fuel['id']}
+            if float_compare(price, row['current_price'], precision_digits=PRICE_DIGITS):
+                vals['current_price'] = price
+                history.append({
+                    'station_fuel_id': row['id'],
+                    'price': price,
+                    'previous_price': row['current_price'],
+                    'date_communicated': date,
+                    'mimit_price_id': fuel['id'],
+                })
+            touched.append((row['id'], vals))
 
         created = self.create(to_create)
         # ponytail: one write per changed row; batch through SQL if runs get slow

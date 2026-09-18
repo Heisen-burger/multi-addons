@@ -87,6 +87,11 @@ Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
 
+### 19.0.1.0.3
+
+- Fix first sync on real data: a station can list the same fuel and service mode twice,
+  the sync now keeps the latest communication.
+
 ### 19.0.1.0.2
 
 - Add Italian translation and the `.pot` template.

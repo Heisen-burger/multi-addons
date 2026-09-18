@@ -22,6 +22,7 @@
       "location": {"lat": 45.07, "lng": 7.68},
       "insertDate": "2026-09-18T09:30:00+02:00",
       "fuels": [
+        {"id": 4999, "price": 1.999, "name": "Benzina", "fuelId": 1, "isSelf": true},
         {"id": 5004, "price": 1.879, "name": "Benzina", "fuelId": 1, "isSelf": true},
         {"id": 5005, "price": 0.699, "name": "GPL", "fuelId": 4, "isSelf": false}
       ]
