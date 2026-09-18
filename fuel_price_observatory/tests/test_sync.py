@@ -81,7 +81,8 @@ class TestSync(TransactionCase):
             self._sync(dump)
         fuel = self._fuel(1001, 'Gasolio', True)
         self.assertEqual(len(fuel.price_ids), 4)
-        self.assertRecordValues(fuel.price_ids[:2], [
+        latest = self.Price.search([('station_fuel_id', '=', fuel.id)], limit=2)
+        self.assertRecordValues(latest, [
             {'price': 1.749, 'previous_price': 1.849},
             {'price': 1.849, 'previous_price': 1.749},
         ])

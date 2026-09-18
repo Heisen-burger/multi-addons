@@ -54,9 +54,10 @@ class FuelStationFuel(models.Model):
 
     @api.depends('price_ids.price')
     def _compute_min_max(self):
-        # price_ids come newest first, so min()/max() keep the most recent row on ties
+        # newest first, so min()/max() keep the most recent row on ties; the O2M cache
+        # appends rows in creation order, so sort here instead of trusting _order
         for rec in self:
-            prices = rec.price_ids
+            prices = rec.price_ids.sorted(key=lambda p: (p.date_communicated, p.id), reverse=True)
             low = min(prices, key=lambda p: p.price, default=None)
             high = max(prices, key=lambda p: p.price, default=None)
             rec.min_price = low.price if low else 0.0
