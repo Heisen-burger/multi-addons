@@ -1,0 +1,10 @@
+// STeSI Consulting - Michele Di Croce
+// License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html).
+.o_fuel_map_canvas {
+    min-height: 400px;
+    z-index: 0; // keep Leaflet panes under Odoo dialogs and dropdowns
+}
+
+.o_fuel_map_popup {
+    min-width: 180px;
+}

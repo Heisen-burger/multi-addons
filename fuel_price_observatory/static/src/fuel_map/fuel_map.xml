@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<templates xml:space="preserve">
+
+    <t t-name="fuel_price_observatory.FuelMap">
+        <div class="o_fuel_map d-flex flex-column h-100">
+            <div class="o_control_panel d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-bottom">
+                <select class="form-select w-auto" t-att-value="state.fuelType"
+                        t-on-change="(ev) => this.onFilterChange('fuelType', ev.target.value)">
+                    <t t-foreach="state.fuelTypes" t-as="fuel" t-key="fuel">
+                        <option t-att-value="fuel" t-att-selected="fuel === state.fuelType" t-esc="fuel"/>
+                    </t>
+                </select>
+                <div class="btn-group">
+                    <button class="btn btn-sm" t-att-class="state.isSelf ? 'btn-primary' : 'btn-outline-primary'"
+                            t-on-click="() => this.onFilterChange('isSelf', true)">Self Service</button>
+                    <button class="btn btn-sm" t-att-class="state.isSelf ? 'btn-outline-primary' : 'btn-primary'"
+                            t-on-click="() => this.onFilterChange('isSelf', false)">Served</button>
+                </div>
+                <span class="text-muted ms-auto">
+                    <t t-if="state.zoomedOut">Zoom in to see the stations</t>
+                    <t t-else=""><t t-esc="state.count"/> stations in view, green is the lowest price</t>
+                </span>
+            </div>
+            <div class="o_fuel_map_canvas flex-grow-1" t-ref="map"/>
+        </div>
+    </t>
+
+</templates>

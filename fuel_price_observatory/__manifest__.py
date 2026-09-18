@@ -6,7 +6,7 @@
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.1.0.3',
+    'version': '19.0.1.1.0',
     'website': "https://github.com/Heisen-burger/multi-addons",
     'depends': ['mail'],
     'data': [
@@ -19,4 +19,9 @@
         'data/ir_actions_server.xml',
         'data/ir_cron.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'fuel_price_observatory/static/src/fuel_map/**/*',
+        ],
+    },
 }

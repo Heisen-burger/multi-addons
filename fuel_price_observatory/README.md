@@ -19,6 +19,10 @@ lists you follow.
 - **Alerts**: follow a price list from its chatter. Each price change posts a message with
   the old and new price; followers receive it by email or in their Odoo inbox according to
   their own notification preference.
+- **Map**: stations in the current viewport as circles colored from green (lowest price
+  in view) to red, one fuel and service mode at a time, popup with current, min and max
+  price and a button to the record. Followed price lists get a thicker border. Leaflet
+  with OpenStreetMap tiles, no API key. Markers appear from zoom level 9, 500 at most.
 - **Two scheduled jobs** plus manual triggers under *Fuel Prices > Configuration*.
 
 ## Data sources
@@ -59,9 +63,15 @@ only what changed.
 
 ## Menus
 
-*Fuel Prices*: Price Lists (default view, sorted by price, filter *Followed by Me*),
+*Fuel Prices*: Price Lists (default view, sorted by price, filter *Followed by Me*), Map,
 Stations, Price History (list and line graph), Configuration (Update Prices, Update
 Stations; administrators only).
+
+## Third-party code
+
+`static/lib/leaflet` ships Leaflet 1.9.4 (BSD-2-Clause, see its `LICENSE`). Map tiles come
+from the public OpenStreetMap tile server; heavy use should point `fuel_map.js` to a tile
+provider of your own.
 
 ## Access rights
 
@@ -86,6 +96,11 @@ python3 odoo-bin -c odoo19.conf -d test_fpo19 -i fuel_price_observatory --test-e
 Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
+
+### 19.0.1.1.0
+
+- Add the Map menu: Leaflet map of the price lists in view, colored by price, with popup
+  and link to the record. Stored latitude/longitude on price lists.
 
 ### 19.0.1.0.3
 

@@ -5,8 +5,15 @@
 
     <menuitem id="menu_fuel_root" name="Fuel Prices" sequence="90"
               web_icon="fuel_price_observatory,static/description/icon.png"/>
+    <record id="action_fuel_map" model="ir.actions.client">
+        <field name="name">Map</field>
+        <field name="tag">fuel_price_observatory.map</field>
+    </record>
+
     <menuitem id="menu_fuel_station_fuel" name="Price Lists" parent="menu_fuel_root"
               action="action_fuel_station_fuel" sequence="10"/>
+    <menuitem id="menu_fuel_map" name="Map" parent="menu_fuel_root"
+              action="action_fuel_map" sequence="15"/>
     <menuitem id="menu_fuel_station" name="Stations" parent="menu_fuel_root"
               action="action_fuel_station" sequence="20"/>
     <menuitem id="menu_fuel_price" name="Price History" parent="menu_fuel_root"

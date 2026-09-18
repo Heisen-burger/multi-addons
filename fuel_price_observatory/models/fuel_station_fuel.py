@@ -40,6 +40,8 @@ class FuelStationFuel(models.Model):
     brand = fields.Char(related='station_id.brand', store=True)
     city = fields.Char(related='station_id.city', store=True)
     province = fields.Char(related='station_id.province', store=True)
+    latitude = fields.Float(related='station_id.latitude', store=True)
+    longitude = fields.Float(related='station_id.longitude', store=True)
 
     _key_unique = models.Constraint(
         'unique (station_id, fuel_type, is_self)',
