@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="mt_price_change" model="mail.message.subtype">
+        <field name="name">Price Change</field>
+        <field name="res_model">fuel.station.fuel</field>
+        <field name="default" eval="True"/>
+        <field name="description">Fuel price changed</field>
+    </record>
+
+</odoo>

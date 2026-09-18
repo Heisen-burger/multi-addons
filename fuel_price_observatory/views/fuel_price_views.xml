@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_fuel_price_list" model="ir.ui.view">
+        <field name="name">fuel.price.list</field>
+        <field name="model">fuel.price</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="date_communicated"/>
+                <field name="station_id"/>
+                <field name="fuel_type"/>
+                <field name="is_self"/>
+                <field name="previous_price"/>
+                <field name="price"/>
+                <field name="mimit_price_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_fuel_price_graph" model="ir.ui.view">
+        <field name="name">fuel.price.graph</field>
+        <field name="model">fuel.price</field>
+        <field name="arch" type="xml">
+            <graph type="line" disable_linking="1">
+                <field name="date_communicated" interval="day"/>
+                <field name="price" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_fuel_price_search" model="ir.ui.view">
+        <field name="name">fuel.price.search</field>
+        <field name="model">fuel.price</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="station_id"/>
+                <field name="station_fuel_id"/>
+                <field name="fuel_type"/>
+                <filter string="Self Service" name="self" domain="[('is_self', '=', True)]"/>
+                <filter string="Served" name="served" domain="[('is_self', '=', False)]"/>
+                <separator/>
+                <filter string="Price List" name="group_station_fuel" context="{'group_by': 'station_fuel_id'}"/>
+                <filter string="Station" name="group_station" context="{'group_by': 'station_id'}"/>
+                <filter string="Fuel" name="group_fuel" context="{'group_by': 'fuel_type'}"/>
+                <filter string="Date" name="group_date" context="{'group_by': 'date_communicated:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fuel_price" model="ir.actions.act_window">
+        <field name="name">Price History</field>
+        <field name="res_model">fuel.price</field>
+        <field name="view_mode">list,graph</field>
+        <field name="search_view_id" ref="view_fuel_price_search"/>
+    </record>
+
+</odoo>

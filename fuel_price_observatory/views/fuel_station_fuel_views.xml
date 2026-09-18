@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_fuel_station_fuel_list" model="ir.ui.view">
+        <field name="name">fuel.station.fuel.list</field>
+        <field name="model">fuel.station.fuel</field>
+        <field name="arch" type="xml">
+            <list create="0" default_order="current_price, id">
+                <field name="station_id"/>
+                <field name="brand" optional="show"/>
+                <field name="city"/>
+                <field name="province"/>
+                <field name="fuel_type"/>
+                <field name="is_self" widget="boolean_toggle" readonly="1"/>
+                <field name="current_price"/>
+                <field name="current_date"/>
+                <field name="min_price"/>
+                <field name="min_date" optional="hide"/>
+                <field name="max_price"/>
+                <field name="max_date" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_fuel_station_fuel_form" model="ir.ui.view">
+        <field name="name">fuel.station.fuel.form</field>
+        <field name="model">fuel.station.fuel</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name"/></h1>
+                    </div>
+                    <group>
+                        <group name="station">
+                            <field name="station_id"/>
+                            <field name="brand"/>
+                            <field name="city"/>
+                            <field name="province"/>
+                        </group>
+                        <group name="fuel">
+                            <field name="fuel_type"/>
+                            <field name="is_self"/>
+                            <field name="current_price"/>
+                            <field name="current_date"/>
+                        </group>
+                    </group>
+                    <group string="History">
+                        <group>
+                            <field name="min_price"/>
+                            <field name="min_date"/>
+                        </group>
+                        <group>
+                            <field name="max_price"/>
+                            <field name="max_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Price History" name="history">
+                            <field name="price_ids" readonly="1">
+                                <list>
+                                    <field name="date_communicated"/>
+                                    <field name="previous_price"/>
+                                    <field name="price"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fuel_station_fuel_search" model="ir.ui.view">
+        <field name="name">fuel.station.fuel.search</field>
+        <field name="model">fuel.station.fuel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="station_id"/>
+                <field name="city"/>
+                <field name="province"/>
+                <field name="brand"/>
+                <field name="fuel_type"/>
+                <filter string="Followed by Me" name="followed" domain="[('message_is_follower', '=', True)]"/>
+                <separator/>
+                <filter string="Self Service" name="self" domain="[('is_self', '=', True)]"/>
+                <filter string="Served" name="served" domain="[('is_self', '=', False)]"/>
+                <separator/>
+                <filter string="Fuel" name="group_fuel" context="{'group_by': 'fuel_type'}"/>
+                <filter string="Brand" name="group_brand" context="{'group_by': 'brand'}"/>
+                <filter string="Province" name="group_province" context="{'group_by': 'province'}"/>
+                <filter string="City" name="group_city" context="{'group_by': 'city'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fuel_station_fuel" model="ir.actions.act_window">
+        <field name="name">Price Lists</field>
+        <field name="res_model">fuel.station.fuel</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_fuel_station_fuel_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No prices yet</p>
+            <p>Run "Update Prices" from the Configuration menu or wait for the scheduled sync.</p>
+        </field>
+    </record>
+
+</odoo>

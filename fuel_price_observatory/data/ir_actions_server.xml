@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="action_sync_prices" model="ir.actions.server">
+        <field name="name">Fuel Prices: Update Prices</field>
+        <field name="model_id" ref="model_fuel_station_fuel"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        <field name="code">model._cron_sync_prices()</field>
+    </record>
+
+    <record id="action_sync_stations" model="ir.actions.server">
+        <field name="name">Fuel Prices: Update Stations</field>
+        <field name="model_id" ref="model_fuel_station"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        <field name="code">model._cron_sync_stations()</field>
+    </record>
+
+    <menuitem id="menu_fuel_sync_prices" name="Update Prices" parent="menu_fuel_config"
+              action="action_sync_prices" sequence="10"/>
+    <menuitem id="menu_fuel_sync_stations" name="Update Stations" parent="menu_fuel_config"
+              action="action_sync_stations" sequence="20"/>
+
+</odoo>

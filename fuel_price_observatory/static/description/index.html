@@ -1,0 +1,47 @@
+<section style="max-width: 900px; margin: 0 auto; padding: 24px 16px; font-family: Arial, sans-serif; color: #333;">
+    <h1 style="color: #F1972B; border-bottom: 3px solid #F1972B; padding-bottom: 8px;">Fuel Price Observatory</h1>
+    <p style="font-size: 16px;">Italian fuel prices from the MIMIT observatory inside Odoo: every station, every fuel, a history of each price change, and chatter alerts for the price lists you follow.</p>
+
+    <h2 style="color: #F1972B; margin-top: 32px;">Features</h2>
+    <ul style="line-height: 1.7;">
+        <li><strong>Price lists</strong>: one record per station, fuel and service mode with current price, historical minimum and maximum, each with its date.</li>
+        <li><strong>Price history</strong>: one row per price change with the previous price.</li>
+        <li><strong>Stations</strong>: brand, manager, type, address, city, province, coordinates.</li>
+        <li><strong>Alerts</strong>: follow a price list from its chatter. Every change posts a message; followers get it by email or in their inbox according to their notification preference.</li>
+        <li><strong>Scheduled sync</strong>: prices every 30 minutes from the observatory API, station registry once a day from the MIMIT CSV. Manual triggers under <em>Fuel Prices &gt; Configuration</em>.</li>
+    </ul>
+
+    <h2 style="color: #F1972B; margin-top: 32px;">Data sources</h2>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr style="background: #F1972B; color: #fff;">
+            <th style="padding: 8px; text-align: left;">Source</th>
+            <th style="padding: 8px; text-align: left;">Cadence</th>
+            <th style="padding: 8px; text-align: left;">Content</th>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">Observatory app API</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">every 30 minutes</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">all stations with current fuel prices</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">Registry CSV</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">daily</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">manager, station type, street, city, province</td>
+        </tr>
+    </table>
+
+    <h2 style="color: #F1972B; margin-top: 32px;">How the sync works</h2>
+    <ol style="line-height: 1.7;">
+        <li>Download the full dump.</li>
+        <li>Create missing stations and price lists.</li>
+        <li>Compare each communication id with the stored one: same id, nothing; new id and same price, update the date; new id and new price, update the list and append a history row.</li>
+        <li>Post a chatter message on every changed price list that has followers.</li>
+    </ol>
+
+    <h2 style="color: #F1972B; margin-top: 32px;">Access rights</h2>
+    <p>Internal users read everything and can follow price lists. Administrators manage records and run the manual sync.</p>
+
+    <p style="margin-top: 40px; font-size: 13px; color: #777;">
+        STeSI Consulting &middot; <a href="https://stesi.consulting" style="color: #F1972B;">stesi.consulting</a> &middot; Contributor: Michele Di Croce
+    </p>
+</section>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_fuel_station_list" model="ir.ui.view">
+        <field name="name">fuel.station.list</field>
+        <field name="model">fuel.station</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="mimit_id" optional="hide"/>
+                <field name="name"/>
+                <field name="brand"/>
+                <field name="manager" optional="hide"/>
+                <field name="station_type" optional="show"/>
+                <field name="street" optional="hide"/>
+                <field name="city"/>
+                <field name="province"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_fuel_station_form" model="ir.ui.view">
+        <field name="name">fuel.station.form</field>
+        <field name="model">fuel.station</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group name="identity">
+                            <field name="mimit_id"/>
+                            <field name="brand"/>
+                            <field name="manager"/>
+                            <field name="station_type"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group name="location">
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="province"/>
+                            <field name="address"/>
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Price List" name="fuels">
+                            <field name="fuel_ids" readonly="1">
+                                <list>
+                                    <field name="fuel_type"/>
+                                    <field name="is_self"/>
+                                    <field name="current_price"/>
+                                    <field name="current_date"/>
+                                    <field name="min_price"/>
+                                    <field name="min_date"/>
+                                    <field name="max_price"/>
+                                    <field name="max_date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fuel_station_search" model="ir.ui.view">
+        <field name="name">fuel.station.search</field>
+        <field name="model">fuel.station</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="province"/>
+                <field name="brand"/>
+                <field name="manager"/>
+                <field name="mimit_id"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Brand" name="group_brand" context="{'group_by': 'brand'}"/>
+                <filter string="Province" name="group_province" context="{'group_by': 'province'}"/>
+                <filter string="Type" name="group_type" context="{'group_by': 'station_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fuel_station" model="ir.actions.act_window">
+        <field name="name">Stations</field>
+        <field name="res_model">fuel.station</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_fuel_station_search"/>
+    </record>
+
+</odoo>

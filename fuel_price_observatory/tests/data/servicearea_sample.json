@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "results": [
+    {
+      "id": 1001,
+      "name": "ENI VIA ROMA",
+      "brand": "Agip Eni",
+      "address": "VIA ROMA 1 - 20100 MILANO (MI)",
+      "location": {"lat": 45.4642, "lng": 9.19},
+      "insertDate": "2026-09-18T08:00:00+02:00",
+      "fuels": [
+        {"id": 5001, "price": 1.899, "name": "Benzina", "fuelId": 1, "isSelf": true},
+        {"id": 5002, "price": 2.099, "name": "Benzina", "fuelId": 1, "isSelf": false},
+        {"id": 5003, "price": 1.799, "name": "Gasolio", "fuelId": 2, "isSelf": true}
+      ]
+    },
+    {
+      "id": 1002,
+      "name": "IP CORSO ITALIA",
+      "brand": "Api-Ip",
+      "address": "CORSO ITALIA 10 - 10100 TORINO (TO)",
+      "location": {"lat": 45.07, "lng": 7.68},
+      "insertDate": "2026-09-18T09:30:00+02:00",
+      "fuels": [
+        {"id": 5004, "price": 1.879, "name": "Benzina", "fuelId": 1, "isSelf": true},
+        {"id": 5005, "price": 0.699, "name": "GPL", "fuelId": 4, "isSelf": false}
+      ]
+    }
+  ]
+}

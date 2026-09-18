@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <menuitem id="menu_fuel_root" name="Fuel Prices" sequence="90"
+              web_icon="fuel_price_observatory,static/description/icon.png"/>
+    <menuitem id="menu_fuel_station_fuel" name="Price Lists" parent="menu_fuel_root"
+              action="action_fuel_station_fuel" sequence="10"/>
+    <menuitem id="menu_fuel_station" name="Stations" parent="menu_fuel_root"
+              action="action_fuel_station" sequence="20"/>
+    <menuitem id="menu_fuel_price" name="Price History" parent="menu_fuel_root"
+              action="action_fuel_price" sequence="30"/>
+    <menuitem id="menu_fuel_config" name="Configuration" parent="menu_fuel_root"
+              sequence="90" groups="base.group_system"/>
+
+</odoo>
