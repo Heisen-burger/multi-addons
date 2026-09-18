@@ -110,12 +110,16 @@ export class FuelMap extends Component {
 
     popupHtml(row) {
         const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+        // babel only extracts _t() outside template literals
+        const minLabel = _t("Min");
+        const maxLabel = _t("Max");
+        const openLabel = _t("Open");
         return `<div class="o_fuel_map_popup">
             <b>${esc(row.display_name)}</b><br/>
             <small>${esc(row.brand)} ${esc(row.city)}</small><br/>
             <span class="fs-4">${row.current_price.toFixed(3)} €</span><br/>
-            <small>${esc(_t("Min"))} ${row.min_price.toFixed(3)} · ${esc(_t("Max"))} ${row.max_price.toFixed(3)}</small><br/>
-            <button class="btn btn-sm btn-primary mt-2" data-id="${row.id}">${esc(_t("Open"))}</button>
+            <small>${esc(minLabel)} ${row.min_price.toFixed(3)} · ${esc(maxLabel)} ${row.max_price.toFixed(3)}</small><br/>
+            <button class="btn btn-sm btn-primary mt-2" data-id="${row.id}">${esc(openLabel)}</button>
         </div>`;
     }
 

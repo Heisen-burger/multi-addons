@@ -97,6 +97,10 @@ Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
 
+### 19.0.1.1.1
+
+- Italian translation of the map screen.
+
 ### 19.0.1.1.0
 
 - Add the Map menu: Leaflet map of the price lists in view, colored by price, with popup

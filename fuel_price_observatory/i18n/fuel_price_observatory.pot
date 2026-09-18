@@ -292,6 +292,18 @@ msgid "Manager"
 msgstr ""
 
 #. module: fuel_price_observatory
+#: model:ir.actions.client,name:fuel_price_observatory.action_fuel_map
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_map
+msgid "Map"
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.js:0
+msgid "Max"
+msgstr ""
+
+#. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__max_date
 msgid "Max Date"
 msgstr ""
@@ -309,6 +321,12 @@ msgstr ""
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_ids
 msgid "Messages"
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.js:0
+msgid "Min"
 msgstr ""
 
 #. module: fuel_price_observatory
@@ -349,6 +367,12 @@ msgstr ""
 #. module: fuel_price_observatory
 #: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__message_has_error_counter
 msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.js:0
+msgid "Open"
 msgstr ""
 
 #. module: fuel_price_observatory
@@ -419,6 +443,8 @@ msgid "Self"
 msgstr ""
 
 #. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.xml:0
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__is_self
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__is_self
 #: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
@@ -428,7 +454,9 @@ msgstr ""
 
 #. module: fuel_price_observatory
 #. odoo-python
+#. odoo-javascript
 #: code:addons/fuel_price_observatory/models/fuel_station_fuel.py:0
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.xml:0
 #: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
 #: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
 msgid "Served"
@@ -495,4 +523,16 @@ msgstr ""
 #. module: fuel_price_observatory
 #: model:ir.model.fields,help:fuel_price_observatory.field_fuel_price__date_communicated
 msgid "When the station communicated the new price."
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.xml:0
+msgid "Zoom in to see the stations"
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-javascript
+#: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.xml:0
+msgid "stations in view, green is the lowest price"
 msgstr ""
