@@ -87,6 +87,10 @@ Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
 
+### 19.0.1.0.2
+
+- Add Italian translation and the `.pot` template.
+
 ### 19.0.1.0.1
 
 - Fix min/max dates on price ties: sort history rows before picking them.

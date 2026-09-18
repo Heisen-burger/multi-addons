@@ -1,0 +1,498 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* fuel_price_observatory
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-18 20:11+0000\n"
+"PO-Revision-Date: 2026-09-18 20:11+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fuel_price_observatory
+#. odoo-python
+#: code:addons/fuel_price_observatory/models/fuel_station_fuel.py:0
+msgid ""
+"%(fuel)s: price changed from %(old).3f to %(new).3f (%(delta)+.3f) on "
+"%(date)s"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.constraint,message:fuel_price_observatory.constraint_fuel_station_mimit_id_unique
+msgid "A station with this MIMIT ID already exists."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__active
+msgid "Active"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__address
+msgid "Address"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_form
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_search
+msgid "Archived"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__brand
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__brand
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_search
+msgid "Brand"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__city
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__city
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+msgid "City"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station__manager
+msgid "Company operating the station (Gestore)."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_config
+msgid "Configuration"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__create_uid
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__create_uid
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__create_date
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__create_date
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__current_date
+msgid "Current Date"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__current_price
+msgid "Current Price"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
+msgid "Date"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__date_communicated
+msgid "Date Communicated"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__display_name
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__display_name
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+msgid "Followed by Me"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+msgid "Fuel"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__fuel_code
+msgid "Fuel Code"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model,name:fuel_price_observatory.model_fuel_price
+msgid "Fuel Price History"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_root
+msgid "Fuel Prices"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.server,name:fuel_price_observatory.ir_cron_sync_prices_ir_actions_server
+msgid "Fuel Prices: Sync Prices from MIMIT API"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.server,name:fuel_price_observatory.ir_cron_sync_stations_ir_actions_server
+msgid "Fuel Prices: Sync Stations from MIMIT CSV"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.server,name:fuel_price_observatory.action_sync_prices
+msgid "Fuel Prices: Update Prices"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.server,name:fuel_price_observatory.action_sync_stations
+msgid "Fuel Prices: Update Stations"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model,name:fuel_price_observatory.model_fuel_station
+msgid "Fuel Station"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model,name:fuel_price_observatory.model_fuel_station_fuel
+msgid "Fuel Station Price List"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__fuel_type
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__fuel_type
+msgid "Fuel Type"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_price__fuel_type
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__fuel_type
+msgid "Fuel name as published by MIMIT."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:mail.message.subtype,description:fuel_price_observatory.mt_price_change
+msgid "Fuel price changed"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station__address
+msgid "Full address string as published by the observatory API."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__price_ids
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_form
+msgid "History"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__id
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__id
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__id
+msgid "ID"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__mimit_price_id
+msgid "Identifier of the last price communication seen."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__write_uid
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__write_uid
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__write_date
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__write_date
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__latitude
+msgid "Latitude"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__longitude
+msgid "Longitude"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__mimit_id
+msgid "MIMIT ID"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__mimit_price_id
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__mimit_price_id
+msgid "MIMIT Price ID"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__fuel_code
+msgid "MIMIT fuel identifier (1 petrol, 2 diesel, 3 CNG, 4 LPG, ...)."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__manager
+msgid "Manager"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__max_date
+msgid "Max Date"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__max_price
+msgid "Max Price"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__min_date
+msgid "Min Date"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__min_price
+msgid "Min Price"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__name
+msgid "Name"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.actions.act_window,help:fuel_price_observatory.action_fuel_station_fuel
+msgid "No prices yet"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__previous_price
+msgid "Previous Price"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__price
+msgid "Price"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:mail.message.subtype,name:fuel_price_observatory.mt_price_change
+msgid "Price Change"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.act_window,name:fuel_price_observatory.action_fuel_price
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_price
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_form
+msgid "Price History"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__station_fuel_id
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__fuel_ids
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_form
+msgid "Price List"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.act_window,name:fuel_price_observatory.action_fuel_station_fuel
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_station_fuel
+msgid "Price Lists"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_price__previous_price
+msgid "Price before this change, 0 on the first row."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__province
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__province
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_search
+msgid "Province"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station__station_type
+msgid "Road or motorway station (Tipo Impianto)."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.actions.act_window,help:fuel_price_observatory.action_fuel_station_fuel
+msgid ""
+"Run \"Update Prices\" from the Configuration menu or wait for the scheduled "
+"sync."
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-python
+#: code:addons/fuel_price_observatory/models/fuel_station_fuel.py:0
+msgid "Self"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__is_self
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__is_self
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+msgid "Self Service"
+msgstr ""
+
+#. module: fuel_price_observatory
+#. odoo-python
+#: code:addons/fuel_price_observatory/models/fuel_station_fuel.py:0
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_fuel_search
+msgid "Served"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__station_id
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__station_id
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
+msgid "Station"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__station_type
+msgid "Station Type"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station__mimit_id
+msgid "Station identifier in the MIMIT observatory (idImpianto)."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.actions.act_window,name:fuel_price_observatory.action_fuel_station
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_station
+msgid "Stations"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__street
+msgid "Street"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.constraint,message:fuel_price_observatory.constraint_fuel_price_key_unique
+msgid "This price communication is already archived."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.constraint,message:fuel_price_observatory.constraint_fuel_station_fuel_key_unique
+msgid "This station already has a price list for this fuel and service mode."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_station_search
+msgid "Type"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_sync_prices
+msgid "Update Prices"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_sync_stations
+msgid "Update Stations"
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__current_date
+msgid "When the station communicated the current price."
+msgstr ""
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_price__date_communicated
+msgid "When the station communicated the new price."
+msgstr ""
