@@ -18,7 +18,7 @@ class TelegramCase(TransactionCase):
         super().setUpClass()
         cls.env['ir.config_parameter'].sudo().set_param('telegram_bot.bot_token', 'test-token')
         cls.env['ir.config_parameter'].sudo().set_param('telegram_bot.webhook_secret', 'test-secret')
-        cls.real_call = TelegramBot._call  # captured before setUp patches it
+        cls.real_call = staticmethod(TelegramBot._call)  # captured before setUp patches it
         cls.Chat = cls.env['telegram.chat']
 
     def setUp(self):

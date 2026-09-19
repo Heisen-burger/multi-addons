@@ -79,7 +79,8 @@ class TestFuelBot(FuelTelegramCase):
             self.send_text('/soglia')
             self.assertEqual(self.chat().state, 'threshold')
             self.send_text(text)
-            self.assertRecordValues(sub, [{'above_price': above, 'below_price': below}], msg=text)
+            with self.subTest(text=text):
+                self.assertRecordValues(sub, [{'above_price': above, 'below_price': below}])
             self.assertEqual(self.chat().state, 'idle')
         self.send_text('/soglia')
         self.send_text('boh')
