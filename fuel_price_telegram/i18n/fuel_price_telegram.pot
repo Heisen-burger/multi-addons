@@ -17,13 +17,13 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "%(fuel)s %(mode)s, %(order)s"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid ""
 "%(name)s, now %(price).3f, alert %(rule)s.\n"
 "Send the new rule:\n"
@@ -35,7 +35,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "%(name)s: alert %(rule)s."
 msgstr ""
 
@@ -61,7 +61,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "All fuels"
 msgstr ""
 
@@ -77,13 +77,13 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Change fuel"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Change the list:"
 msgstr ""
 
@@ -100,6 +100,11 @@ msgid "Chat"
 msgstr ""
 
 #. module: fuel_price_telegram
+#: model:ir.ui.menu,name:fuel_price_telegram.menu_fuel_telegram_bot
+msgid "Bots"
+msgstr ""
+
+#. module: fuel_price_telegram
 #: model:ir.ui.menu,name:fuel_price_telegram.menu_fuel_telegram_chat
 msgid "Chats"
 msgstr ""
@@ -107,6 +112,11 @@ msgstr ""
 #. module: fuel_price_telegram
 #: model:ir.model,name:fuel_price_telegram.model_res_config_settings
 msgid "Config Settings"
+msgstr ""
+
+#. module: fuel_price_telegram
+#: model:ir.model.fields,help:fuel_price_telegram.field_telegram_bot__kind
+msgid "Conversation handler. Modules add kinds with selection_add."
 msgstr ""
 
 #. module: fuel_price_telegram
@@ -142,18 +152,19 @@ msgstr ""
 #: model:ir.model.fields,field_description:fuel_price_telegram.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_bot__display_name
 #: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_chat__display_name
+#: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_handler_fuel__display_name
 msgid "Display Name"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Follow a fuel first: open a station and tap the fuel."
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid ""
 "Following %s: you get a message at every price change. Set thresholds with "
 "/soglia."
@@ -161,7 +172,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Fuel"
 msgstr ""
 
@@ -192,6 +203,11 @@ msgid "Fuel name as published by MIMIT."
 msgstr ""
 
 #. module: fuel_price_telegram
+#: model:ir.model.fields.selection,name:fuel_price_telegram.selection__telegram_bot__kind__fuel
+msgid "Fuel prices"
+msgstr ""
+
+#. module: fuel_price_telegram
 #: model:ir.model.fields,help:fuel_price_telegram.field_telegram_chat__fuel_type
 msgid "Fuel used when the chat sends a location. '*' means every fuel."
 msgstr ""
@@ -204,7 +220,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid ""
 "Hi! Send me your location to see fuel prices around you, or type a town name to search a station.\n"
 "Open a station to follow one or more fuels: I will message you at every price change, or only outside the thresholds you set.\n"
@@ -214,7 +230,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid ""
 "I did not understand. Examples: <code>sopra 1.85</code>, <code>sotto "
 "1.70</code>, <code>1.70-1.85</code>, <code>nessuna</code>."
@@ -227,7 +243,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:fuel_price_telegram.field_res_config_settings__id
 #: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_bot__id
 #: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_chat__id
+#: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_handler_fuel__id
 msgid "ID"
+msgstr ""
+
+#. module: fuel_price_telegram
+#: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_bot__kind
+msgid "Kind"
 msgstr ""
 
 #. module: fuel_price_telegram
@@ -280,26 +302,26 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "No station found for \"%s\". Try a town name or send your location."
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "No station with %s within 100 km of this point."
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid ""
 "No subscriptions yet. Send your location or a town name to find a station."
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Now send me your location."
 msgstr ""
 
@@ -315,7 +337,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Price list not found."
 msgstr ""
 
@@ -326,11 +348,6 @@ msgid "Prices around your last location"
 msgstr ""
 
 #. module: fuel_price_telegram
-#: model:ir.ui.menu,name:fuel_price_telegram.menu_fuel_register_webhook
-msgid "Register Telegram Webhook"
-msgstr ""
-
-#. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_bot.py:0
 msgid "Remove every subscription"
@@ -338,7 +355,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Self"
 msgstr ""
 
@@ -350,25 +367,25 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Self service"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Self service or served?"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Send me your location first."
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Served"
 msgstr ""
 
@@ -393,7 +410,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Station not found."
 msgstr ""
 
@@ -414,7 +431,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Subscription not found."
 msgstr ""
 
@@ -432,7 +449,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Tap a fuel to follow it, tap again to stop."
 msgstr ""
 
@@ -443,12 +460,18 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #: model:ir.model,name:fuel_price_telegram.model_telegram_bot
-msgid "Telegram Bot Client"
+#: model_terms:ir.ui.view,arch_db:fuel_price_telegram.res_config_settings_view_form
+msgid "Telegram Bot"
 msgstr ""
 
 #. module: fuel_price_telegram
 #: model:ir.model,name:fuel_price_telegram.model_telegram_chat
 msgid "Telegram Chat"
+msgstr ""
+
+#. module: fuel_price_telegram
+#: model:ir.model,name:fuel_price_telegram.model_telegram_handler_fuel
+msgid "Telegram Handler: Fuel Prices"
 msgstr ""
 
 #. module: fuel_price_telegram
@@ -473,7 +496,7 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Unfollowed %s."
 msgstr ""
 
@@ -484,13 +507,13 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Which fuel are you looking for?"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "Which subscription?"
 msgstr ""
 
@@ -508,13 +531,13 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "by distance"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "by price"
 msgstr ""
 
@@ -532,36 +555,36 @@ msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "⚙️ Thresholds"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "⛽ Station"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "💶 By price"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "📍 Send my location"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "📏 By distance"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "🧭 Navigate"
 msgstr ""

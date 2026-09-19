@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 13:11+0000\n"
-"PO-Revision-Date: 2026-09-19 13:11+0000\n"
+"POT-Creation-Date: 2026-09-19 14:20+0000\n"
+"PO-Revision-Date: 2026-09-19 14:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -17,26 +17,23 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__access_code
 msgid "Access Code"
 msgstr "Codice di accesso"
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__active
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__active
 msgid "Active"
 msgstr "Attivo"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid "Answer to /start when no module overrides it."
-msgstr "Risposta a /start quando nessun modulo la sostituisce."
+#: model:ir.model.fields,help:telegram_bot.field_telegram_bot__welcome
+msgid "Answer to /start for the generic handler."
+msgstr "Risposta a /start per il gestore generico."
 
 #. module: telegram_bot
-#: model:ir.model.fields,help:telegram_bot.field_res_config_settings__telegram_welcome
-msgid "Answer to /start. Modules can override it in code."
-msgstr "Risposta a /start. I moduli possono sostituirla nel codice."
-
-#. module: telegram_bot
+#: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_bot_form
 #: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_chat_form
 #: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_chat_search
 msgid "Archived"
@@ -48,35 +45,47 @@ msgid "Authorized"
 msgstr "Autorizzata"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__bot_id
+#: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_chat_search
 msgid "Bot"
 msgstr "Bot"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid "Bot Token"
-msgstr "Token del bot"
+#: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_bot_form
+msgid "Bot name"
+msgstr "Nome del bot"
+
+#. module: telegram_bot
+#: model:ir.ui.menu,name:telegram_bot.menu_telegram_bot
+msgid "Bots"
+msgstr "Bot"
 
 #. module: telegram_bot
 #. odoo-python
-#: code:addons/telegram_bot/models/telegram_chat.py:0
+#: code:addons/telegram_bot/models/telegram_handler.py:0
 msgid "Bye. Send /start whenever you want to come back."
 msgstr "Ciao. Manda /start quando vuoi tornare."
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__chat_count
+msgid "Chat Count"
+msgstr "Numero chat"
+
+#. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__chat_ids
 #: model:ir.ui.menu,name:telegram_bot.menu_telegram_chat
 msgid "Chats"
 msgstr "Chat"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid "Checked on every webhook call. Leave empty to generate one."
-msgstr "Verificato a ogni chiamata del webhook. Lascia vuoto per generarne uno."
+#: model:ir.model.fields,help:telegram_bot.field_telegram_bot__webhook_secret
+msgid "Checked on every webhook call. Generated on registration when empty."
+msgstr "Verificato a ogni chiamata del webhook. Generato alla registrazione se vuoto."
 
 #. module: telegram_bot
-#: model:ir.model,name:telegram_bot.model_res_config_settings
-msgid "Config Settings"
-msgstr "Impostazioni di configurazione"
+#: model:ir.model.fields,help:telegram_bot.field_telegram_bot__kind
+msgid "Conversation handler. Modules add kinds with selection_add."
+msgstr "Gestore della conversazione. I moduli aggiungono tipi con selection_add."
 
 #. module: telegram_bot
 #: model:ir.model.fields,help:telegram_bot.field_telegram_chat__state
@@ -84,43 +93,57 @@ msgid "Conversation state. Extensions add values with selection_add."
 msgstr "Stato della conversazione. Le estensioni aggiungono valori con selection_add."
 
 #. module: telegram_bot
+#: model_terms:ir.actions.act_window,help:telegram_bot.action_telegram_bot
+msgid ""
+"Create one with @BotFather, paste the token here and register the webhook."
+msgstr ""
+"Creane uno con @BotFather, incolla qui il token e registra il webhook."
+
+#. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__create_uid
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__create_uid
 msgid "Created by"
 msgstr "Creato da"
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__create_date
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__create_date
 msgid "Created on"
 msgstr "Creato il"
 
 #. module: telegram_bot
-#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__display_name
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__display_name
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_handler__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: telegram_bot
-#: model:ir.model.fields,help:telegram_bot.field_res_config_settings__telegram_webhook_secret
-msgid "Generated on webhook registration when empty."
-msgstr "Generato alla registrazione del webhook se vuoto."
+#: model:ir.model.fields,help:telegram_bot.field_telegram_bot__username
+msgid "Filled by the webhook registration (getMe)."
+msgstr "Compilato dalla registrazione del webhook (getMe)."
+
+#. module: telegram_bot
+#: model:ir.model.fields.selection,name:telegram_bot.selection__telegram_bot__kind__generic
+msgid "Generic"
+msgstr "Generico"
 
 #. module: telegram_bot
 #. odoo-python
-#: code:addons/telegram_bot/models/telegram_bot.py:0
+#: code:addons/telegram_bot/models/telegram_handler.py:0
 msgid "Help"
 msgstr "Aiuto"
 
 #. module: telegram_bot
 #. odoo-python
-#: code:addons/telegram_bot/models/telegram_chat.py:0
+#: code:addons/telegram_bot/models/telegram_handler.py:0
 msgid "Hi! Send /help to see what I can do."
 msgstr "Ciao! Manda /help per vedere cosa so fare."
 
 #. module: telegram_bot
-#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__id
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__id
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__id
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_handler__id
 msgid "ID"
 msgstr "ID"
 
@@ -130,36 +153,41 @@ msgid "Idle"
 msgstr "In attesa"
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__kind
+msgid "Kind"
+msgstr "Tipo"
+
+#. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__write_uid
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__write_uid
 msgid "Last Updated by"
 msgstr "Ultimo aggiornamento di"
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__write_date
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__write_date
 msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__name
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__name
 msgid "Name"
 msgstr "Nome"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid ""
-"New chats must send /start followed by this code. Empty: open to everyone."
-msgstr ""
-"Le nuove chat devono mandare /start seguito da questo codice. Vuoto: aperto a "
-"tutti."
+#: model_terms:ir.actions.act_window,help:telegram_bot.action_telegram_bot
+msgid "No bot yet"
+msgstr "Nessun bot ancora"
 
 #. module: telegram_bot
-#: model:ir.ui.menu,name:telegram_bot.menu_telegram_register_webhook
+#: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_bot_form
 msgid "Register Webhook"
 msgstr "Registra webhook"
 
 #. module: telegram_bot
 #. odoo-python
-#: code:addons/telegram_bot/models/telegram_bot.py:0
+#: code:addons/telegram_bot/models/telegram_handler.py:0
 msgid "Start"
 msgstr "Avvia"
 
@@ -170,24 +198,18 @@ msgstr "Stato"
 
 #. module: telegram_bot
 #: model:ir.ui.menu,name:telegram_bot.menu_telegram_root
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
 msgid "Telegram"
 msgstr "Telegram"
 
 #. module: telegram_bot
 #: model:ir.model,name:telegram_bot.model_telegram_bot
-msgid "Telegram Bot Client"
-msgstr "Client bot Telegram"
+msgid "Telegram Bot"
+msgstr "Bot Telegram"
 
 #. module: telegram_bot
-#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__telegram_access_code
-msgid "Telegram Access Code"
-msgstr "Codice di accesso Telegram"
-
-#. module: telegram_bot
-#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__telegram_bot_token
-msgid "Telegram Bot Token"
-msgstr "Token bot Telegram"
+#: model:ir.actions.act_window,name:telegram_bot.action_telegram_bot
+msgid "Telegram Bots"
+msgstr "Bot Telegram"
 
 #. module: telegram_bot
 #: model:ir.model,name:telegram_bot.model_telegram_chat
@@ -205,19 +227,14 @@ msgid "Telegram Chats"
 msgstr "Chat Telegram"
 
 #. module: telegram_bot
+#: model:ir.model,name:telegram_bot.model_telegram_handler
+msgid "Telegram Conversation Handler"
+msgstr "Gestore conversazione Telegram"
+
+#. module: telegram_bot
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__lang
 msgid "Telegram Language"
 msgstr "Lingua Telegram"
-
-#. module: telegram_bot
-#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__telegram_webhook_secret
-msgid "Telegram Webhook Secret"
-msgstr "Secret webhook Telegram"
-
-#. module: telegram_bot
-#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__telegram_welcome
-msgid "Telegram Welcome Message"
-msgstr "Messaggio di benvenuto Telegram"
 
 #. module: telegram_bot
 #. odoo-python
@@ -232,11 +249,6 @@ msgid "Telegram webhook registered"
 msgstr "Webhook Telegram registrato"
 
 #. module: telegram_bot
-#: model:ir.actions.server,name:telegram_bot.action_register_webhook
-msgid "Telegram: Register Webhook"
-msgstr "Telegram: registra webhook"
-
-#. module: telegram_bot
 #: model:ir.model.fields,help:telegram_bot.field_telegram_chat__authorized
 msgid ""
 "The chat sent the access code, or none was required when it first wrote."
@@ -245,9 +257,9 @@ msgstr ""
 "primo messaggio."
 
 #. module: telegram_bot
-#: model:ir.model.constraint,message:telegram_bot.constraint_telegram_chat_chat_id_unique
-msgid "This Telegram chat is already registered."
-msgstr "Questa chat Telegram è già registrata."
+#: model:ir.model.constraint,message:telegram_bot.constraint_telegram_chat_bot_chat_unique
+msgid "This Telegram chat is already registered for this bot."
+msgstr "Questa chat Telegram è già registrata per questo bot."
 
 #. module: telegram_bot
 #. odoo-python
@@ -256,28 +268,35 @@ msgid "This bot is private. Send /start followed by the access code."
 msgstr "Questo bot è privato. Manda /start seguito dal codice di accesso."
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid ""
-"Token from @BotFather. Then run Settings > Technical > Telegram > Register "
-"Webhook."
-msgstr ""
-"Token di @BotFather. Poi esegui Impostazioni > Tecnico > Telegram > Registra "
-"webhook."
+#: model:ir.model.constraint,message:telegram_bot.constraint_telegram_bot_token_unique
+msgid "This bot token is already registered."
+msgstr "Questo token è già registrato."
 
 #. module: telegram_bot
-#: model:ir.model.fields,help:telegram_bot.field_res_config_settings__telegram_bot_token
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__token
+msgid "Token"
+msgstr "Token"
+
+#. module: telegram_bot
+#: model:ir.model.fields,help:telegram_bot.field_telegram_bot__token
 msgid "Token given by @BotFather."
 msgstr "Token fornito da @BotFather."
 
 #. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__username
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__username
 msgid "Username"
 msgstr "Username"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__webhook_secret
 msgid "Webhook Secret"
 msgstr "Secret webhook"
+
+#. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__webhook_url
+msgid "Webhook Url"
+msgstr "URL webhook"
 
 #. module: telegram_bot
 #. odoo-python
@@ -292,15 +311,20 @@ msgstr ""
 "Ultimo errore: %(error)s"
 
 #. module: telegram_bot
-#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_bot__welcome
+msgid "Welcome"
+msgstr "Benvenuto"
+
+#. module: telegram_bot
+#: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_bot_form
 msgid "Welcome Message"
 msgstr "Messaggio di benvenuto"
 
 #. module: telegram_bot
-#: model:ir.model.fields,help:telegram_bot.field_res_config_settings__telegram_access_code
+#: model:ir.model.fields,help:telegram_bot.field_telegram_bot__access_code
 msgid ""
 "When set, a new chat must send '/start <code>' before the bot answers. Share"
-" the link t.me/<bot>?start=<code>."
+" the link t.me/<bot>?start=<code>. Empty: open to everyone."
 msgstr ""
 "Se impostato, una nuova chat deve mandare '/start <codice>' prima che il bot"
-" risponda. Condividi il link t.me/<bot>?start=<codice>."
+" risponda. Condividi il link t.me/<bot>?start=<codice>. Vuoto: aperto a tutti."

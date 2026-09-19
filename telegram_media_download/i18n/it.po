@@ -1,0 +1,258 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* telegram_media_download
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-19 14:20+0000\n"
+"PO-Revision-Date: 2026-09-19 14:20+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/media_provider.py:0
+msgid "Audio conversion failed: %s"
+msgstr "Conversione audio fallita: %s"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/media_provider.py:0
+msgid "Audio conversion timed out."
+msgstr "Conversione audio scaduta."
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__chat_id
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.view_telegram_media_download_search
+msgid "Chat"
+msgstr "Chat"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,help:telegram_media_download.field_telegram_bot__kind
+msgid "Conversation handler. Modules add kinds with selection_add."
+msgstr "Gestore della conversazione. I moduli aggiungono tipi con selection_add."
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Could not resolve this Suno link."
+msgstr "Non riesco a risolvere questo link Suno."
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_bot__display_name
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_handler_media__display_name
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__display_name
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_provider__display_name
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_provider_suno__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "Download failed: %s"
+msgstr "Download fallito: %s"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__error
+#: model:ir.model.fields.selection,name:telegram_media_download.selection__telegram_media_download__state__error
+msgid "Error"
+msgstr "Errore"
+
+#. module: telegram_media_download
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.view_telegram_media_download_search
+msgid "Failed"
+msgstr "Falliti"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "I cannot download from this link. Supported sites: %s"
+msgstr "Non posso scaricare da questo link. Siti supportati: %s"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_bot__id
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_handler_media__id
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__id
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_provider__id
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_provider_suno__id
+msgid "ID"
+msgstr "ID"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_bot__kind
+msgid "Kind"
+msgstr "Tipo"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__write_date
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: telegram_media_download
+#: model:ir.actions.act_window,name:telegram_media_download.action_telegram_media_download
+#: model:ir.ui.menu,name:telegram_media_download.menu_telegram_media_download
+msgid "Media Downloads"
+msgstr "Download media"
+
+#. module: telegram_media_download
+#: model:ir.model.fields.selection,name:telegram_media_download.selection__telegram_bot__kind__media
+msgid "Media download"
+msgstr "Download media"
+
+#. module: telegram_media_download
+#: model:ir.model.fields.selection,name:telegram_media_download.selection__telegram_media_download__state__pending
+msgid "Pending"
+msgstr "In corso"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__performer
+msgid "Performer"
+msgstr "Artista"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__provider
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.view_telegram_media_download_search
+msgid "Provider"
+msgstr "Provider"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,help:telegram_media_download.field_telegram_media_download__provider
+msgid "Provider that handled the link."
+msgstr "Provider che ha gestito il link."
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid ""
+"Send me a link and I reply with the file (MP3 for music, video where the site offers one).\n"
+"Supported sites: %s"
+msgstr ""
+"Mandami un link e ti rispondo con il file (MP3 per la musica, video dove il sito lo offre).\n"
+"Siti supportati: %s"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "Send me a link to a track. Supported sites: %s"
+msgstr "Mandami il link di un brano. Siti supportati: %s"
+
+#. module: telegram_media_download
+#: model:ir.model.fields.selection,name:telegram_media_download.selection__telegram_media_download__state__done
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.view_telegram_media_download_search
+msgid "Sent"
+msgstr "Inviato"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__size
+msgid "Size (bytes)"
+msgstr "Dimensione (byte)"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__state
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.view_telegram_media_download_search
+msgid "State"
+msgstr "Stato"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "Supported sites"
+msgstr "Siti supportati"
+
+#. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_telegram_bot
+msgid "Telegram Bot"
+msgstr "Bot Telegram"
+
+#. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_telegram_handler_media
+msgid "Telegram Handler: Media Download"
+msgstr "Gestore Telegram: download media"
+
+#. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_telegram_media_download
+msgid "Telegram Media Download"
+msgstr "Download media Telegram"
+
+#. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_telegram_media_provider
+msgid "Telegram Media Provider"
+msgstr "Provider media Telegram"
+
+#. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_telegram_media_provider_suno
+msgid "Telegram Media Provider: Suno"
+msgstr "Provider media Telegram: Suno"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "Telegram refused the file: %s"
+msgstr "Telegram ha rifiutato il file: %s"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "The file weighs %.1f MB, above the 50 MB Telegram allows a bot."
+msgstr "Il file pesa %.1f MB, oltre i 50 MB che Telegram concede a un bot."
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "This Suno track is not ready yet (status %s)."
+msgstr "Questo brano Suno non è ancora pronto (stato %s)."
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__title
+msgid "Title"
+msgstr "Titolo"
+
+#. module: telegram_media_download
+#: model:ir.model.fields.selection,name:telegram_media_download.selection__telegram_media_download__state__too_big
+msgid "Too big"
+msgstr "Troppo grande"
+
+#. module: telegram_media_download
+#: model:ir.model.fields.selection,name:telegram_media_download.selection__telegram_media_download__state__unsupported
+msgid "Unsupported link"
+msgstr "Link non supportato"
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__url
+msgid "Url"
+msgstr "URL"
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/media_provider.py:0
+msgid "ffmpeg is not installed on the server."
+msgstr "ffmpeg non è installato sul server."
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/telegram_handler.py:0
+msgid "⏳ Downloading from %s, a few seconds…"
+msgstr "⏳ Scarico da %s, qualche secondo…"
