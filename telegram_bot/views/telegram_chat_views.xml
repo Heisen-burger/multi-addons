@@ -12,6 +12,7 @@
                 <field name="username" optional="show"/>
                 <field name="chat_id" optional="hide"/>
                 <field name="lang" optional="hide"/>
+                <field name="authorized"/>
                 <field name="state" optional="hide"/>
             </list>
         </field>
@@ -32,6 +33,7 @@
                             <field name="chat_id"/>
                             <field name="username"/>
                             <field name="lang"/>
+                            <field name="authorized"/>
                             <field name="active" invisible="1"/>
                         </group>
                         <group name="conversation">

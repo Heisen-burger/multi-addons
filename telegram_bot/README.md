@@ -68,7 +68,19 @@ records every API call in `self.calls` and offers `send_text`, `send_location`, 
 `telegram.chat`: read for internal users, full access for administrators. The webhook runs
 as superuser after the secret check.
 
+## Access code
+
+Settings > Telegram > Access Code. When set, a new chat gets "This bot is private" until it
+sends `/start <code>`; the link `https://t.me/<bot>?start=<code>` does it in one tap.
+Admitted chats keep the `authorized` flag, so changing the code later does not lock them
+out; untick the flag on a chat record to ban it. Empty code: every chat is admitted on its
+first message.
+
 ## Changelog
+
+### 19.0.1.1.0
+
+- Access code: new chats must send `/start <code>` when one is configured.
 
 ### 19.0.1.0.1
 

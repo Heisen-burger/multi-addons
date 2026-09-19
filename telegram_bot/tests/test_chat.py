@@ -56,6 +56,26 @@ class TestChat(TelegramCase):
             self.real_call(self.env['telegram.bot'], 'sendMessage', chat_id=4242, text="hi")
         self.assertFalse(self.chat().active)
 
+    def test_access_code_gates_new_chats(self):
+        self.env['ir.config_parameter'].sudo().set_param('telegram_bot.access_code', 'sesame')
+        self.send_text('/start')
+        self.assertFalse(self.chat().authorized)
+        self.assertIn("private", self.last_text())
+        self.send_text('/start wrong')
+        self.assertFalse(self.chat().authorized)
+        self.tap('demo:1')
+        self.assertIn("private", self.last_text())
+        self.calls.clear()
+        self.send_text('/start sesame')
+        self.assertTrue(self.chat().authorized)
+        self.assertNotIn("private", self.last_text())
+        self.send_text('/help')
+        self.assertIn("/start", self.last_text())
+
+    def test_no_access_code_admits_everyone(self):
+        self.send_text('/help')
+        self.assertTrue(self.chat().authorized)
+
     def test_handle_update_swallows_errors(self):
         with patch.object(type(self.Chat), '_dispatch', side_effect=ValueError("boom")):
             self.Chat._handle_update({'update_id': 9})

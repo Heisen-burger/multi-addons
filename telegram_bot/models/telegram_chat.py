@@ -22,6 +22,7 @@ class TelegramChat(models.Model):
     state = fields.Selection([('idle', "Idle")], default='idle', required=True,
                              help="Conversation state. Extensions add values with selection_add.")
     active = fields.Boolean(default=True)
+    authorized = fields.Boolean(help="The chat sent the access code, or none was required when it first wrote.")
 
     _chat_id_unique = models.Constraint(
         'unique (chat_id)',
@@ -45,9 +46,12 @@ class TelegramChat(models.Model):
         if query:
             chat = self._get_chat(query['message']['chat'], query.get('from'))
             self._bot()._call('answerCallbackQuery', callback_query_id=query['id'])
-            chat._on_callback(query.get('data') or '', query['message'])
+            if chat._check_access():
+                chat._on_callback(query.get('data') or '', query['message'])
         elif message:
             chat = self._get_chat(message['chat'], message.get('from'))
+            if not chat._check_access(message.get('text') or ''):
+                return
             if message.get('location'):
                 chat._on_location(message['location'])
             elif message.get('text'):
@@ -69,6 +73,23 @@ class TelegramChat(models.Model):
         else:
             chat = self.create(vals)
         return chat.with_context(lang=chat._odoo_lang())
+
+    def _check_access(self, text=''):
+        """True when the chat may talk to the bot.
+
+        With an access code configured, a chat is admitted once it sends
+        '/start <code>' (also the payload of a t.me/<bot>?start=<code> link).
+        Without a code every chat is admitted on its first message.
+        """
+        if self.authorized:
+            return True
+        code = self._bot()._param('access_code').strip()
+        parts = text.split(maxsplit=1)
+        if not code or (parts and parts[0].split('@')[0] == '/start' and len(parts) > 1 and parts[1].strip() == code):
+            self.write({'authorized': True})
+            return True
+        self._say(_("This bot is private. Send /start followed by the access code."))
+        return False
 
     def _odoo_lang(self):
         self.ensure_one()

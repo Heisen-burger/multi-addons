@@ -17,6 +17,11 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: telegram_bot
+#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
+msgid "Access Code"
+msgstr "Codice di accesso"
+
+#. module: telegram_bot
 #: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__active
 msgid "Active"
 msgstr "Attivo"
@@ -36,6 +41,11 @@ msgstr "Risposta a /start. I moduli possono sostituirla nel codice."
 #: model_terms:ir.ui.view,arch_db:telegram_bot.view_telegram_chat_search
 msgid "Archived"
 msgstr "Archiviato"
+
+#. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_telegram_chat__authorized
+msgid "Authorized"
+msgstr "Autorizzata"
 
 #. module: telegram_bot
 #: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
@@ -135,6 +145,11 @@ msgid "Name"
 msgstr "Nome"
 
 #. module: telegram_bot
+#: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
+msgid "New chats must send /start followed by this code. Empty: open to everyone."
+msgstr "Le nuove chat devono mandare /start seguito da questo codice. Vuoto: aperto a tutti."
+
+#. module: telegram_bot
 #: model:ir.ui.menu,name:telegram_bot.menu_telegram_register_webhook
 msgid "Register Webhook"
 msgstr "Registra webhook"
@@ -160,6 +175,11 @@ msgstr "Telegram"
 #: model:ir.model,name:telegram_bot.model_telegram_bot
 msgid "Telegram Bot Client"
 msgstr "Client bot Telegram"
+
+#. module: telegram_bot
+#: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__telegram_access_code
+msgid "Telegram Access Code"
+msgstr "Codice di accesso Telegram"
 
 #. module: telegram_bot
 #: model:ir.model.fields,field_description:telegram_bot.field_res_config_settings__telegram_bot_token
@@ -214,9 +234,20 @@ msgid "Telegram: Register Webhook"
 msgstr "Telegram: registra webhook"
 
 #. module: telegram_bot
+#: model:ir.model.fields,help:telegram_bot.field_telegram_chat__authorized
+msgid "The chat sent the access code, or none was required when it first wrote."
+msgstr "La chat ha inviato il codice di accesso, oppure nessun codice era richiesto al primo messaggio."
+
+#. module: telegram_bot
 #: model:ir.model.constraint,message:telegram_bot.constraint_telegram_chat_chat_id_unique
 msgid "This Telegram chat is already registered."
 msgstr "Questa chat Telegram è già registrata."
+
+#. module: telegram_bot
+#. odoo-python
+#: code:addons/telegram_bot/models/telegram_chat.py:0
+msgid "This bot is private. Send /start followed by the access code."
+msgstr "Questo bot è privato. Manda /start seguito dal codice di accesso."
 
 #. module: telegram_bot
 #: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
@@ -258,3 +289,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
 msgid "Welcome Message"
 msgstr "Messaggio di benvenuto"
+
+#. module: telegram_bot
+#: model:ir.model.fields,help:telegram_bot.field_res_config_settings__telegram_access_code
+msgid ""
+"When set, a new chat must send '/start <code>' before the bot answers. Share"
+" the link t.me/<bot>?start=<code>."
+msgstr ""
+"Se impostato, una nuova chat deve mandare '/start <codice>' prima che il bot"
+" risponda. Condividi il link t.me/<bot>?start=<codice>."
