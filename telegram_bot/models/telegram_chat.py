@@ -73,7 +73,9 @@ class TelegramChat(models.Model):
     def _odoo_lang(self):
         self.ensure_one()
         code = (self.lang or '').split('-')[0]
-        lang = code and self.env['res.lang'].search([('code', '=like', code + '_%')], limit=1)
+        # the record may carry active_test=False: ask for active languages explicitly
+        lang = code and self.env['res.lang'].search(
+            [('code', '=like', code + '_%'), ('active', '=', True)], limit=1)
         return lang.code if lang else self.env.lang or 'en_US'
 
     def _bot(self):

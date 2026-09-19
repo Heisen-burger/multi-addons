@@ -4,22 +4,28 @@ from unittest.mock import patch
 
 from odoo.tests import tagged
 
+from odoo.addons.telegram_bot.models.telegram_chat import TelegramChat as BaseChat
+
 from .common import TelegramCase
 
 
 @tagged('post_install', '-at_install')
 class TestChat(TelegramCase):
+    # extensions may override _cmd_start and _on_free_text: base behaviour is exercised
+    # by calling the base class methods on the record
+
     def test_start_creates_chat_and_answers(self):
         self.env['ir.config_parameter'].sudo().set_param('telegram_bot.welcome', "Welcome <here>")
         self.send_text('/start@my_bot')
         self.assertRecordValues(self.chat(), [{'name': "Mario Rossi", 'username': 'mrossi', 'lang': 'it', 'state': 'idle'}])
         self.assertEqual(self.calls[0][0], 'sendMessage')
+        BaseChat._cmd_start(self.chat())
         self.assertEqual(self.last_text(), "Welcome &lt;here&gt;")
 
     def test_unknown_command_and_free_text_show_help(self):
         self.send_text('/whatever')
         self.assertIn("/start", self.last_text())
-        self.send_text('hello')
+        BaseChat._on_free_text(self.chat(), 'hello')
         self.assertIn("/help", self.last_text())
 
     def test_callback_routes_to_cb_method(self):
