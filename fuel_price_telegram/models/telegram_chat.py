@@ -42,7 +42,7 @@ class TelegramChat(models.Model):
     def _on_free_text(self, text):
         if self.state == 'threshold':
             return self._set_threshold(text)
-        return self._search(text)
+        return self._search_stations(text)
 
     def _on_location(self, location):
         self.write({'last_latitude': location['latitude'], 'last_longitude': location['longitude']})
@@ -223,7 +223,8 @@ class TelegramChat(models.Model):
             ])
         self._say("<b>%s</b>\n%s" % (escape(header), "\n".join(lines)), keyboard=keyboard)
 
-    def _search(self, text):
+    def _search_stations(self, text):
+        # never name this _search: it would shadow the ORM method
         stations = self.env['fuel.station'].search(
             ['&', ('fuel_ids.current_price', '>', 0), '|', ('city', 'ilike', text), ('name', 'ilike', text)],
             limit=10, order='city, name')
