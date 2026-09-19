@@ -146,8 +146,11 @@ msgstr "Nome"
 
 #. module: telegram_bot
 #: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid "New chats must send /start followed by this code. Empty: open to everyone."
-msgstr "Le nuove chat devono mandare /start seguito da questo codice. Vuoto: aperto a tutti."
+msgid ""
+"New chats must send /start followed by this code. Empty: open to everyone."
+msgstr ""
+"Le nuove chat devono mandare /start seguito da questo codice. Vuoto: aperto a "
+"tutti."
 
 #. module: telegram_bot
 #: model:ir.ui.menu,name:telegram_bot.menu_telegram_register_webhook
@@ -235,8 +238,11 @@ msgstr "Telegram: registra webhook"
 
 #. module: telegram_bot
 #: model:ir.model.fields,help:telegram_bot.field_telegram_chat__authorized
-msgid "The chat sent the access code, or none was required when it first wrote."
-msgstr "La chat ha inviato il codice di accesso, oppure nessun codice era richiesto al primo messaggio."
+msgid ""
+"The chat sent the access code, or none was required when it first wrote."
+msgstr ""
+"La chat ha inviato il codice di accesso, oppure nessun codice era richiesto al "
+"primo messaggio."
 
 #. module: telegram_bot
 #: model:ir.model.constraint,message:telegram_bot.constraint_telegram_chat_chat_id_unique

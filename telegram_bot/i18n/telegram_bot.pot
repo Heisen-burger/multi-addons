@@ -145,7 +145,8 @@ msgstr ""
 
 #. module: telegram_bot
 #: model_terms:ir.ui.view,arch_db:telegram_bot.res_config_settings_view_form
-msgid "New chats must send /start followed by this code. Empty: open to everyone."
+msgid ""
+"New chats must send /start followed by this code. Empty: open to everyone."
 msgstr ""
 
 #. module: telegram_bot
@@ -234,7 +235,8 @@ msgstr ""
 
 #. module: telegram_bot
 #: model:ir.model.fields,help:telegram_bot.field_telegram_chat__authorized
-msgid "The chat sent the access code, or none was required when it first wrote."
+msgid ""
+"The chat sent the access code, or none was required when it first wrote."
 msgstr ""
 
 #. module: telegram_bot
