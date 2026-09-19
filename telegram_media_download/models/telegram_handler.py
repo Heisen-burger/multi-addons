@@ -46,7 +46,9 @@ class TelegramHandlerMedia(models.AbstractModel):
     def _download(self, chat, url):
         Log = self.env['telegram.media.download']
         provider = self.env['telegram.media.provider']._for_url(url)
-        log = Log.create({'chat_id': chat.id, 'url': url, 'provider': provider and provider._provider_name})
+        # an abstract model recordset is empty, hence falsy: test against None
+        log = Log.create({'chat_id': chat.id, 'url': url,
+                          'provider': provider._provider_name if provider is not None else False})
         if provider is None:
             log.state = 'unsupported'
             return chat._say(_("I cannot download from this link. Supported sites: %s") % escape(self._sites_line()))
