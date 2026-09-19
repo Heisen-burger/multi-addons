@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 14:20+0000\n"
-"PO-Revision-Date: 2026-09-19 14:20+0000\n"
+"POT-Creation-Date: 2026-09-19 15:30+0000\n"
+"PO-Revision-Date: 2026-09-19 15:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -34,6 +34,11 @@ msgid "Chat"
 msgstr ""
 
 #. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: telegram_media_download
 #: model:ir.model.fields,help:telegram_media_download.field_telegram_bot__kind
 msgid "Conversation handler. Modules add kinds with selection_add."
 msgstr ""
@@ -55,6 +60,7 @@ msgid "Created on"
 msgstr ""
 
 #. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_bot__display_name
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_handler_media__display_name
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__display_name
@@ -87,6 +93,7 @@ msgid "I cannot download from this link. Supported sites: %s"
 msgstr ""
 
 #. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_res_config_settings__id
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_bot__id
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_handler_media__id
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__id
@@ -163,6 +170,11 @@ msgid "Sent"
 msgstr ""
 
 #. module: telegram_media_download
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.res_config_settings_view_form
+msgid "Session Cookie"
+msgstr ""
+
+#. module: telegram_media_download
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__size
 msgid "Size (bytes)"
 msgstr ""
@@ -171,6 +183,24 @@ msgstr ""
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__state
 #: model_terms:ir.ui.view,arch_db:telegram_media_download.view_telegram_media_download_search
 msgid "State"
+msgstr ""
+
+#. module: telegram_media_download
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.res_config_settings_view_form
+msgid "Suno"
+msgstr ""
+
+#. module: telegram_media_download
+#: model:ir.model.fields,field_description:telegram_media_download.field_res_config_settings__telegram_media_suno_client_cookie
+msgid "Suno Session Cookie"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid ""
+"Suno refuses this track to anonymous visitors. Own or private tracks need "
+"the Suno session cookie in Settings."
 msgstr ""
 
 #. module: telegram_media_download
@@ -187,6 +217,11 @@ msgstr ""
 #. module: telegram_media_download
 #: model:ir.model,name:telegram_media_download.model_telegram_handler_media
 msgid "Telegram Handler: Media Download"
+msgstr ""
+
+#. module: telegram_media_download
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.res_config_settings_view_form
+msgid "Telegram Media"
 msgstr ""
 
 #. module: telegram_media_download
@@ -211,6 +246,13 @@ msgid "Telegram refused the file: %s"
 msgstr ""
 
 #. module: telegram_media_download
+#: model_terms:ir.ui.view,arch_db:telegram_media_download.res_config_settings_view_form
+msgid ""
+"The __client cookie of a logged-in suno.com session: own and private tracks "
+"become downloadable. Public tracks work without it."
+msgstr ""
+
+#. module: telegram_media_download
 #. odoo-python
 #: code:addons/telegram_media_download/models/telegram_handler.py:0
 msgid "The file weighs %.1f MB, above the 50 MB Telegram allows a bot."
@@ -220,6 +262,14 @@ msgstr ""
 #. odoo-python
 #: code:addons/telegram_media_download/models/provider_suno.py:0
 msgid "This Suno track is not ready yet (status %s)."
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid ""
+"This track has no public audio or video. Own or private tracks need the Suno"
+" session cookie in Settings."
 msgstr ""
 
 #. module: telegram_media_download
@@ -240,6 +290,13 @@ msgstr ""
 #. module: telegram_media_download
 #: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__url
 msgid "Url"
+msgstr ""
+
+#. module: telegram_media_download
+#: model:ir.model.fields,help:telegram_media_download.field_res_config_settings__telegram_media_suno_client_cookie
+msgid ""
+"Value of the __client cookie of a logged-in suno.com session. Lets the bot "
+"download your own and private tracks. Leave empty for public tracks only."
 msgstr ""
 
 #. module: telegram_media_download

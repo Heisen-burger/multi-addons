@@ -35,6 +35,11 @@ msgid "Chat"
 msgstr "Chat"
 
 #. module: telegram_media_download
+#: model:ir.model,name:telegram_media_download.model_res_config_settings
+msgid "Config Settings"
+msgstr "Impostazioni di configurazione"
+
+#. module: telegram_media_download
 #: model:ir.model.fields,help:telegram_media_download.field_telegram_bot__kind
 msgid "Conversation handler. Modules add kinds with selection_add."
 msgstr "Gestore della conversazione. I moduli aggiungono tipi con selection_add."
