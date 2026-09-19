@@ -62,7 +62,9 @@ class TestFuelBot(FuelTelegramCase):
         sub = self.Sub.search([('chat_id', '=', self.chat().id), ('station_fuel_id', '=', gasolio.id)])
         self.assertTrue(sub.active)
         markup = self.sent('editMessageReplyMarkup')[-1]['reply_markup']['inline_keyboard']
-        self.assertTrue(markup[1][0]['text'].startswith("✅"))
+        labels = {row[0]['callback_data']: row[0]['text'] for row in markup}
+        self.assertTrue(labels['sub:%s' % gasolio.id].startswith("✅"))
+        self.assertTrue(labels['sub:%s' % self.fuel(self.duomo, 'Benzina').id].startswith("➕"))
         self.assertEqual(markup[-1][0]['callback_data'], 'thrst:%s' % self.duomo.id)
         self.tap('sub:%s' % gasolio.id)
         self.assertFalse(sub.active)
