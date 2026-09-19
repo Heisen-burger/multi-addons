@@ -67,12 +67,10 @@ class TelegramBot(models.AbstractModel):
     def _commands(self):
         """[(command, description)] shown by /help and registered with setMyCommands.
 
-        Extensions call super() and append their own.
+        Extensions call super() and append their own. Build the list from keyword
+        arguments: a tuple opened right after a _() call confuses the term extractor.
         """
-        return [
-            ('start', _("Start")),
-            ('help', _("Help")),
-        ]
+        return list(dict(start=_("Start"), help=_("Help")).items())
 
     @api.model
     def action_register_webhook(self):

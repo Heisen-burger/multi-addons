@@ -12,15 +12,16 @@ class TelegramBot(models.AbstractModel):
 
     @api.model
     def _commands(self):
-        return super()._commands() + [
-            ('vicini', _("Prices around your last location")),
-            ('carburante', _("Change the fuel you are looking for")),
-            ('lista', _("Manage your subscriptions")),
-            ('prezzi', _("Current prices of your subscriptions")),
-            ('soglia', _("Set alert thresholds")),
-            ('stop', _("Remove every subscription")),
-            ('aiuto', _("Help")),
-        ]
+        own = dict(
+            vicini=_("Prices around your last location"),
+            carburante=_("Change the fuel you are looking for"),
+            lista=_("Manage your subscriptions"),
+            prezzi=_("Current prices of your subscriptions"),
+            soglia=_("Set alert thresholds"),
+            stop=_("Remove every subscription"),
+            aiuto=_("Help"),
+        )
+        return super()._commands() + list(own.items())
 
     @api.model
     def _maps_link(self, station):

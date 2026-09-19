@@ -205,21 +205,24 @@ class TelegramChat(models.Model):
         if not lines:
             return self._say(_("No station with %s within 100 km of this point.") % escape(self.fuel_type or ""),
                              keyboard=[[{'text': _("Change fuel"), 'callback_data': 'fuel:'}]])
+        # labels first: a parenthesis opened right after a _() call confuses the term extractor
         all_fuels = self.fuel_type == ALL_FUELS
-        header = _("%(fuel)s %(mode)s, %(order)s",
-                   fuel=_("All fuels") if all_fuels else self.fuel_type,
-                   mode="" if all_fuels else self._mode_label(),
-                   order=_("by distance") if (order == 'dist' or all_fuels) else _("by price"))
+        by_distance = order == 'dist' or all_fuels
+        fuel_label = _("All fuels") if all_fuels else self.fuel_type
+        order_label = _("by distance") if by_distance else _("by price")
+        header = _("%(fuel)s %(mode)s, %(order)s", fuel=fuel_label,
+                   mode="" if all_fuels else self._mode_label(), order=order_label)
         buttons = [{'text': str(index), 'callback_data': 'st:%s' % station.id}
                    for index, station in enumerate(stations, 1)]
         keyboard = [buttons[i:i + 5] for i in range(0, len(buttons), 5)]
         if not all_fuels:
+            toggle_label = _("💶 By price") if by_distance else _("📏 By distance")
+            mode_label = _("Served") if self.is_self else _("Self service")
+            fuel_button = _("Fuel")
             keyboard.append([
-                {'text': _("📏 By distance") if order != 'dist' else _("💶 By price"),
-                 'callback_data': 'near:%s' % ('dist' if order != 'dist' else 'price')},
-                {'text': _("Served") if self.is_self else _("Self service"),
-                 'callback_data': 'mode:%s' % ('0' if self.is_self else '1')},
-                {'text': _("Fuel"), 'callback_data': 'fuel:'},
+                {'text': toggle_label, 'callback_data': 'near:price' if by_distance else 'near:dist'},
+                {'text': mode_label, 'callback_data': 'mode:0' if self.is_self else 'mode:1'},
+                {'text': fuel_button, 'callback_data': 'fuel:'},
             ])
         self._say("<b>%s</b>\n%s" % (escape(header), "\n".join(lines)), keyboard=keyboard)
 
