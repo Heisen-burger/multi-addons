@@ -13,7 +13,7 @@ alerts on every change the observatory sync detects.
 | Command | Effect |
 |---|---|
 | `/start` | welcome and a "Send my location" button |
-| location | first time: pick a fuel; then the nearest stations for that fuel, cheapest first, with distance, time of the last communication and a navigation link |
+| location | first time: pick a fuel and self/served; then one card per nearest station, cheapest first, with distance, time of the last communication, Navigate and Station buttons |
 | town or station name | up to 10 matching stations |
 | `/vicini` | repeat the search on the last location |
 | `/carburante` | change the fuel (or "All fuels") |
@@ -64,6 +64,13 @@ Fuel Prices > Telegram > Chats, Subscriptions. Fuel Prices > Configuration > Reg
 Telegram Webhook.
 
 ## Changelog
+
+### 19.0.1.1.0
+
+- Ask self service or served after the fuel choice, once per chat.
+- Nearest stations and search results arrive as one card per station: price with a
+  medal for the three cheapest, station, address, distance, time, Navigate and Station
+  buttons; a closing message carries the order, mode and fuel toggles.
 
 ### 19.0.1.0.0
 

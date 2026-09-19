@@ -14,40 +14,62 @@ class TestFuelBot(FuelTelegramCase):
         self.send_text('/aiuto')
         self.assertIn("/vicini", self.last_text())
 
-    def test_location_asks_fuel_then_lists_by_price(self):
+    def station_cards(self):
+        """(text, station callback, navigate url) of every station card sent since the last clear."""
+        cards = []
+        for payload in self.sent():
+            rows = payload.get('reply_markup', {}).get('inline_keyboard', [])
+            buttons = [button for row in rows for button in row]
+            card = [b['callback_data'] for b in buttons if b.get('callback_data', '').startswith('st:')]
+            if card and len(buttons) == 2:
+                cards.append((payload['text'], card[0], buttons[0].get('url')))
+        return cards
+
+    def test_location_asks_fuel_mode_then_one_card_per_station(self):
         self.send_location(45.4642, 9.1900)
         self.assertIn('fuel:Benzina', self.last_buttons())
         self.assertIn('fuel:*', self.last_buttons())
         self.tap('fuel:Gasolio')
         self.assertEqual(self.chat().fuel_type, 'Gasolio')
-        text = self.last_text()
-        # Torino sits 125 km away and stays out; Milan and Monza stations come cheapest first
-        self.assertNotIn("TORINO", text)
-        self.assertLess(text.index("1.749"), text.index("1.769"))
-        self.assertLess(text.index("1.769"), text.index("1.799"))
-        self.assertIn("destination=45.45,9.17", text)
-        buttons = self.last_buttons()
-        self.assertEqual(buttons[:3], ['st:%s' % self.navigli.id, 'st:%s' % self.monza.id, 'st:%s' % self.duomo.id])
-        self.assertIn('near:dist', buttons)
+        self.assertEqual(self.last_buttons(), ['mode:1', 'mode:0'], "self or served comes next")
+        self.calls.clear()
+        self.tap('mode:1')
+        self.assertTrue(self.chat().mode_chosen)
+        cards = self.station_cards()
+        # Torino sits 125 km away and stays out; cheapest first, one message each
+        self.assertEqual([card[1] for card in cards],
+                         ['st:%s' % self.navigli.id, 'st:%s' % self.monza.id, 'st:%s' % self.duomo.id])
+        self.assertTrue(cards[0][0].startswith("🥇 <b>1.749 €</b> · Gasolio Self"))
+        self.assertIn("📍 MILANO · 2.", cards[0][0])
+        self.assertIn("destination=45.45,9.17", cards[0][2])
+        self.assertIn('near:dist', self.last_buttons(), "footer carries the toggles")
+        self.assertIn('mode:0', self.last_buttons())
 
     def test_near_by_distance_and_vicini(self):
         self.send_location(45.4642, 9.1900)
         self.tap('fuel:Gasolio')
+        self.tap('mode:1')
+        self.calls.clear()
         self.tap('near:dist')
-        self.assertEqual(self.last_buttons()[0], 'st:%s' % self.duomo.id)
+        self.assertEqual(self.station_cards()[0][1], 'st:%s' % self.duomo.id)
+        self.assertNotIn("🥇", self.station_cards()[0][0], "no medals when sorted by distance")
+        self.calls.clear()
         self.send_text('/vicini')
-        self.assertEqual(self.last_buttons()[0], 'st:%s' % self.navigli.id, "back to price order")
+        self.assertEqual(self.station_cards()[0][1], 'st:%s' % self.navigli.id, "back to price order")
 
-    def test_all_fuels_lists_stations_by_distance(self):
+    def test_all_fuels_skips_mode_and_lists_by_distance(self):
         self.send_location(45.4642, 9.1900)
+        self.calls.clear()
         self.tap('fuel:*')
-        text = self.last_text()
-        self.assertLess(text.index("ENI DUOMO"), text.index("IP NAVIGLI"))
-        self.assertIn("Benzina Self <b>1.899</b>", text)
+        cards = self.station_cards()
+        self.assertEqual(cards[0][1], 'st:%s' % self.duomo.id)
+        self.assertIn("• Benzina Self <b>1.899 €</b>", cards[0][0])
+        self.assertNotIn('mode:0', self.last_buttons())
 
     def test_text_search_by_city(self):
         self.send_text('monza')
-        self.assertEqual(self.last_buttons(), ['st:%s' % self.monza.id])
+        self.assertEqual([card[1] for card in self.station_cards()], ['st:%s' % self.monza.id])
+        self.assertIn("⛽ <b>Q8 MONZA</b>", self.station_cards()[0][0])
         self.send_text('nowhere')
         self.assertIn("nowhere", self.last_text())
         self.assertIn('reply_markup', self.sent()[-1])
@@ -62,7 +84,8 @@ class TestFuelBot(FuelTelegramCase):
         sub = self.Sub.search([('chat_id', '=', self.chat().id), ('station_fuel_id', '=', gasolio.id)])
         self.assertTrue(sub.active)
         markup = self.sent('editMessageReplyMarkup')[-1]['reply_markup']['inline_keyboard']
-        labels = {row[0]['callback_data']: row[0]['text'] for row in markup}
+        self.assertIn('url', markup[0][0], "first row navigates to the station")
+        labels = {row[0].get('callback_data'): row[0]['text'] for row in markup}
         self.assertTrue(labels['sub:%s' % gasolio.id].startswith("✅"))
         self.assertTrue(labels['sub:%s' % self.fuel(self.duomo, 'Benzina').id].startswith("➕"))
         self.assertEqual(markup[-1][0]['callback_data'], 'thrst:%s' % self.duomo.id)

@@ -90,6 +90,12 @@ msgstr "Cambia carburante"
 
 #. module: fuel_price_telegram
 #. odoo-python
+#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+msgid "Change the list:"
+msgstr "Modifica l'elenco:"
+
+#. module: fuel_price_telegram
+#. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_bot.py:0
 msgid "Change the fuel you are looking for"
 msgstr "Cambia il carburante che cerchi"
@@ -363,6 +369,12 @@ msgstr "Self service"
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+msgid "Self service or served?"
+msgstr "Self service o servito?"
+
+#. module: fuel_price_telegram
+#. odoo-python
+#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
 msgid "Send me your location first."
 msgstr "Prima mandami la tua posizione."
 
@@ -534,6 +546,12 @@ msgstr "⚙️ Soglie"
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+msgid "⛽ Station"
+msgstr "⛽ Scheda"
+
+#. module: fuel_price_telegram
+#. odoo-python
+#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
 msgid "💶 By price"
 msgstr "💶 Per prezzo"
 
@@ -548,3 +566,9 @@ msgstr "📍 Invia la mia posizione"
 #: code:addons/fuel_price_telegram/models/telegram_chat.py:0
 msgid "📏 By distance"
 msgstr "📏 Per distanza"
+
+#. module: fuel_price_telegram
+#. odoo-python
+#: code:addons/fuel_price_telegram/models/telegram_chat.py:0
+msgid "🧭 Navigate"
+msgstr "🧭 Naviga"

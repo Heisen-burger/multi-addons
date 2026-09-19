@@ -23,6 +23,7 @@ class TelegramChat(models.Model):
     last_station_id = fields.Many2one('fuel.station', ondelete='set null')
     fuel_type = fields.Char(help="Fuel used when the chat sends a location. '*' means every fuel.")
     is_self = fields.Boolean("Self Service", default=True)
+    mode_chosen = fields.Boolean(help="The chat answered the self/served question at least once.")
     last_latitude = fields.Float(digits=(10, 6))
     last_longitude = fields.Float(digits=(10, 6))
     subscription_ids = fields.One2many('fuel.telegram.subscription', 'chat_id', string="Subscriptions")
@@ -48,6 +49,8 @@ class TelegramChat(models.Model):
         self.write({'last_latitude': location['latitude'], 'last_longitude': location['longitude']})
         if not self.fuel_type:
             return self._ask_fuel()
+        if self.fuel_type != ALL_FUELS and not self.mode_chosen:
+            return self._ask_mode()
         return self._send_nearest()
 
     # ------------------------------------------------------------------
@@ -72,6 +75,15 @@ class TelegramChat(models.Model):
         if not arg:
             return self._ask_fuel()
         self.write({'fuel_type': arg})
+        if arg != ALL_FUELS:
+            return self._ask_mode()
+        self._send_nearest_or_ask_location()
+
+    def _cb_mode(self, arg, message):
+        self.write({'is_self': arg == '1', 'mode_chosen': True})
+        self._send_nearest_or_ask_location()
+
+    def _send_nearest_or_ask_location(self):
         if self.last_latitude:
             self._send_nearest()
         else:
@@ -79,10 +91,6 @@ class TelegramChat(models.Model):
 
     def _cb_near(self, arg, message):
         self._send_nearest(order=arg)
-
-    def _cb_mode(self, arg, message):
-        self.write({'is_self': arg == '1'})
-        self._send_nearest()
 
     # ------------------------------------------------------------------
     # commands
@@ -175,56 +183,78 @@ class TelegramChat(models.Model):
         keyboard.append([{'text': _("All fuels"), 'callback_data': 'fuel:' + ALL_FUELS}])
         self._say(_("Which fuel are you looking for?"), keyboard=keyboard)
 
+    def _ask_mode(self):
+        self_label = _("Self service")
+        served_label = _("Served")
+        self._say(_("Self service or served?"), keyboard=[[
+            {'text': "🤳 " + self_label, 'callback_data': 'mode:1'},
+            {'text': "🧑‍🔧 " + served_label, 'callback_data': 'mode:0'},
+        ]])
+
     def _limit(self):
         return int(self.env['ir.config_parameter'].sudo().get_param('fuel_telegram.nearest_limit', 10) or 10)
 
-    def _send_nearest(self, order='price'):
+    def _station_buttons(self, station):
+        navigate = _("🧭 Navigate")
+        card = _("⛽ Station")
+        return [[{'text': navigate, 'url': self._bot()._maps_link(station)},
+                 {'text': card, 'callback_data': 'st:%s' % station.id}]]
+
+    def _station_message(self, station, km=None, fuel=None, rank=None):
+        """One card per station: price line (or every price), name, address, distance, time."""
         bot = self._bot()
-        lat, lng = self.last_latitude, self.last_longitude
         lines = []
-        stations = []
-        if self.fuel_type == ALL_FUELS:
-            for index, (km, station) in enumerate(self.env['fuel.station']._nearest(lat, lng, self._limit()), 1):
-                prices = ", ".join("%s <b>%.3f</b>" % (escape(self._fuel_label(f)), f.current_price)
-                                   for f in station.fuel_ids.filtered('current_price'))
-                lines.append("%s. %.1f km · <b>%s</b>, %s\n   %s · %s" % (
-                    index, km, escape(station.name), escape(station.city or ""), prices, bot._navigate(station)))
-                stations.append(station)
+        if fuel is not None:
+            medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "%s." % rank if rank else "")
+            lines.append("%s <b>%.3f €</b> · %s" % (medal, fuel.current_price, escape(self._fuel_label(fuel))))
+        lines.append("⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")))
+        address = ", ".join(p for p in (station.street, station.city) if p) or station.address or ""
+        distance = " · %.1f km" % km if km is not None else ""
+        lines.append("📍 %s%s" % (escape(address), distance))
+        if fuel is not None:
+            lines.append("🕒 %s" % bot._fmt_station_dt(fuel.current_date))
+        else:
+            for row in station.fuel_ids.filtered('current_price'):
+                lines.append("• %s <b>%.3f €</b> · %s" % (escape(self._fuel_label(row)), row.current_price,
+                                                         bot._fmt_station_dt(row.current_date)))
+        return "\n".join(lines)
+
+    def _send_nearest(self, order='price'):
+        lat, lng = self.last_latitude, self.last_longitude
+        all_fuels = self.fuel_type == ALL_FUELS
+        cards = []
+        if all_fuels:
+            cards = [(station, km, None) for km, station in self.env['fuel.station']._nearest(lat, lng, self._limit())]
         else:
             ranked = self.env['fuel.station.fuel']._nearest(lat, lng, self.fuel_type, self.is_self, self._limit())
             if order == 'dist':
                 ranked.sort(key=lambda pair: pair[0])
             else:
                 ranked.sort(key=lambda pair: (pair[1].current_price, pair[0]))
-            for index, (km, fuel) in enumerate(ranked, 1):
-                station = fuel.station_id
-                lines.append("%s. <b>%.3f</b> · %.1f km · %s, %s · %s · %s" % (
-                    index, fuel.current_price, km, escape(station.name), escape(station.city or ""),
-                    bot._fmt_station_dt(fuel.current_date), bot._navigate(station)))
-                stations.append(station)
-        if not lines:
+            cards = [(fuel.station_id, km, fuel) for km, fuel in ranked]
+        if not cards:
+            change_fuel = _("Change fuel")
             return self._say(_("No station with %s within 100 km of this point.") % escape(self.fuel_type or ""),
-                             keyboard=[[{'text': _("Change fuel"), 'callback_data': 'fuel:'}]])
+                             keyboard=[[{'text': change_fuel, 'callback_data': 'fuel:'}]])
         # labels first: a parenthesis opened right after a _() call confuses the term extractor
-        all_fuels = self.fuel_type == ALL_FUELS
         by_distance = order == 'dist' or all_fuels
         fuel_label = _("All fuels") if all_fuels else self.fuel_type
         order_label = _("by distance") if by_distance else _("by price")
         header = _("%(fuel)s %(mode)s, %(order)s", fuel=fuel_label,
                    mode="" if all_fuels else self._mode_label(), order=order_label)
-        buttons = [{'text': str(index), 'callback_data': 'st:%s' % station.id}
-                   for index, station in enumerate(stations, 1)]
-        keyboard = [buttons[i:i + 5] for i in range(0, len(buttons), 5)]
+        self._say("<b>%s</b>" % escape(header))
+        for rank, (station, km, fuel) in enumerate(cards, 1):
+            self._say(self._station_message(station, km=km, fuel=fuel, rank=None if by_distance else rank),
+                      keyboard=self._station_buttons(station))
+        toggle_label = _("💶 By price") if by_distance else _("📏 By distance")
+        mode_label = _("Served") if self.is_self else _("Self service")
+        fuel_button = _("Fuel")
+        footer = _("Change the list:")
+        keyboard = [[{'text': fuel_button, 'callback_data': 'fuel:'}]]
         if not all_fuels:
-            toggle_label = _("💶 By price") if by_distance else _("📏 By distance")
-            mode_label = _("Served") if self.is_self else _("Self service")
-            fuel_button = _("Fuel")
-            keyboard.append([
-                {'text': toggle_label, 'callback_data': 'near:price' if by_distance else 'near:dist'},
-                {'text': mode_label, 'callback_data': 'mode:0' if self.is_self else 'mode:1'},
-                {'text': fuel_button, 'callback_data': 'fuel:'},
-            ])
-        self._say("<b>%s</b>\n%s" % (escape(header), "\n".join(lines)), keyboard=keyboard)
+            keyboard[0].insert(0, {'text': mode_label, 'callback_data': 'mode:0' if self.is_self else 'mode:1'})
+            keyboard[0].insert(0, {'text': toggle_label, 'callback_data': 'near:price' if by_distance else 'near:dist'})
+        self._say(footer, keyboard=keyboard)
 
     def _search_stations(self, text):
         # never name this _search: it would shadow the ORM method
@@ -234,10 +264,8 @@ class TelegramChat(models.Model):
         if not stations:
             return self._say(_("No station found for \"%s\". Try a town name or send your location.") % escape(text),
                              reply_keyboard=self._location_keyboard())
-        lines = ["%s. <b>%s</b>, %s (%s)" % (index, escape(s.name), escape(s.city or ""), escape(s.brand or ""))
-                 for index, s in enumerate(stations, 1)]
-        buttons = [{'text': str(index), 'callback_data': 'st:%s' % s.id} for index, s in enumerate(stations, 1)]
-        self._say("\n".join(lines), keyboard=[buttons[i:i + 5] for i in range(0, len(buttons), 5)])
+        for station in stations:
+            self._say(self._station_message(station), keyboard=self._station_buttons(station))
 
     # ------------------------------------------------------------------
     # station card and subscriptions
@@ -250,9 +278,11 @@ class TelegramChat(models.Model):
 
     def _station_keyboard(self, station):
         followed = set(self.subscription_ids.mapped('station_fuel_id').ids)
-        keyboard = [[{'text': "%s %s" % ("✅" if fuel.id in followed else "➕", self._fuel_label(fuel)),
-                      'callback_data': 'sub:%s' % fuel.id}]
-                    for fuel in station.fuel_ids.filtered('current_price')]
+        navigate = _("🧭 Navigate")
+        keyboard = [[{'text': navigate, 'url': self._bot()._maps_link(station)}]]
+        keyboard += [[{'text': "%s %s" % ("✅" if fuel.id in followed else "➕", self._fuel_label(fuel)),
+                       'callback_data': 'sub:%s' % fuel.id}]
+                     for fuel in station.fuel_ids.filtered('current_price')]
         if followed & set(station.fuel_ids.ids):
             keyboard.append([{'text': _("⚙️ Thresholds"), 'callback_data': 'thrst:%s' % station.id}])
         return keyboard
@@ -267,9 +297,9 @@ class TelegramChat(models.Model):
         bot._call('sendVenue', chat_id=self.chat_id, latitude=station.latitude, longitude=station.longitude,
                   title=station.name, address=address)
         lines = ["<b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")),
-                 escape(", ".join(p for p in (station.street, station.city, station.province) if p)
-                        or station.address or ""),
-                 bot._navigate(station), ""]
+                 "📍 " + escape(", ".join(p for p in (station.street, station.city, station.province) if p)
+                               or station.address or ""),
+                 ""]
         for fuel in station.fuel_ids.filtered('current_price'):
             lines.append("%s: <b>%.3f</b> · %s" % (escape(self._fuel_label(fuel)), fuel.current_price,
                                                    bot._fmt_station_dt(fuel.current_date)))
