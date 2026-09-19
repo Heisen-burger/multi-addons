@@ -277,6 +277,11 @@ msgid "Manage your subscriptions"
 msgstr "Gestisci le tue iscrizioni"
 
 #. module: fuel_price_telegram
+#: model:ir.model.fields,field_description:fuel_price_telegram.field_telegram_chat__mode_chosen
+msgid "Mode Chosen"
+msgstr "Modalità scelta"
+
+#. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_bot.py:0
 msgid "Navigate"
@@ -467,6 +472,11 @@ msgstr "Chat Telegram"
 #: model:ir.model,name:fuel_price_telegram.model_fuel_telegram_subscription
 msgid "Telegram Price Subscription"
 msgstr "Iscrizione prezzi Telegram"
+
+#. module: fuel_price_telegram
+#: model:ir.model.fields,help:fuel_price_telegram.field_telegram_chat__mode_chosen
+msgid "The chat answered the self/served question at least once."
+msgstr "La chat ha risposto almeno una volta alla domanda self/servito."
 
 #. module: fuel_price_telegram
 #: model:ir.actions.act_window,name:fuel_price_telegram.action_fuel_telegram_subscription

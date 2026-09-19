@@ -70,6 +70,10 @@ as superuser after the secret check.
 
 ## Changelog
 
+### 19.0.1.0.1
+
+- Test helper `last_buttons` skips url buttons.
+
 ### 19.0.1.0.0
 
 - Initial release.

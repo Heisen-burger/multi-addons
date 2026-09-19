@@ -56,4 +56,4 @@ class TelegramCase(TransactionCase):
 
     def last_buttons(self):
         rows = self.sent()[-1].get('reply_markup', {}).get('inline_keyboard', [])
-        return [button['callback_data'] for row in rows for button in row]
+        return [button['callback_data'] for row in rows for button in row if 'callback_data' in button]
