@@ -9,6 +9,7 @@ class FuelTelegramCase(TelegramCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.bot.kind = 'fuel'
         cls.Sub = cls.env['fuel.telegram.subscription']
         cls.Station = cls.env['fuel.station']
         cls.stations = cls.Station.create([

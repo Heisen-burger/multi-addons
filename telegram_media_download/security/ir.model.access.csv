@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telegram_media_download_user,telegram.media.download user,model_telegram_media_download,base.group_user,1,0,0,0
+access_telegram_media_download_system,telegram.media.download system,model_telegram_media_download,base.group_system,1,1,1,1

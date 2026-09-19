@@ -1,22 +1,23 @@
 <section style="max-width: 900px; margin: 0 auto; padding: 24px 16px; font-family: Arial, sans-serif; color: #333;">
     <h1 style="color: #F1972B; border-bottom: 3px solid #F1972B; padding-bottom: 8px;">Telegram Bot</h1>
-    <p style="font-size: 16px;">Generic Telegram Bot API layer for Odoo: webhook endpoint, chat registry, command and callback routing, HTML message helper. Other modules add commands by inheriting two models.</p>
+    <p style="font-size: 16px;">Generic Telegram Bot API layer for Odoo: any number of bots, one webhook per bot, chat registry, access code, command and callback routing, HTML messages and file uploads. Other modules add a bot kind by inheriting two models.</p>
 
     <h2 style="color: #F1972B; margin-top: 32px;">Features</h2>
     <ul style="line-height: 1.7;">
-        <li><strong>Webhook</strong> protected by the Telegram secret token header, always answering 200.</li>
-        <li><strong>Chat registry</strong>: one record per chat, archived on /stop or when the user blocks the bot, revived by any later message.</li>
-        <li><strong>Routing</strong>: /command to <code>_cmd_&lt;command&gt;</code>, inline button data to <code>_cb_&lt;key&gt;</code>, free text and shared locations to dedicated hooks.</li>
-        <li><strong>Client</strong>: one method per Bot API call, HTML messages with inline or reply keyboards, webhook registration from a menu entry.</li>
-        <li><strong>Access code</strong>: optional; new chats must send /start followed by the code, or open the t.me link that carries it.</li>
+        <li><strong>Bots</strong>: one record per bot with token, kind, webhook secret, access code and welcome text; webhook registration from the form.</li>
+        <li><strong>Webhook</strong> per bot, protected by the Telegram secret token header, always answering 200.</li>
+        <li><strong>Chat registry</strong>: one record per bot and chat, archived on /stop or when the user blocks the bot, revived by any later message.</li>
+        <li><strong>Access code</strong>: optional per bot; new chats must send /start followed by the code, or open the t.me link that carries it.</li>
+        <li><strong>Routing</strong>: /command to <code>_cmd_&lt;command&gt;</code>, inline button data to <code>_cb_&lt;key&gt;</code>, free text and shared locations to dedicated hooks, one handler model per bot kind.</li>
+        <li><strong>Client</strong>: one method per Bot API call, HTML messages with inline or reply keyboards, audio, video, voice, photo and document uploads.</li>
         <li><strong>No dependency</strong> beyond the requests library shipped with Odoo.</li>
     </ul>
 
     <h2 style="color: #F1972B; margin-top: 32px;">Configuration</h2>
     <ol style="line-height: 1.7;">
         <li>Create the bot with @BotFather and copy the token.</li>
-        <li>Settings &gt; Telegram: paste the token and save.</li>
-        <li>Settings &gt; Technical &gt; Telegram &gt; Register Webhook.</li>
+        <li>Settings &gt; Technical &gt; Telegram &gt; Bots: new record, paste the token, pick the kind.</li>
+        <li>Press Register Webhook.</li>
     </ol>
 
     <p style="margin-top: 40px; font-size: 13px; color: #777;">

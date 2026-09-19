@@ -50,7 +50,7 @@ class TelegramSubscription(models.Model):
     @api.model
     def _notify(self, changes):
         """Send one Telegram message per subscription whose threshold the change crosses."""
-        bot = self.env['telegram.bot']
+        handler = self.env['telegram.handler.fuel']
         by_fuel = defaultdict(lambda: self.browse())
         for sub in self.search([('station_fuel_id', 'in', changes.station_fuel_id.ids)]):
             by_fuel[sub.station_fuel_id.id] |= sub
@@ -58,13 +58,14 @@ class TelegramSubscription(models.Model):
             for sub in by_fuel.get(change.station_fuel_id.id, self.browse()):
                 if not sub._should_notify(change.price):
                     continue
-                sub = sub.with_context(lang=sub.chat_id._odoo_lang())
+                chat = sub.chat_id.with_context(lang=sub.chat_id._odoo_lang())
+                bot = chat.bot_id
                 fuel = change.station_fuel_id
                 station = fuel.station_id
                 text = "⛽ <b>%s</b>\n%s: %.3f → <b>%.3f</b> (%+.3f)\n%s · %s" % (
-                    escape(station.name), escape(sub.chat_id._fuel_label(fuel)),
+                    escape(station.name), escape(handler._fuel_label(fuel)),
                     change.previous_price, change.price, change.price - change.previous_price,
                     bot._fmt_station_dt(change.date_communicated), bot._navigate(station),
                 )
-                bot._send(sub.chat_id.chat_id, text,
-                          keyboard=[[{'text': _("Station"), 'callback_data': 'st:%s' % station.id}]])
+                station_label = _("Station")
+                chat._say(text, keyboard=[[{'text': station_label, 'callback_data': 'st:%s' % station.id}]])

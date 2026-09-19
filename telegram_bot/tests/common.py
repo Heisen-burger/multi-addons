@@ -11,22 +11,26 @@ FROM = {'id': 4242, 'language_code': 'it'}
 
 
 class TelegramCase(TransactionCase):
-    """Patches the Bot API client and records every call. Reusable by bot extensions."""
+    """Creates a bot, patches the Bot API client and records every call.
+
+    Bot extensions reuse it: set `cls.bot.kind` in their setUpClass.
+    """
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env['ir.config_parameter'].sudo().set_param('telegram_bot.bot_token', 'test-token')
-        cls.env['ir.config_parameter'].sudo().set_param('telegram_bot.webhook_secret', 'test-secret')
         cls.real_call = staticmethod(TelegramBot._call)  # captured before setUp patches it
+        cls.bot = cls.env['telegram.bot'].create({
+            'name': "Test bot", 'token': 'test-token', 'webhook_secret': 'test-secret',
+        })
         cls.Chat = cls.env['telegram.chat']
 
     def setUp(self):
         super().setUp()
         self.calls = []
 
-        def fake_call(_model, method, **payload):
-            self.calls.append((method, payload))
+        def fake_call(_bot, method, files=None, **payload):
+            self.calls.append((method, dict(payload, files=files) if files else payload))
             return {'ok': True, 'result': {}}
 
         patcher = patch.object(TelegramBot, '_call', autospec=True, side_effect=fake_call)
@@ -35,18 +39,19 @@ class TelegramCase(TransactionCase):
 
     # helpers -------------------------------------------------------------
     def send_text(self, text):
-        self.Chat._dispatch({'update_id': 1, 'message': {'message_id': 10, 'chat': CHAT, 'from': FROM, 'text': text}})
+        self.bot._dispatch({'update_id': 1, 'message': {'message_id': 10, 'chat': CHAT, 'from': FROM, 'text': text}})
 
     def send_location(self, lat, lng):
-        self.Chat._dispatch({'update_id': 2, 'message': {
+        self.bot._dispatch({'update_id': 2, 'message': {
             'message_id': 11, 'chat': CHAT, 'from': FROM, 'location': {'latitude': lat, 'longitude': lng}}})
 
     def tap(self, data):
-        self.Chat._dispatch({'update_id': 3, 'callback_query': {
+        self.bot._dispatch({'update_id': 3, 'callback_query': {
             'id': 'cb1', 'from': FROM, 'data': data, 'message': {'message_id': 12, 'chat': CHAT}}})
 
     def chat(self):
-        return self.Chat.with_context(active_test=False).search([('chat_id', '=', CHAT['id'])])
+        return self.Chat.with_context(active_test=False).search(
+            [('bot_id', '=', self.bot.id), ('chat_id', '=', CHAT['id'])])
 
     def sent(self, method='sendMessage'):
         return [payload for name, payload in self.calls if name == method]

@@ -13,6 +13,7 @@ own README, license and changelog.
 | [fuel_price_observatory](fuel_price_observatory/) | Italian fuel prices from the MIMIT observatory: history, min/max, change alerts | OPL-1 |
 | [telegram_bot](telegram_bot/) | Telegram Bot API client, webhook and command routing for other modules to extend | OPL-1 |
 | [fuel_price_telegram](fuel_price_telegram/) | Telegram bot: nearest fuel prices, subscriptions with thresholds, change alerts | OPL-1 |
+| [telegram_media_download](telegram_media_download/) | Telegram bot that turns a track link into an MP3; one provider per site, Suno included | OPL-1 |
 
 ## Installation
 

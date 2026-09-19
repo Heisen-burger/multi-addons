@@ -6,5 +6,6 @@ from . import (
     res_config_settings,
     telegram_bot,
     telegram_chat,
+    telegram_handler,
     telegram_subscription,
 )

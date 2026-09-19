@@ -10,13 +10,14 @@ SECRET_HEADER = 'X-Telegram-Bot-Api-Secret-Token'
 
 class TelegramWebhook(http.Controller):
     # auth='none' defaults to a read-only cursor and env.uid None: force both
-    @http.route('/telegram_bot/webhook', type='json2', auth='none', methods=['POST'],
+    @http.route('/telegram_bot/webhook/<int:bot_id>', type='json2', auth='none', methods=['POST'],
                 csrf=False, readonly=False)
-    def webhook(self, **update):
+    def webhook(self, bot_id, **update):
         env = request.env(user=SUPERUSER_ID, su=True)
-        secret = env['ir.config_parameter'].get_param('telegram_bot.webhook_secret')
+        bot = env['telegram.bot'].browse(bot_id).exists()
+        secret = bot.webhook_secret if bot else None
         if not secret or request.httprequest.headers.get(SECRET_HEADER) != secret:
             raise Forbidden()
-        env['telegram.chat']._handle_update(update)
+        bot._handle_update(update)
         # always 200: Telegram retries any other status forever
         return {}

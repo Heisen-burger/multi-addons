@@ -1,17 +1,17 @@
 # STeSI Consulting - Michele Di Croce
 # License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html).
 {
-    'name': "Telegram Bot",
-    'summary': "Telegram Bot API client, webhook and command routing for other modules to extend",
+    'name': "Telegram Media Download Bot",
+    'summary': "Telegram bot that turns a track link into an MP3; one provider per site, Suno included",
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.2.0.0',
+    'version': '19.0.1.0.0',
     'website': "https://github.com/Heisen-burger/multi-addons",
-    'depends': ['base'],
+    'depends': ['telegram_bot'],
+    'external_dependencies': {'bin': ['ffmpeg']},
     'data': [
         'security/ir.model.access.csv',
-        'views/telegram_bot_views.xml',
-        'views/telegram_chat_views.xml',
+        'views/media_download_views.xml',
     ],
 }

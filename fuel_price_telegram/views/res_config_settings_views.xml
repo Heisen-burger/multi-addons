@@ -6,16 +6,19 @@
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.inherit.fuel_price_telegram</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="telegram_bot.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <block name="telegram_bot_block" position="after">
-                <block title="Fuel Prices" name="fuel_telegram_block">
-                    <setting id="fuel_telegram_limit" string="Nearest Stations"
-                             help="Stations listed when a user sends a location.">
-                        <field name="fuel_telegram_nearest_limit"/>
-                    </setting>
-                </block>
-            </block>
+            <xpath expr="//form" position="inside">
+                <app data-string="Fuel Prices" string="Fuel Prices" name="fuel_price_telegram"
+                     logo="/fuel_price_observatory/static/description/icon.png">
+                    <block title="Telegram Bot" name="fuel_telegram_block">
+                        <setting id="fuel_telegram_limit" string="Nearest Stations"
+                                 help="Stations listed when a user sends a location.">
+                            <field name="fuel_telegram_nearest_limit"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
         </field>
     </record>
 

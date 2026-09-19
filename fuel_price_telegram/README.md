@@ -46,24 +46,29 @@ message every Telegram subscription whose rule the new price crosses. No extra c
 
 ## Configuration
 
-1. Install, then follow the `telegram_bot` README: token in Settings > Telegram, then
-   Fuel Prices > Configuration > Register Telegram Webhook.
-2. Settings > Telegram > Fuel Prices: number of nearest stations (default 10).
+1. Install, then Fuel Prices > Telegram > Bots: new bot, kind *Fuel prices*, token from
+   @BotFather, access code if wanted, *Register Webhook*.
+2. Settings > Fuel Prices: number of nearest stations (default 10).
 
 ## Models
 
 | Model | Purpose |
 |---|---|
+| `telegram.handler.fuel` | the whole conversation, bound to bots of kind *Fuel prices* |
 | `telegram.chat` (extended) | preferred fuel and mode, last location, conversation state, subscriptions |
 | `fuel.telegram.subscription` | chat × price list, `above_price`, `below_price` |
 | `fuel.station._nearest`, `fuel.station.fuel._nearest` | bounding box on indexed coordinates, haversine ranking |
 
 ## Menus
 
-Fuel Prices > Telegram > Chats, Subscriptions. Fuel Prices > Configuration > Register
-Telegram Webhook.
+Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
+
+### 19.0.2.0.0
+
+- Multi-bot base: conversation moved to `telegram.handler.fuel`, bots of kind *Fuel
+  prices*; the migration marks the existing bot. Register its webhook again.
 
 ### 19.0.1.1.0
 

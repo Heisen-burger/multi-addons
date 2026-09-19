@@ -6,9 +6,9 @@
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.1.1.0',
+    'version': '19.0.2.0.0',
     'website': "https://github.com/Heisen-burger/multi-addons",
-    'depends': ['telegram_bot', 'fuel_price_observatory'],
+    'depends': ['telegram_bot', 'base_setup', 'fuel_price_observatory'],
     'data': [
         'security/ir.model.access.csv',
         'views/telegram_chat_views.xml',

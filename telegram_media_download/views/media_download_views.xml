@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_telegram_media_download_list" model="ir.ui.view">
+        <field name="name">telegram.media.download.list</field>
+        <field name="model">telegram.media.download</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="create_date"/>
+                <field name="chat_id"/>
+                <field name="provider"/>
+                <field name="title"/>
+                <field name="performer" optional="show"/>
+                <field name="size" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'" decoration-danger="state in ('error', 'too_big')"
+                       decoration-warning="state == 'unsupported'"/>
+                <field name="url" optional="hide"/>
+                <field name="error" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_telegram_media_download_search" model="ir.ui.view">
+        <field name="name">telegram.media.download.search</field>
+        <field name="model">telegram.media.download</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="title"/>
+                <field name="url"/>
+                <field name="chat_id"/>
+                <filter string="Sent" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Failed" name="failed" domain="[('state', 'in', ('error', 'too_big', 'unsupported'))]"/>
+                <separator/>
+                <filter string="Chat" name="group_chat" context="{'group_by': 'chat_id'}"/>
+                <filter string="Provider" name="group_provider" context="{'group_by': 'provider'}"/>
+                <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_telegram_media_download" model="ir.actions.act_window">
+        <field name="name">Media Downloads</field>
+        <field name="res_model">telegram.media.download</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_telegram_media_download_search"/>
+    </record>
+
+    <menuitem id="menu_telegram_media_download" name="Media Downloads" parent="telegram_bot.menu_telegram_root"
+              action="action_telegram_media_download" sequence="30"/>
+
+</odoo>
