@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_telegram_chat_list_inherit_fuel" model="ir.ui.view">
+        <field name="name">telegram.chat.list.inherit.fuel_price_telegram</field>
+        <field name="model">telegram.chat</field>
+        <field name="inherit_id" ref="telegram_bot.view_telegram_chat_list"/>
+        <field name="arch" type="xml">
+            <field name="lang" position="after">
+                <field name="fuel_type"/>
+                <field name="is_self"/>
+                <field name="subscription_count"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_telegram_chat_form_inherit_fuel" model="ir.ui.view">
+        <field name="name">telegram.chat.form.inherit.fuel_price_telegram</field>
+        <field name="model">telegram.chat</field>
+        <field name="inherit_id" ref="telegram_bot.view_telegram_chat_form"/>
+        <field name="arch" type="xml">
+            <group name="conversation" position="inside">
+                <field name="fuel_type"/>
+                <field name="is_self"/>
+                <field name="pending_subscription_id"/>
+                <field name="last_station_id"/>
+                <field name="last_latitude"/>
+                <field name="last_longitude"/>
+            </group>
+            <notebook position="inside">
+                <page string="Subscriptions" name="subscriptions">
+                    <field name="subscription_ids">
+                        <list editable="bottom">
+                            <field name="station_fuel_id"/>
+                            <field name="current_price"/>
+                            <field name="above_price"/>
+                            <field name="below_price"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

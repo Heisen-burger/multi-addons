@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_telegram_chat_list" model="ir.ui.view">
+        <field name="name">telegram.chat.list</field>
+        <field name="model">telegram.chat</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="name"/>
+                <field name="username" optional="show"/>
+                <field name="chat_id" optional="hide"/>
+                <field name="lang" optional="hide"/>
+                <field name="state" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_telegram_chat_form" model="ir.ui.view">
+        <field name="name">telegram.chat.form</field>
+        <field name="model">telegram.chat</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group name="telegram">
+                            <field name="chat_id"/>
+                            <field name="username"/>
+                            <field name="lang"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group name="conversation">
+                            <field name="state"/>
+                        </group>
+                    </group>
+                    <notebook/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_telegram_chat_search" model="ir.ui.view">
+        <field name="name">telegram.chat.search</field>
+        <field name="model">telegram.chat</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="username"/>
+                <field name="chat_id"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_telegram_chat" model="ir.actions.act_window">
+        <field name="name">Telegram Chats</field>
+        <field name="res_model">telegram.chat</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telegram_chat_search"/>
+    </record>
+
+    <menuitem id="menu_telegram_root" name="Telegram" parent="base.menu_custom" sequence="60"/>
+    <menuitem id="menu_telegram_chat" name="Chats" parent="menu_telegram_root"
+              action="action_telegram_chat" sequence="10"/>
+
+</odoo>

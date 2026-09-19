@@ -11,6 +11,8 @@ own README, license and changelog.
 | Module | Summary | License |
 |---|---|---|
 | [fuel_price_observatory](fuel_price_observatory/) | Italian fuel prices from the MIMIT observatory: history, min/max, change alerts | OPL-1 |
+| [telegram_bot](telegram_bot/) | Telegram Bot API client, webhook and command routing for other modules to extend | OPL-1 |
+| [fuel_price_telegram](fuel_price_telegram/) | Telegram bot: nearest fuel prices, subscriptions with thresholds, change alerts | OPL-1 |
 
 ## Installation
 

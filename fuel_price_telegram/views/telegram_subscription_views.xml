@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="view_fuel_telegram_subscription_list" model="ir.ui.view">
+        <field name="name">fuel.telegram.subscription.list</field>
+        <field name="model">fuel.telegram.subscription</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="chat_id"/>
+                <field name="station_fuel_id"/>
+                <field name="current_price"/>
+                <field name="above_price"/>
+                <field name="below_price"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_fuel_telegram_subscription_search" model="ir.ui.view">
+        <field name="name">fuel.telegram.subscription.search</field>
+        <field name="model">fuel.telegram.subscription</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="chat_id"/>
+                <field name="station_id"/>
+                <field name="fuel_type"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Chat" name="group_chat" context="{'group_by': 'chat_id'}"/>
+                <filter string="Station" name="group_station" context="{'group_by': 'station_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fuel_telegram_subscription" model="ir.actions.act_window">
+        <field name="name">Telegram Subscriptions</field>
+        <field name="res_model">fuel.telegram.subscription</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_fuel_telegram_subscription_search"/>
+    </record>
+
+</odoo>

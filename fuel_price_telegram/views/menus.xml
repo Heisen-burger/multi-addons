@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <menuitem id="menu_fuel_telegram" name="Telegram" parent="fuel_price_observatory.menu_fuel_root" sequence="40"/>
+    <menuitem id="menu_fuel_telegram_chat" name="Chats" parent="menu_fuel_telegram"
+              action="telegram_bot.action_telegram_chat" sequence="10"/>
+    <menuitem id="menu_fuel_telegram_subscription" name="Subscriptions" parent="menu_fuel_telegram"
+              action="action_fuel_telegram_subscription" sequence="20"/>
+    <menuitem id="menu_fuel_register_webhook" name="Register Telegram Webhook"
+              parent="fuel_price_observatory.menu_fuel_config" action="telegram_bot.action_register_webhook"
+              sequence="30"/>
+
+</odoo>
