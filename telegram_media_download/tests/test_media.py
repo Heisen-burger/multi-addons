@@ -89,6 +89,46 @@ class TestMedia(TelegramCase):
         with patch.object(type(suno), '_http_get', return_value=Redirect()):
             self.assertEqual(suno._clip_id('https://suno.com/s/kuuNnXWLBeiaN1wU'), '20f569e1-fb1b-4b4e-af8e-8518ffb5837a')
 
+    def test_suno_private_track_needs_cookie(self):
+        suno = self.env['telegram.media.provider.suno']
+
+        class Meta:
+            @staticmethod
+            def json():
+                return {'status': 'complete', 'title': "Private", 'video_url': '', 'is_public': False}
+
+        with patch.object(type(suno), '_http_get', return_value=Meta()), \
+                self.assertRaises(UserError, msg="no cookie: no public video, clear message"):
+            suno._fetch(SONG)
+
+    def test_suno_cookie_path_uses_feed_audio_url(self):
+        suno = self.env['telegram.media.provider.suno']
+        self.env['ir.config_parameter'].sudo().set_param('telegram_media.suno_client_cookie', 'eyJ.cookie')
+        calls = []
+
+        class Response:
+            def __init__(self, payload=None, content=b''):
+                self.payload, self.content = payload, content
+
+            def json(self):
+                return self.payload
+
+        def fake_get(_self, url, **kwargs):
+            calls.append((url, kwargs.get('headers', {}).get('Authorization')))
+            if '/api/clip/' in url:
+                return Response({'status': 'complete', 'title': "Mine", 'display_name': "Me", 'video_url': ''})
+            return Response(content=b'RAW-AUDIO')
+
+        with patch.object(type(suno), '_jwt', return_value='jwt-1'), \
+                patch.object(type(suno), '_authenticated_clip',
+                             return_value={'audio_url': 'https://cdn1.suno.ai/x.mp3', 'title': "Mine (feed)"}), \
+                patch.object(type(suno), '_http_get', autospec=True, side_effect=fake_get), \
+                patch.object(type(suno), '_to_mp3', return_value=b'ID3mp3'):
+            track = suno._fetch(SONG)
+        self.assertEqual(track['title'], "Mine (feed)")
+        self.assertEqual(track['data'], b'ID3mp3')
+        self.assertIn(('https://cdn1.suno.ai/x.mp3', 'Bearer jwt-1'), calls)
+
     def test_to_mp3_with_ffmpeg(self):
         if not shutil.which('ffmpeg'):
             self.skipTest("ffmpeg not installed")

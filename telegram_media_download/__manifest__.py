@@ -6,12 +6,13 @@
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'website': "https://github.com/Heisen-burger/multi-addons",
-    'depends': ['telegram_bot'],
+    'depends': ['telegram_bot', 'base_setup'],
     'external_dependencies': {'bin': ['ffmpeg']},
     'data': [
         'security/ir.model.access.csv',
         'views/media_download_views.xml',
+        'views/res_config_settings_views.xml',
     ],
 }

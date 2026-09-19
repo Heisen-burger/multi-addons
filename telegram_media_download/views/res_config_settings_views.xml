@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.telegram_media_download</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Telegram Media" string="Telegram Media" name="telegram_media_download"
+                     logo="/telegram_media_download/static/description/icon.png">
+                    <block title="Suno" name="telegram_media_suno_block">
+                        <setting id="telegram_media_suno_cookie" string="Session Cookie"
+                                 help="The __client cookie of a logged-in suno.com session: own and private tracks become downloadable. Public tracks work without it.">
+                            <field name="telegram_media_suno_client_cookie" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

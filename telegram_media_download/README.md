@@ -30,6 +30,20 @@ API method.
 The direct mp3 (`cdn1.suno.ai/<uuid>.mp3`) and the `media_urls` m4a answer 403 or arrive
 encrypted, hence the video route. Verified on 2026-09-19.
 
+### Own and private tracks
+
+Private tracks and tracks made with recent models have no public video, so the anonymous
+route fails. Give the bot a logged-in Suno session: Settings > Telegram Media > Suno >
+Session Cookie, paste the value of the `__client` cookie of suno.com (browser dev tools >
+Application/Storage > Cookies > `https://suno.com` > `__client`, a long `eyJ...` string).
+With it the provider asks Clerk (`auth.suno.com`) for a short-lived JWT, reads the clip
+through `GET /api/feed/v2?ids=<uuid>` and downloads its real `audio_url`; the file goes
+through `ffmpeg` anyway to get MP3, ID3 tags and cover. Without the cookie, or when the
+session expired, it falls back to the public video and explains what is missing.
+
+The cookie is a credential of the Suno account: keep it to administrators (the field is a
+password field) and log out of Suno to revoke it.
+
 ## Adding a site
 
 One file in `models/`, registered in `models/__init__.py`:
@@ -73,6 +87,11 @@ Settings > Technical > Telegram > Media Downloads: every link received with prov
 title, size, state and error.
 
 ## Changelog
+
+### 19.0.1.1.0
+
+- Suno: own and private tracks through the `__client` session cookie (Settings > Telegram
+  Media); clear message when a track has no public video and no cookie is set.
 
 ### 19.0.1.0.0
 
