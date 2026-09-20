@@ -116,7 +116,8 @@ class TestFuelBot(FuelTelegramCase):
         labels = {row[0].get('callback_data'): row[0]['text'] for row in markup}
         self.assertTrue(labels['sub:%s' % gasolio.id].startswith("✅"))
         self.assertTrue(labels['sub:%s' % self.fuel(self.duomo, 'Benzina').id].startswith("➕"))
-        self.assertEqual(markup[-1][0]['callback_data'], 'thrst:%s' % self.duomo.id)
+        self.assertEqual([b['callback_data'] for b in markup[-1]],
+                         ['hist:%s' % self.duomo.id, 'thrst:%s' % self.duomo.id])
         self.tap('sub:%s' % gasolio.id)
         self.assertFalse(sub.active)
 
@@ -165,6 +166,29 @@ class TestFuelBot(FuelTelegramCase):
         self.assertEqual(alerts[0]['reply_markup']['inline_keyboard'][0][0]['callback_data'], 'st:%s' % self.duomo.id)
         self.assertTrue(change(gasolio, 1.90, 103), "above the range: alert")
         self.assertTrue(change(benzina, 1.90, 104), "no thresholds: every change")
+
+    def test_digest_when_several_prices_move(self):
+        gasolio = self.fuel(self.duomo, 'Gasolio')
+        benzina = self.fuel(self.navigli, 'Benzina')
+        self.tap('sub:%s' % gasolio.id)
+        self.tap('sub:%s' % benzina.id)
+        rows = self.env['fuel.price'].create([
+            {'station_fuel_id': gasolio.id, 'price': 1.700, 'previous_price': 1.799,
+             'date_communicated': '2026-09-19 06:00:00', 'mimit_price_id': 201},
+            {'station_fuel_id': benzina.id, 'price': 1.950, 'previous_price': 1.879,
+             'date_communicated': '2026-09-19 06:00:00', 'mimit_price_id': 202},
+        ])
+        self.calls.clear()
+        self.env['fuel.station.fuel']._notify_followers(rows)
+        alerts = self.sent()
+        self.assertEqual(len(alerts), 1, "one digest instead of a message per station")
+        text = alerts[0]['text']
+        self.assertIn("1.799 → <b>1.700</b> (-0.099)", text)
+        self.assertIn("1.879 → <b>1.950</b> (+0.071)", text)
+        self.assertIn("ENI DUOMO", text)
+        self.assertIn("IP NAVIGLI", text)
+        self.assertEqual(sorted(self.last_buttons()),
+                         sorted(['st:%s' % self.duomo.id, 'st:%s' % self.navigli.id]))
 
     def test_lista_prezzi_delete_stop(self):
         gasolio = self.fuel(self.duomo, 'Gasolio')

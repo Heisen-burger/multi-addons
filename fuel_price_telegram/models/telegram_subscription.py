@@ -6,6 +6,9 @@ from html import escape
 from odoo import _, api, fields, models
 from odoo.tools import float_compare
 
+MAX_LINES = 15
+MAX_BUTTONS = 5
+
 
 class TelegramSubscription(models.Model):
     _name = 'fuel.telegram.subscription'
@@ -49,23 +52,54 @@ class TelegramSubscription(models.Model):
 
     @api.model
     def _notify(self, changes):
-        """Send one Telegram message per subscription whose threshold the change crosses."""
-        handler = self.env['telegram.handler.fuel']
+        """Message every chat whose thresholds the changes cross, one message per chat."""
         by_fuel = defaultdict(lambda: self.browse())
         for sub in self.search([('station_fuel_id', 'in', changes.station_fuel_id.ids)]):
             by_fuel[sub.station_fuel_id.id] |= sub
+        per_chat = defaultdict(lambda: self.env['fuel.price'])
         for change in changes:
             for sub in by_fuel.get(change.station_fuel_id.id, self.browse()):
-                if not sub._should_notify(change.price):
-                    continue
-                chat = sub.chat_id.with_context(lang=sub.chat_id._odoo_lang())
-                bot = chat.bot_id
-                fuel = change.station_fuel_id
-                station = fuel.station_id
-                text = "⛽ <b>%s</b>\n%s: %.3f → <b>%.3f</b> (%+.3f)\n%s · %s" % (
-                    escape(station.name), escape(handler._fuel_label(fuel)),
-                    change.previous_price, change.price, change.price - change.previous_price,
-                    bot._fmt_station_dt(change.date_communicated), bot._navigate(station),
-                )
-                station_label = _("Station")
-                chat._say(text, keyboard=[[{'text': station_label, 'callback_data': 'st:%s' % station.id}]])
+                if sub._should_notify(change.price):
+                    per_chat[sub.chat_id] |= change
+        for chat, rows in per_chat.items():
+            chat = chat.with_context(lang=chat._odoo_lang())
+            if len(rows) == 1:
+                self._notify_one(chat, rows)
+            else:
+                self._notify_many(chat, rows)
+
+    def _change_line(self, chat, change, with_station=True):
+        handler = self.env['telegram.handler.fuel']
+        fuel = change.station_fuel_id
+        label = escape(handler._fuel_label(fuel))
+        if with_station:
+            label = "<b>%s</b> %s" % (escape(fuel.station_id.name), label)
+        return "%s: %.3f → <b>%.3f</b> (%+.3f)" % (label, change.previous_price, change.price,
+                                                   change.price - change.previous_price)
+
+    def _notify_one(self, chat, change):
+        bot = chat.bot_id
+        station = change.station_fuel_id.station_id
+        station_label = _("Station")
+        history_label = _("📈 History")
+        text = "⛽ %s\n%s · %s" % (self._change_line(chat, change),
+                                  bot._fmt_station_dt(change.date_communicated), bot._navigate(station))
+        chat._say(text, keyboard=[[{'text': station_label, 'callback_data': 'st:%s' % station.id},
+                                   {'text': history_label, 'callback_data': 'hist:%s' % station.id}]])
+
+    def _notify_many(self, chat, changes):
+        """One digest when a sync moves several prices the chat follows."""
+        bot = chat.bot_id
+        changes = changes.sorted(lambda c: (c.station_fuel_id.station_id.name, c.station_fuel_id.fuel_type))
+        header = _("⛽ %s prices changed") % len(changes)
+        lines = [header]
+        for change in changes[:MAX_LINES]:
+            lines.append("• %s" % self._change_line(chat, change))
+        if len(changes) > MAX_LINES:
+            lines.append(_("and %s more") % (len(changes) - MAX_LINES))
+        lines.append(bot._fmt_station_dt(changes[0].date_communicated))
+        buttons = []
+        for station in changes.station_fuel_id.station_id[:MAX_BUTTONS]:
+            buttons.append({'text': "⛽ %s" % station.name[:20], 'callback_data': 'st:%s' % station.id})
+        keyboard = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
+        chat._say("\n".join(lines), keyboard=keyboard)
