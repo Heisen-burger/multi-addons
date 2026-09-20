@@ -265,11 +265,13 @@ msgstr "Ultimo aggiornamento il"
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__latitude
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__latitude
 msgid "Latitude"
 msgstr "Latitudine"
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__longitude
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__longitude
 msgid "Longitude"
 msgstr "Longitudine"
 
@@ -380,8 +382,14 @@ msgstr "Apri"
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__previous_price
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__previous_price
 msgid "Previous Price"
 msgstr "Prezzo precedente"
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__previous_price
+msgid "Price before the last change, 0 until the price moves once."
+msgstr "Prezzo prima dell'ultima variazione, 0 finché il prezzo non si muove."
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__price
