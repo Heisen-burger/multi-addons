@@ -75,7 +75,7 @@ class TestFuelBot(FuelTelegramCase):
         gasolio.write({'previous_price': 1.849})
         self.calls.clear()
         self.tap('st:%s' % self.duomo.id)
-        self.assertIn("<b>1.799</b> (-0.050)", self.last_text(), "station card shows the move")
+        self.assertIn("<b>1.799</b> (prev. 1.849)", self.last_text(), "station card shows the previous price")
         self.assertIn("<b>1.899</b> <i>(", self.last_text(), "a fuel with no recorded change says so")
         self.assertIn('hist:%s' % self.duomo.id, self.last_buttons())
         self.calls.clear()
@@ -89,7 +89,7 @@ class TestFuelBot(FuelTelegramCase):
         self.send_location(45.4642, 9.1900)
         self.tap('fuel:Gasolio')
         self.tap('mode:1')
-        self.assertIn("(-0.050)", self.station_cards()[-1][0], "the nearest card shows it too")
+        self.assertIn("(prev. 1.849)", self.station_cards()[-1][0], "the nearest card shows it too")
 
     def test_storico_without_a_station(self):
         self.send_text('/storico')

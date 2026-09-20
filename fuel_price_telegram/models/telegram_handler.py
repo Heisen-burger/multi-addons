@@ -128,7 +128,7 @@ class TelegramHandlerFuel(models.AbstractModel):
             fuel = sub.station_fuel_id
             lines.append("%s. <b>%s</b> %s: <b>%.3f</b>%s · %s\n   %s · %s" % (
                 index, escape(fuel.station_id.name), escape(self._fuel_label(fuel)), fuel.current_price,
-                self._delta(fuel), bot._fmt_station_dt(fuel.current_date), escape(sub._threshold_label()),
+                self._previous(fuel), bot._fmt_station_dt(fuel.current_date), escape(sub._threshold_label()),
                 bot._navigate(fuel.station_id)))
             keyboard.append([
                 {'text': "⚙️ %s" % index, 'callback_data': 'thr:%s' % sub.id},
@@ -146,7 +146,7 @@ class TelegramHandlerFuel(models.AbstractModel):
         for sub in subs:
             fuel = sub.station_fuel_id
             lines.append("<b>%.3f</b>%s %s %s · %s · %s" % (
-                fuel.current_price, self._delta(fuel), escape(fuel.station_id.name),
+                fuel.current_price, self._previous(fuel), escape(fuel.station_id.name),
                 escape(self._fuel_label(fuel)), bot._fmt_station_dt(fuel.current_date),
                 bot._navigate(fuel.station_id)))
         chat._say("\n".join(lines))
@@ -229,7 +229,7 @@ class TelegramHandlerFuel(models.AbstractModel):
         lines = []
         if fuel is not None:
             medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "%s." % rank if rank else "")
-            lines.append("%s <b>%.3f €</b>%s · %s" % (medal, fuel.current_price, self._delta(fuel),
+            lines.append("%s <b>%.3f €</b>%s · %s" % (medal, fuel.current_price, self._previous(fuel),
                                                      escape(self._fuel_label(fuel))))
         lines.append("⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")))
         address = ", ".join(p for p in (station.street, station.city) if p) or station.address or ""
@@ -240,7 +240,7 @@ class TelegramHandlerFuel(models.AbstractModel):
         else:
             for row in station.fuel_ids.filtered('current_price'):
                 lines.append("• %s <b>%.3f €</b>%s · %s" % (escape(self._fuel_label(row)), row.current_price,
-                                                           self._delta(row), bot._fmt_station_dt(row.current_date)))
+                                                           self._previous(row), bot._fmt_station_dt(row.current_date)))
         return "\n".join(lines)
 
     def _send_nearest(self, chat, order='price'):
@@ -296,11 +296,12 @@ class TelegramHandlerFuel(models.AbstractModel):
     def _fuel_label(self, fuel):
         return "%s %s" % (fuel.fuel_type, _("Self") if fuel.is_self else _("Served"))
 
-    def _delta(self, fuel):
-        """' (+0.020)' against the price before the last change, empty on a first price."""
+    def _previous(self, fuel):
+        """' (prev. 1.799)' when the price moved once, empty while the first price holds."""
         if not fuel.previous_price:
             return ""
-        return " (%+.3f)" % (fuel.current_price - fuel.previous_price)
+        label = _("prev. %.3f") % fuel.previous_price
+        return " (%s)" % label
 
     def _mode_label(self, chat):
         return _("Self") if chat.is_self else _("Served")
@@ -334,7 +335,7 @@ class TelegramHandlerFuel(models.AbstractModel):
                  ""]
         no_change = _("no change yet")
         for fuel in station.fuel_ids.filtered('current_price'):
-            move = self._delta(fuel) or " <i>(%s)</i>" % escape(no_change)
+            move = self._previous(fuel) or " <i>(%s)</i>" % escape(no_change)
             lines.append("%s: <b>%.3f</b>%s · %s" % (escape(self._fuel_label(fuel)), fuel.current_price,
                                                      move, bot._fmt_station_dt(fuel.current_date)))
         lines += ["", escape(_("Tap a fuel to follow it, tap again to stop."))]

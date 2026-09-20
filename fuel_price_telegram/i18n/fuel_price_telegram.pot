@@ -592,6 +592,12 @@ msgstr ""
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_handler.py:0
+msgid "prev. %.3f"
+msgstr ""
+
+#. module: fuel_price_telegram
+#. odoo-python
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "⚙️ Thresholds"
 msgstr ""
 

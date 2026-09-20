@@ -66,6 +66,10 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
 
+### 19.0.2.2.0
+
+- Price lines carry the previous price, `(prec. 1.849)`, instead of the difference.
+
 ### 19.0.2.1.1
 
 - Station card marks a fuel with no recorded change, so a missing move reads as missing
@@ -74,8 +78,8 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ### 19.0.2.1.0
 
-- Every price the bot sends carries the move against the previous price, `(+0.020)` or
-  `(-0.050)`: nearest cards, station card, `/lista`, `/prezzi`.
+- Every price the bot sends carries the price before it: nearest cards, station card,
+  `/lista`, `/prezzi`.
 - History: a button on the station card and the `/storico` command list the last twelve
   changes of that station, each with old and new price.
 
