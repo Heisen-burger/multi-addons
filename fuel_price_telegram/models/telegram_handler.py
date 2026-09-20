@@ -25,6 +25,7 @@ class TelegramHandlerFuel(models.AbstractModel):
             carburante=_("Change the fuel you are looking for"),
             lista=_("Manage your subscriptions"),
             prezzi=_("Current prices of your subscriptions"),
+            storico=_("Price history of the last station you opened"),
             soglia=_("Set alert thresholds"),
             stop=_("Remove every subscription"),
             aiuto=_("Help"),
@@ -80,6 +81,9 @@ class TelegramHandlerFuel(models.AbstractModel):
     def _cb_near(self, chat, arg, message):
         self._send_nearest(chat, order=arg)
 
+    def _cb_hist(self, chat, arg, message):
+        self._send_history(chat, int(arg))
+
     def _send_nearest_or_ask_location(self, chat):
         if chat.last_latitude:
             self._send_nearest(chat)
@@ -122,9 +126,9 @@ class TelegramHandlerFuel(models.AbstractModel):
         keyboard = []
         for index, sub in enumerate(subs, 1):
             fuel = sub.station_fuel_id
-            lines.append("%s. <b>%s</b> %s: <b>%.3f</b> · %s\n   %s · %s" % (
+            lines.append("%s. <b>%s</b> %s: <b>%.3f</b>%s · %s\n   %s · %s" % (
                 index, escape(fuel.station_id.name), escape(self._fuel_label(fuel)), fuel.current_price,
-                bot._fmt_station_dt(fuel.current_date), escape(sub._threshold_label()),
+                self._delta(fuel), bot._fmt_station_dt(fuel.current_date), escape(sub._threshold_label()),
                 bot._navigate(fuel.station_id)))
             keyboard.append([
                 {'text': "⚙️ %s" % index, 'callback_data': 'thr:%s' % sub.id},
@@ -141,12 +145,37 @@ class TelegramHandlerFuel(models.AbstractModel):
         lines = []
         for sub in subs:
             fuel = sub.station_fuel_id
-            last = self.env['fuel.price'].search([('station_fuel_id', '=', fuel.id)], limit=1)
-            delta = " (%+.3f)" % (last.price - last.previous_price) if last.previous_price else ""
             lines.append("<b>%.3f</b>%s %s %s · %s · %s" % (
-                fuel.current_price, delta, escape(fuel.station_id.name), escape(self._fuel_label(fuel)),
-                bot._fmt_station_dt(fuel.current_date), bot._navigate(fuel.station_id)))
+                fuel.current_price, self._delta(fuel), escape(fuel.station_id.name),
+                escape(self._fuel_label(fuel)), bot._fmt_station_dt(fuel.current_date),
+                bot._navigate(fuel.station_id)))
         chat._say("\n".join(lines))
+
+    def _cmd_storico(self, chat):
+        if not chat.last_station_id:
+            return chat._say(_("Open a station first: send your location or a town name."))
+        self._send_history(chat, chat.last_station_id.id)
+
+    def _send_history(self, chat, station_id, limit=12):
+        station = self.env['fuel.station'].browse(station_id).exists()
+        if not station:
+            return chat._say(_("Station not found."))
+        chat.write({'last_station_id': station.id})
+        bot = chat.bot_id
+        rows = self.env['fuel.price'].search([('station_id', '=', station.id)], limit=limit)
+        if not rows:
+            return chat._say(_("No price change recorded for %s yet.") % escape(station.name))
+        lines = ["📈 <b>%s</b>" % escape(station.name)]
+        for row in rows:
+            label = escape(self._fuel_label(row.station_fuel_id))
+            if row.previous_price:
+                lines.append("%s · %s: %.3f → <b>%.3f</b> (%+.3f)" % (
+                    bot._fmt_station_dt(row.date_communicated), label, row.previous_price, row.price,
+                    row.price - row.previous_price))
+            else:
+                lines.append("%s · %s: <b>%.3f</b> %s" % (
+                    bot._fmt_station_dt(row.date_communicated), label, row.price, escape(_("first price"))))
+        chat._say("\n".join(lines), keyboard=self._station_buttons(chat, station))
 
     def _cmd_soglia(self, chat, station_id=None):
         subs = chat.subscription_ids
@@ -200,7 +229,8 @@ class TelegramHandlerFuel(models.AbstractModel):
         lines = []
         if fuel is not None:
             medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "%s." % rank if rank else "")
-            lines.append("%s <b>%.3f €</b> · %s" % (medal, fuel.current_price, escape(self._fuel_label(fuel))))
+            lines.append("%s <b>%.3f €</b>%s · %s" % (medal, fuel.current_price, self._delta(fuel),
+                                                     escape(self._fuel_label(fuel))))
         lines.append("⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")))
         address = ", ".join(p for p in (station.street, station.city) if p) or station.address or ""
         distance = " · %.1f km" % km if km is not None else ""
@@ -209,8 +239,8 @@ class TelegramHandlerFuel(models.AbstractModel):
             lines.append("🕒 %s" % bot._fmt_station_dt(fuel.current_date))
         else:
             for row in station.fuel_ids.filtered('current_price'):
-                lines.append("• %s <b>%.3f €</b> · %s" % (escape(self._fuel_label(row)), row.current_price,
-                                                         bot._fmt_station_dt(row.current_date)))
+                lines.append("• %s <b>%.3f €</b>%s · %s" % (escape(self._fuel_label(row)), row.current_price,
+                                                           self._delta(row), bot._fmt_station_dt(row.current_date)))
         return "\n".join(lines)
 
     def _send_nearest(self, chat, order='price'):
@@ -266,6 +296,12 @@ class TelegramHandlerFuel(models.AbstractModel):
     def _fuel_label(self, fuel):
         return "%s %s" % (fuel.fuel_type, _("Self") if fuel.is_self else _("Served"))
 
+    def _delta(self, fuel):
+        """' (+0.020)' against the price before the last change, empty on a first price."""
+        if not fuel.previous_price:
+            return ""
+        return " (%+.3f)" % (fuel.current_price - fuel.previous_price)
+
     def _mode_label(self, chat):
         return _("Self") if chat.is_self else _("Served")
 
@@ -276,8 +312,11 @@ class TelegramHandlerFuel(models.AbstractModel):
         keyboard += [[{'text': "%s %s" % ("✅" if fuel.id in followed else "➕", self._fuel_label(fuel)),
                        'callback_data': 'sub:%s' % fuel.id}]
                      for fuel in station.fuel_ids.filtered('current_price')]
+        history = _("📈 History")
+        row = [{'text': history, 'callback_data': 'hist:%s' % station.id}]
         if followed & set(station.fuel_ids.ids):
-            keyboard.append([{'text': _("⚙️ Thresholds"), 'callback_data': 'thrst:%s' % station.id}])
+            row.append({'text': _("⚙️ Thresholds"), 'callback_data': 'thrst:%s' % station.id})
+        keyboard.append(row)
         return keyboard
 
     def _show_station(self, chat, station_id):
@@ -294,8 +333,8 @@ class TelegramHandlerFuel(models.AbstractModel):
                                or station.address or ""),
                  ""]
         for fuel in station.fuel_ids.filtered('current_price'):
-            lines.append("%s: <b>%.3f</b> · %s" % (escape(self._fuel_label(fuel)), fuel.current_price,
-                                                   bot._fmt_station_dt(fuel.current_date)))
+            lines.append("%s: <b>%.3f</b>%s · %s" % (escape(self._fuel_label(fuel)), fuel.current_price,
+                                                     self._delta(fuel), bot._fmt_station_dt(fuel.current_date)))
         lines += ["", escape(_("Tap a fuel to follow it, tap again to stop."))]
         chat._say("\n".join(lines), keyboard=self._station_keyboard(chat, station))
 

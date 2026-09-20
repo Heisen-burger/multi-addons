@@ -19,6 +19,7 @@ alerts on every change the observatory sync detects.
 | `/carburante` | change the fuel (or "All fuels") |
 | `/lista` | subscriptions with buttons: thresholds, remove, open station |
 | `/prezzi` | current prices of the subscriptions, cheapest first |
+| `/storico` | last price changes of the station you opened last |
 | `/soglia` | set thresholds on a subscription |
 | `/stop` | remove every subscription |
 | `/aiuto` | command list |
@@ -64,6 +65,13 @@ message every Telegram subscription whose rule the new price crosses. No extra c
 Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
+
+### 19.0.2.1.0
+
+- Every price the bot sends carries the move against the previous price, `(+0.020)` or
+  `(-0.050)`: nearest cards, station card, `/lista`, `/prezzi`.
+- History: a button on the station card and the `/storico` command list the last twelve
+  changes of that station, each with old and new price.
 
 ### 19.0.2.0.0
 

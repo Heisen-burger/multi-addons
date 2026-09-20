@@ -30,6 +30,8 @@ class FuelStationFuel(models.Model):
     is_self = fields.Boolean("Self Service")
     current_price = fields.Float(digits=(6, PRICE_DIGITS))
     current_date = fields.Datetime(help="When the station communicated the current price.")
+    previous_price = fields.Float(digits=(6, PRICE_DIGITS),
+                                  help="Price before the last change, 0 until the price moves once.")
     mimit_price_id = fields.Integer("MIMIT Price ID",
                                     help="Identifier of the last price communication seen.")
     min_price = fields.Float(digits=(6, PRICE_DIGITS), compute='_compute_min_max', store=True)
@@ -159,6 +161,7 @@ class FuelStationFuel(models.Model):
             vals = {'current_date': date, 'mimit_price_id': fuel['id']}
             if float_compare(price, row['current_price'], precision_digits=PRICE_DIGITS):
                 vals['current_price'] = price
+                vals['previous_price'] = row['current_price']
                 history.append({
                     'station_fuel_id': row['id'],
                     'price': price,

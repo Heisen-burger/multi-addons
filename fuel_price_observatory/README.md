@@ -58,7 +58,7 @@ only what changed.
 | Model | Purpose | Key fields |
 |---|---|---|
 | `fuel.station` | station registry | `mimit_id` (unique), `name`, `brand`, `manager`, `station_type`, `street`, `city`, `province`, `latitude`, `longitude`, `active` |
-| `fuel.station.fuel` | price list, followable (`mail.thread`) | `station_id`, `fuel_type`, `is_self`, `current_price`, `current_date`, `mimit_price_id`, `min_price`, `min_date`, `max_price`, `max_date` |
+| `fuel.station.fuel` | price list, followable (`mail.thread`) | `station_id`, `fuel_type`, `is_self`, `current_price`, `previous_price`, `current_date`, `mimit_price_id`, `min_price`, `min_date`, `max_price`, `max_date` |
 | `fuel.price` | history, insert only | `station_fuel_id`, `price`, `previous_price`, `date_communicated`, `mimit_price_id` |
 
 ## Menus
@@ -96,6 +96,11 @@ python3 odoo-bin -c odoo19.conf -d test_fpo19 -i fuel_price_observatory --test-e
 Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
+
+### 19.0.1.2.0
+
+- Price lists carry `previous_price`, the price before the last change, filled by the sync
+  and backfilled from the history by the migration.
 
 ### 19.0.1.1.2
 

@@ -90,7 +90,8 @@ class TestSync(TransactionCase):
             {'price': 1.749, 'previous_price': 1.849},
             {'price': 1.849, 'previous_price': 1.749},
         ])
-        self.assertRecordValues(fuel, [{'current_price': 1.749, 'min_price': 1.749, 'max_price': 1.849}])
+        self.assertRecordValues(fuel, [{'current_price': 1.749, 'previous_price': 1.849,
+                                        'min_price': 1.749, 'max_price': 1.849}])
         # tie on the minimum: the most recent communication wins
         self.assertEqual(fuel.min_date.isoformat(), '2026-09-21T06:00:00')
         self.assertEqual(fuel.max_date.isoformat(), '2026-09-20T06:00:00')

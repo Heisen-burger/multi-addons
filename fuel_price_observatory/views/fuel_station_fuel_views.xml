@@ -15,6 +15,7 @@
                 <field name="fuel_type"/>
                 <field name="is_self" widget="boolean_toggle" readonly="1"/>
                 <field name="current_price"/>
+                <field name="previous_price" optional="show"/>
                 <field name="current_date"/>
                 <field name="min_price"/>
                 <field name="min_date" optional="hide"/>
@@ -44,6 +45,7 @@
                             <field name="fuel_type"/>
                             <field name="is_self"/>
                             <field name="current_price"/>
+                            <field name="previous_price"/>
                             <field name="current_date"/>
                         </group>
                     </group>

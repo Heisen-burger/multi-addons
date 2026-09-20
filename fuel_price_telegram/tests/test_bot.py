@@ -66,6 +66,34 @@ class TestFuelBot(FuelTelegramCase):
         self.assertIn("• Benzina Self <b>1.899 €</b>", cards[0][0])
         self.assertNotIn('mode:0', self.last_buttons())
 
+    def test_previous_price_and_history(self):
+        gasolio = self.fuel(self.duomo, 'Gasolio')
+        self.env['fuel.price'].create({
+            'station_fuel_id': gasolio.id, 'price': 1.799, 'previous_price': 1.849,
+            'date_communicated': '2026-09-19 06:00:00', 'mimit_price_id': 90001,
+        })
+        gasolio.write({'previous_price': 1.849})
+        self.calls.clear()
+        self.tap('st:%s' % self.duomo.id)
+        self.assertIn("<b>1.799</b> (-0.050)", self.last_text(), "station card shows the move")
+        self.assertIn('hist:%s' % self.duomo.id, self.last_buttons())
+        self.calls.clear()
+        self.tap('hist:%s' % self.duomo.id)
+        history = self.last_text()
+        self.assertIn("1.849 → <b>1.799</b> (-0.050)", history)
+        self.assertIn("Gasolio Self", history)
+        self.calls.clear()
+        self.send_text('/storico')
+        self.assertIn("1.849 → <b>1.799</b>", self.last_text(), "the command reuses the last station")
+        self.send_location(45.4642, 9.1900)
+        self.tap('fuel:Gasolio')
+        self.tap('mode:1')
+        self.assertIn("(-0.050)", self.station_cards()[-1][0], "the nearest card shows it too")
+
+    def test_storico_without_a_station(self):
+        self.send_text('/storico')
+        self.assertIn("station", self.last_text())
+
     def test_text_search_by_city(self):
         self.send_text('monza')
         self.assertEqual([card[1] for card in self.station_cards()], ['st:%s' % self.monza.id])
