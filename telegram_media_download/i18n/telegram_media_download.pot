@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 15:30+0000\n"
-"PO-Revision-Date: 2026-09-19 15:30+0000\n"
+"POT-Creation-Date: 2026-09-20 15:18+0000\n"
+"PO-Revision-Date: 2026-09-20 15:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -198,9 +198,33 @@ msgstr ""
 #. module: telegram_media_download
 #. odoo-python
 #: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Suno returned no token for this session"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
 msgid ""
-"Suno refuses this track to anonymous visitors. Own or private tracks need "
-"the Suno session cookie in Settings."
+"Suno serves this track only to the account that owns it (%(reason)s). Put "
+"the __client cookie of your Suno session in Settings > Telegram Media."
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Suno session"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Suno session missing"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Suno session unusable: %s"
 msgstr ""
 
 #. module: telegram_media_download
@@ -240,9 +264,19 @@ msgid "Telegram Media Provider: Suno"
 msgstr ""
 
 #. module: telegram_media_download
+#: model:ir.actions.server,name:telegram_media_download.action_test_suno_session
+msgid "Telegram Media: Test Suno Session"
+msgstr ""
+
+#. module: telegram_media_download
 #. odoo-python
 #: code:addons/telegram_media_download/models/telegram_handler.py:0
 msgid "Telegram refused the file: %s"
+msgstr ""
+
+#. module: telegram_media_download
+#: model:ir.ui.menu,name:telegram_media_download.menu_test_suno_session
+msgid "Test Suno Session"
 msgstr ""
 
 #. module: telegram_media_download
@@ -265,16 +299,20 @@ msgid "This Suno track is not ready yet (status %s)."
 msgstr ""
 
 #. module: telegram_media_download
-#. odoo-python
-#: code:addons/telegram_media_download/models/provider_suno.py:0
-msgid ""
-"This track has no public audio or video. Own or private tracks need the Suno"
-" session cookie in Settings."
+#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__title
+msgid "Title"
 msgstr ""
 
 #. module: telegram_media_download
-#: model:ir.model.fields,field_description:telegram_media_download.field_telegram_media_download__title
-msgid "Title"
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Token obtained, but the clip call failed: %s"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "Token obtained. Test clip audio: %s"
 msgstr ""
 
 #. module: telegram_media_download
@@ -303,6 +341,30 @@ msgstr ""
 #. odoo-python
 #: code:addons/telegram_media_download/models/media_provider.py:0
 msgid "ffmpeg is not installed on the server."
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "no Suno session cookie configured"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "none"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "the cookie carries no active Suno session, log in again and copy it"
+msgstr ""
+
+#. module: telegram_media_download
+#. odoo-python
+#: code:addons/telegram_media_download/models/provider_suno.py:0
+msgid "the session has no audio for this track"
 msgstr ""
 
 #. module: telegram_media_download
