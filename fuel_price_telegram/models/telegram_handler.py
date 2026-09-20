@@ -332,9 +332,11 @@ class TelegramHandlerFuel(models.AbstractModel):
                  "📍 " + escape(", ".join(p for p in (station.street, station.city, station.province) if p)
                                or station.address or ""),
                  ""]
+        no_change = _("no change yet")
         for fuel in station.fuel_ids.filtered('current_price'):
+            move = self._delta(fuel) or " <i>(%s)</i>" % escape(no_change)
             lines.append("%s: <b>%.3f</b>%s · %s" % (escape(self._fuel_label(fuel)), fuel.current_price,
-                                                     self._delta(fuel), bot._fmt_station_dt(fuel.current_date)))
+                                                     move, bot._fmt_station_dt(fuel.current_date)))
         lines += ["", escape(_("Tap a fuel to follow it, tap again to stop."))]
         chat._say("\n".join(lines), keyboard=self._station_keyboard(chat, station))
 

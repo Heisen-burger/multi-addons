@@ -76,6 +76,7 @@ class TestFuelBot(FuelTelegramCase):
         self.calls.clear()
         self.tap('st:%s' % self.duomo.id)
         self.assertIn("<b>1.799</b> (-0.050)", self.last_text(), "station card shows the move")
+        self.assertIn("<b>1.899</b> <i>(", self.last_text(), "a fuel with no recorded change says so")
         self.assertIn('hist:%s' % self.duomo.id, self.last_buttons())
         self.calls.clear()
         self.tap('hist:%s' % self.duomo.id)

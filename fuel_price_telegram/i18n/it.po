@@ -596,6 +596,12 @@ msgstr "primo prezzo"
 
 #. module: fuel_price_telegram
 #. odoo-python
+#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
+msgid "no change yet"
+msgstr "nessuna variazione finora"
+
+#. module: fuel_price_telegram
+#. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_subscription.py:0
 msgid "outside %(low).3f-%(high).3f"
 msgstr "fuori da %(low).3f-%(high).3f"

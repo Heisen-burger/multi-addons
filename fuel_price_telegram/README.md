@@ -66,6 +66,12 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
 
+### 19.0.2.1.1
+
+- Station card marks a fuel with no recorded change, so a missing move reads as missing
+  data rather than a bug. The observatory only knows the prices it has seen since it
+  started syncing: MIMIT publishes no past history.
+
 ### 19.0.2.1.0
 
 - Every price the bot sends carries the move against the previous price, `(+0.020)` or
