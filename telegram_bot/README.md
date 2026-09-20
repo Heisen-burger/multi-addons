@@ -72,7 +72,9 @@ class TelegramHandlerOrders(models.AbstractModel):
 
 Build command lists from keyword arguments and keep `_()` calls out of tuples and
 conditionals: Odoo's term extractor treats a parenthesis right after `_()` as another
-translation call.
+translation call. Check a new method name against `dir(env['base'])` before using it:
+`_check_access`, `_search` and `_read` belong to the ORM, and shadowing one breaks every
+view of the model.
 
 Tests reuse `odoo.addons.telegram_bot.tests.common.TelegramCase`: it creates `cls.bot`,
 patches `_call`, records every API call in `self.calls` and offers `send_text`,
@@ -99,6 +101,11 @@ chat to it. The webhook URL now carries the bot id: open the bot and press *Regi
 Webhook* once.
 
 ## Changelog
+
+### 19.0.2.0.1
+
+- Fix the chat list and form, which raised "'bool' object is not subscriptable": the access
+  code check was named `_check_access` and shadowed the ORM method.
 
 ### 19.0.2.0.0
 

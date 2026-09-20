@@ -172,11 +172,11 @@ class TelegramBot(models.Model):
         if query:
             chat = Chat._get_chat(self, query['message']['chat'], query.get('from'))
             self._call('answerCallbackQuery', callback_query_id=query['id'])
-            if chat._check_access():
+            if chat._check_bot_access():
                 handler._on_callback(chat, query.get('data') or '', query['message'])
         elif message:
             chat = Chat._get_chat(self, message['chat'], message.get('from'))
-            if not chat._check_access(message.get('text') or ''):
+            if not chat._check_bot_access(message.get('text') or ''):
                 return
             if message.get('location'):
                 handler._on_location(chat, message['location'])

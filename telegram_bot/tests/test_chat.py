@@ -2,6 +2,7 @@
 # License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html).
 from unittest.mock import patch
 
+from odoo.fields import Command
 from odoo.tests import tagged
 
 from odoo.addons.telegram_bot.models.telegram_handler import TelegramHandler
@@ -93,6 +94,18 @@ class TestChat(TelegramCase):
         self.assertEqual(payload['files']['video'], ("clip.mp4", b"\0\0ftyp"))
         self.assertEqual((payload['width'], payload['height'], payload['caption']), (640, 360, "<b>Clip</b>"))
         self.assertNotIn('title', payload)
+
+    def test_views_open_for_an_internal_user(self):
+        # a method named _check_access would shadow the ORM one and break every view
+        user = self.env['res.users'].create({
+            'name': "Internal", 'login': 'telegram_internal',
+            'group_ids': [Command.link(self.env.ref('base.group_user').id)],
+        })
+        for model in ('telegram.chat', 'telegram.bot'):
+            records = self.env[model].with_user(user)
+            records.browse().check_access('read')
+            self.assertTrue(records.has_access('read'))
+            self.assertTrue(records.get_views([(False, 'list'), (False, 'form')])['views'])
 
     def test_handle_update_swallows_errors(self):
         with patch.object(type(self.bot), '_dispatch', side_effect=ValueError("boom")):

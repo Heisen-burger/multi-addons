@@ -43,8 +43,11 @@ class TelegramChat(models.Model):
             chat = self.create(vals)
         return chat.with_context(lang=chat._odoo_lang())
 
-    def _check_access(self, text=''):
+    def _check_bot_access(self, text=''):
         """True when the chat may talk to the bot.
+
+        Never name this _check_access: it shadows the ORM method and every view of the
+        model then fails with "'bool' object is not subscriptable".
 
         With an access code on the bot, a chat is admitted once it sends '/start <code>'
         (also the payload of a t.me/<bot>?start=<code> link). Without a code every chat is
