@@ -26,10 +26,13 @@ COOKIE_PARAM = 'telegram_media.suno_client_cookie'
 class TelegramMediaProviderSuno(models.AbstractModel):
     """Suno.
 
-    Public clips: metadata from the studio API, audio track pulled out of the public mp4
-    (the direct mp3 and the m4a in `media_urls` answer 403 or arrive encrypted).
-    Own or private clips: the `__client` cookie of a logged-in Suno session gives a short
-    lived JWT through Clerk, the feed then exposes the real audio url.
+    Public clips: metadata from the studio API, audio track pulled out of the public mp4.
+    Own and private clips: Suno serves them to the account that owns them, so the bot needs
+    the `__client` cookie of a logged-in session. The cookie buys a short lived JWT from
+    Clerk, and the authenticated clip carries a real `audio_url`.
+
+    The `media_urls` stream is encrypted and the player decrypts it in the browser. The bot
+    does not touch it: without a session it simply reports what is missing.
     """
     _name = 'telegram.media.provider.suno'
     _inherit = 'telegram.media.provider'
@@ -58,32 +61,68 @@ class TelegramMediaProviderSuno(models.AbstractModel):
         return (self.env['ir.config_parameter'].sudo().get_param(COOKIE_PARAM) or '').strip()
 
     @api.model
-    def _jwt(self):
-        """Short lived bearer token from the Clerk session behind the `__client` cookie, or None."""
+    def _session(self):
+        """Return (jwt, error). `jwt` is None when the cookie is missing, expired or rejected."""
         cookie = self._client_cookie()
         if not cookie:
-            return None
+            return None, _("no Suno session cookie configured")
         headers = {'Authorization': cookie, 'User-Agent': USER_AGENT}
         try:
             client = requests.get(CLERK_API + '/client' + CLERK_QS, headers=headers, timeout=30)
             client.raise_for_status()
-            sid = client.json()['response']['last_active_session_id']
+            payload = (client.json() or {}).get('response') or {}
+            sid = payload.get('last_active_session_id')
+            if not sid:
+                return None, _("the cookie carries no active Suno session, log in again and copy it")
             token = requests.post(CLERK_API + '/client/sessions/%s/tokens' % sid + CLERK_QS,
                                   headers=headers, timeout=30)
             token.raise_for_status()
-            return token.json()['jwt']
-        except (requests.RequestException, KeyError, TypeError, ValueError) as error:
+            jwt = (token.json() or {}).get('jwt')
+            return (jwt, None) if jwt else (None, _("Suno returned no token for this session"))
+        except (requests.RequestException, TypeError, ValueError) as error:
             _logger.warning("Suno session cookie rejected: %s", error)
-            return None
+            return None, str(error)[:200]
 
     def _authenticated_clip(self, clip_id, jwt):
-        """Clip JSON seen by the logged-in user: `audio_url` is real for own and public clips."""
+        """Clip JSON as the logged-in account sees it, from the feed or the clip endpoint."""
         headers = {'Authorization': 'Bearer %s' % jwt, 'User-Agent': USER_AGENT}
-        response = requests.get(FEED_API % clip_id, headers=headers, timeout=30)
+        try:
+            response = requests.get(FEED_API % clip_id, headers=headers, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+            clips = data.get('clips') if isinstance(data, dict) else data
+            clip = (clips or [None])[0]
+            if clip and clip.get('audio_url'):
+                return clip
+        except (requests.RequestException, ValueError) as error:
+            _logger.info("Suno feed for %s failed: %s", clip_id, error)
+        response = requests.get(CLIP_API % clip_id, headers=headers, timeout=30)
         response.raise_for_status()
-        data = response.json()
-        clips = data.get('clips') if isinstance(data, dict) else data
-        return (clips or [None])[0]
+        return response.json()
+
+    @api.model
+    def action_test_session(self):
+        """Report whether the configured cookie still opens a Suno session."""
+        jwt, error = self._session()
+        if not jwt:
+            message = _("Suno session unusable: %s") % error
+        else:
+            try:
+                clip = self._authenticated_clip('4d4b9cf4-3af8-4a99-8f48-a9e39b097998', jwt) or {}
+                audio = clip.get('audio_url') or ''
+                message = _("Token obtained. Test clip audio: %s") % (audio or _("none"))
+            except (requests.RequestException, ValueError) as probe_error:
+                message = _("Token obtained, but the clip call failed: %s") % str(probe_error)[:200]
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _("Suno session") if jwt else _("Suno session missing"),
+                'message': message,
+                'type': 'success' if jwt else 'warning',
+                'sticky': True,
+            },
+        }
 
     # ------------------------------------------------------------------
     # fetch
@@ -95,7 +134,7 @@ class TelegramMediaProviderSuno(models.AbstractModel):
             raise UserError(_("This Suno track is not ready yet (status %s).") % meta.get('status'))
 
         source = None
-        jwt = self._jwt()
+        jwt, session_error = self._session()
         if jwt:
             try:
                 clip = self._authenticated_clip(clip_id, jwt) or {}
@@ -105,19 +144,20 @@ class TelegramMediaProviderSuno(models.AbstractModel):
                                             headers={'Authorization': 'Bearer %s' % jwt,
                                                      'User-Agent': USER_AGENT}).content
                     meta = {**meta, **{k: v for k, v in clip.items() if v}}
+                else:
+                    session_error = _("the session has no audio for this track")
             except (requests.RequestException, ValueError) as error:
                 _logger.warning("Suno authenticated download of %s failed: %s", clip_id, error)
+                session_error = str(error)[:200]
         if source is None:
-            if not meta.get('video_url'):
-                raise UserError(_("This track has no public audio or video. Own or private tracks need "
-                                  "the Suno session cookie in Settings."))
             try:
+                if not meta.get('video_url'):
+                    raise requests.HTTPError(response=None)
                 source = self._http_get(VIDEO_URL % clip_id, timeout=120).content
-            except requests.HTTPError as error:
-                if error.response is not None and error.response.status_code == 403:
-                    raise UserError(_("Suno refuses this track to anonymous visitors. Own or private "
-                                      "tracks need the Suno session cookie in Settings."))
-                raise
+            except requests.HTTPError:
+                raise UserError(_("Suno serves this track only to the account that owns it "
+                                  "(%(reason)s). Put the __client cookie of your Suno session in "
+                                  "Settings > Telegram Media.", reason=session_error))
 
         title = meta.get('title') or clip_id
         performer = meta.get('display_name') or "Suno"

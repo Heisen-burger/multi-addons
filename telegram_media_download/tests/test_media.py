@@ -119,7 +119,7 @@ class TestMedia(TelegramCase):
                 return Response({'status': 'complete', 'title': "Mine", 'display_name': "Me", 'video_url': ''})
             return Response(content=b'RAW-AUDIO')
 
-        with patch.object(type(suno), '_jwt', return_value='jwt-1'), \
+        with patch.object(type(suno), '_session', return_value=('jwt-1', None)), \
                 patch.object(type(suno), '_authenticated_clip',
                              return_value={'audio_url': 'https://cdn1.suno.ai/x.mp3', 'title': "Mine (feed)"}), \
                 patch.object(type(suno), '_http_get', autospec=True, side_effect=fake_get), \
@@ -128,6 +128,14 @@ class TestMedia(TelegramCase):
         self.assertEqual(track['title'], "Mine (feed)")
         self.assertEqual(track['data'], b'ID3mp3')
         self.assertIn(('https://cdn1.suno.ai/x.mp3', 'Bearer jwt-1'), calls)
+
+    def test_session_diagnostic_without_cookie(self):
+        self.env['ir.config_parameter'].sudo().set_param('telegram_media.suno_client_cookie', '')
+        suno = self.env['telegram.media.provider.suno']
+        self.assertEqual(suno._session()[0], None)
+        action = suno.action_test_session()
+        self.assertEqual(action['params']['type'], 'warning')
+        self.assertIn("cookie", action['params']['message'])
 
     def test_to_mp3_with_ffmpeg(self):
         if not shutil.which('ffmpeg'):

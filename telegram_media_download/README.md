@@ -32,14 +32,19 @@ encrypted, hence the video route. Verified on 2026-09-19.
 
 ### Own and private tracks
 
-Private tracks and tracks made with recent models have no public video, so the anonymous
-route fails. Give the bot a logged-in Suno session: Settings > Telegram Media > Suno >
-Session Cookie, paste the value of the `__client` cookie of suno.com (browser dev tools >
-Application/Storage > Cookies > `https://suno.com` > `__client`, a long `eyJ...` string).
-With it the provider asks Clerk (`auth.suno.com`) for a short-lived JWT, reads the clip
-through `GET /api/feed/v2?ids=<uuid>` and downloads its real `audio_url`; the file goes
-through `ffmpeg` anyway to get MP3, ID3 tags and cover. Without the cookie, or when the
-session expired, it falls back to the public video and explains what is missing.
+Private tracks and tracks made with recent models have no public video, and their
+`media_urls` stream is encrypted for the web player, so an anonymous download cannot work.
+Suno serves those files to the account that owns them, so give the bot a logged-in session:
+Settings > Telegram Media > Suno > Session Cookie, paste the value of the `__client` cookie
+of suno.com (browser dev tools > Application/Storage > Cookies > `https://suno.com` >
+`__client`, a long `eyJ...` string). With it the provider asks Clerk (`auth.suno.com`) for a
+short-lived JWT, reads the clip through `GET /api/feed/v2?ids=<uuid>` (falling back to
+`/api/clip/<uuid>` with the same token) and downloads its real `audio_url`; the file still
+goes through `ffmpeg` for MP3, ID3 tags and cover.
+
+Settings > Technical > Telegram > Test Suno Session says whether the cookie still opens a
+session, without going through Telegram. The bot's own error message names the reason too:
+missing cookie, expired session, or a track the session cannot read.
 
 The cookie is a credential of the Suno account: keep it to administrators (the field is a
 password field) and log out of Suno to revoke it.
@@ -87,6 +92,11 @@ Settings > Technical > Telegram > Media Downloads: every link received with prov
 title, size, state and error.
 
 ## Changelog
+
+### 19.0.1.2.0
+
+- Suno: clip endpoint as a fallback when the feed returns no audio, error messages naming
+  the reason, and a Test Suno Session entry under Settings > Technical > Telegram.
 
 ### 19.0.1.1.0
 

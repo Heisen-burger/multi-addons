@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- STeSI Consulting - Michele Di Croce
+     License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html). -->
+<odoo>
+
+    <record id="action_test_suno_session" model="ir.actions.server">
+        <field name="name">Telegram Media: Test Suno Session</field>
+        <field name="model_id" ref="model_telegram_media_provider_suno"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        <field name="code">action = model.action_test_session()</field>
+    </record>
+
+    <menuitem id="menu_test_suno_session" name="Test Suno Session"
+              parent="telegram_bot.menu_telegram_root" action="action_test_suno_session" sequence="40"/>
+
+</odoo>
