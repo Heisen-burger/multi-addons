@@ -17,7 +17,7 @@ FAMILY_SUFFIX = '-x'
 
 
 class FuelType(models.Model):
-    """Fuel families published by MIMIT, cached by the sync so the UI can order them."""
+    """Fuel families published by MIMIT, refreshed by both syncs so the UI can order them."""
     _name = 'fuel.type'
     _description = "Fuel Type"
     _order = 'sequence, id'
@@ -68,9 +68,3 @@ class FuelType(models.Model):
                 self.create(vals)
         _logger.info("Fuel registry: %s families cached", self.search_count([]))
         return True
-
-    @api.model
-    def _ensure_fuel_types(self):
-        """Fill the cache on the first run, then leave it to the daily station sync."""
-        if not self.search_count([]):
-            self._sync_fuel_types()

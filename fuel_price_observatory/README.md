@@ -31,7 +31,7 @@ lists you follow.
 |---|---|---|---|
 | Observatory app API | `POST https://carburanti.mise.gov.it/ospzApi/search/servicearea` with body `{}` | every 30 minutes | all stations with current fuels (~21,700 stations, ~93,000 prices, 12 MB) |
 | Registry CSV | `https://www.mimit.gov.it/images/exportCSV/anagrafica_impianti_attivi.csv` | daily at 07:00 UTC | manager, station type, street, city, province |
-| Fuel registry | `GET https://carburanti.mise.gov.it/ospzApi/registry/fuels` | with the station sync | the six families and their MIMIT codes |
+| Fuel registry | `GET https://carburanti.mise.gov.it/ospzApi/registry/fuels` | with both syncs | the six families and their MIMIT codes |
 
 The fuel registry ids read `<code>-<mode>`: `-1` self service, `-0` served, `-x` either.
 Checked against the data on 2026-09-21: a regional search with `2-1` returns every self row
@@ -104,10 +104,13 @@ Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
 
+### 19.0.1.3.1
+
+- Both syncs refresh `fuel.type`, the price one included.
+
 ### 19.0.1.3.0
 
-- Cache the fuel families of `GET /ospzApi/registry/fuels` in `fuel.type`: the station sync
-  refreshes them, the price sync fills them on first run.
+- Cache the fuel families of `GET /ospzApi/registry/fuels` in `fuel.type`.
 
 ### 19.0.1.2.0
 

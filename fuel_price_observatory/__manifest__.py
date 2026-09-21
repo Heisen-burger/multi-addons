@@ -6,7 +6,7 @@
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.3.1',
     'website': "https://github.com/Heisen-burger/multi-addons",
     'depends': ['mail'],
     'data': [
