@@ -29,6 +29,7 @@ class TestFuelBot(FuelTelegramCase):
         self.send_location(45.4642, 9.1900)
         self.assertIn('fuel:Benzina', self.last_buttons())
         self.assertIn('fuel:*', self.last_buttons())
+        self.assertEqual(self.last_buttons()[:2], ['fuel:Benzina', 'fuel:Gasolio'], "everyday fuels lead")
         self.tap('fuel:Gasolio')
         self.assertEqual(self.chat().fuel_type, 'Gasolio')
         self.assertEqual(self.last_buttons(), ['mode:1', 'mode:0'], "self or served comes next")

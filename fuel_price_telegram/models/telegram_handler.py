@@ -11,6 +11,8 @@ RE_ABOVE = re.compile(r'^\s*(?:sopra|above|>)\s*' + NUMBER + r'\s*$', re.I)
 RE_BELOW = re.compile(r'^\s*(?:sotto|below|<)\s*' + NUMBER + r'\s*$', re.I)
 RESET_WORDS = ('nessuna', 'none', 'no', '0', 'reset')
 ALL_FUELS = '*'
+# the everyday fuels lead the list, the rest follows by how many stations sell it
+PINNED_FUELS = ('Benzina', 'Gasolio', 'GPL', 'Metano')
 
 
 class TelegramHandlerFuel(models.AbstractModel):
@@ -197,12 +199,20 @@ class TelegramHandlerFuel(models.AbstractModel):
     # ------------------------------------------------------------------
     # search and nearest
     # ------------------------------------------------------------------
-    def _ask_fuel(self, chat):
+    def _fuel_choices(self):
+        """Every fuel on sale, the everyday ones first, then by how many stations sell it."""
         groups = self.env['fuel.station.fuel']._read_group(
             [('current_price', '>', 0)], groupby=['fuel_type'], aggregates=['__count'],
-            order='__count desc', limit=6)
-        buttons = [{'text': fuel_type, 'callback_data': 'fuel:%s' % fuel_type} for fuel_type, _count in groups]
-        keyboard = [buttons[i:i + 3] for i in range(0, len(buttons), 3)]
+            order='__count desc')
+        available = [fuel_type for fuel_type, _count in groups]
+        pinned = [fuel for fuel in PINNED_FUELS if fuel in available]
+        return pinned + [fuel for fuel in available if fuel not in pinned]
+
+    def _ask_fuel(self, chat):
+        # two per row: some blends carry long names
+        buttons = [{'text': fuel_type, 'callback_data': 'fuel:%s' % fuel_type}
+                   for fuel_type in self._fuel_choices()]
+        keyboard = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
         keyboard.append([{'text': _("All fuels"), 'callback_data': 'fuel:' + ALL_FUELS}])
         chat._say(_("Which fuel are you looking for?"), keyboard=keyboard)
 

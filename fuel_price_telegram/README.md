@@ -66,6 +66,12 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
 
+### 19.0.2.2.1
+
+- Fuel choice lists every fuel on sale, not the six most common: Metano and the other
+  blends were missing. Benzina, Gasolio, GPL and Metano lead, the rest follows by how many
+  stations sell it.
+
 ### 19.0.2.2.0
 
 - Price lines carry the previous price, `(prec. 1.849)`, instead of the difference.
