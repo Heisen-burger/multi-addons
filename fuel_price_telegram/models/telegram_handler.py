@@ -11,8 +11,9 @@ RE_ABOVE = re.compile(r'^\s*(?:sopra|above|>)\s*' + NUMBER + r'\s*$', re.I)
 RE_BELOW = re.compile(r'^\s*(?:sotto|below|<)\s*' + NUMBER + r'\s*$', re.I)
 RESET_WORDS = ('nessuna', 'none', 'no', '0', 'reset')
 ALL_FUELS = '*'
-# the everyday fuels lead the list, the rest follows by how many stations sell it
-PINNED_FUELS = ('Benzina', 'Gasolio', 'GPL', 'Metano')
+# the families MIMIT lists at /ospzApi/registry/fuels lead the keyboard, the commercial
+# blends (Blue Diesel, HVOlution, ...) follow by how many stations sell them
+PINNED_FUELS = ('Benzina', 'Gasolio', 'Metano', 'GPL', 'GNL', 'L-GNC')
 
 
 class TelegramHandlerFuel(models.AbstractModel):
