@@ -31,6 +31,12 @@ lists you follow.
 |---|---|---|---|
 | Observatory app API | `POST https://carburanti.mise.gov.it/ospzApi/search/servicearea` with body `{}` | every 30 minutes | all stations with current fuels (~21,700 stations, ~93,000 prices, 12 MB) |
 | Registry CSV | `https://www.mimit.gov.it/images/exportCSV/anagrafica_impianti_attivi.csv` | daily at 07:00 UTC | manager, station type, street, city, province |
+| Fuel registry | `GET https://carburanti.mise.gov.it/ospzApi/registry/fuels` | with the station sync | the six families and their MIMIT codes |
+
+The fuel registry ids read `<code>-<mode>`: `-1` self service, `-0` served, `-x` either.
+Checked against the data on 2026-09-21: a regional search with `2-1` returns every self row
+and only the served rows of those same stations, `2-0` the other way round, and on the 922
+stations selling diesel both ways self never costs more, 0.169 less on average.
 
 The API carries communications up to the minute of the call. The CSV lags about one day,
 so the module uses it only for the descriptive fields the API does not split out.
@@ -60,6 +66,7 @@ only what changed.
 | `fuel.station` | station registry | `mimit_id` (unique), `name`, `brand`, `manager`, `station_type`, `street`, `city`, `province`, `latitude`, `longitude`, `active` |
 | `fuel.station.fuel` | price list, followable (`mail.thread`) | `station_id`, `fuel_type`, `is_self`, `current_price`, `previous_price`, `current_date`, `mimit_price_id`, `min_price`, `min_date`, `max_price`, `max_date` |
 | `fuel.price` | history, insert only | `station_fuel_id`, `price`, `previous_price`, `date_communicated`, `mimit_price_id` |
+| `fuel.type` | registry cache of the families | `code`, `name`, `sequence` |
 
 ## Menus
 
@@ -96,6 +103,11 @@ python3 odoo-bin -c odoo19.conf -d test_fpo19 -i fuel_price_observatory --test-e
 Tests patch the two fetch methods with the samples in `tests/data/`.
 
 ## Changelog
+
+### 19.0.1.3.0
+
+- Cache the fuel families of `GET /ospzApi/registry/fuels` in `fuel.type`: the station sync
+  refreshes them, the price sync fills them on first run.
 
 ### 19.0.1.2.0
 

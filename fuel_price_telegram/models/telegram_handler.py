@@ -11,9 +11,9 @@ RE_ABOVE = re.compile(r'^\s*(?:sopra|above|>)\s*' + NUMBER + r'\s*$', re.I)
 RE_BELOW = re.compile(r'^\s*(?:sotto|below|<)\s*' + NUMBER + r'\s*$', re.I)
 RESET_WORDS = ('nessuna', 'none', 'no', '0', 'reset')
 ALL_FUELS = '*'
-# the families MIMIT lists at /ospzApi/registry/fuels lead the keyboard, the commercial
+# fuel.type caches the families MIMIT publishes; they lead the keyboard and the commercial
 # blends (Blue Diesel, HVOlution, ...) follow by how many stations sell them
-PINNED_FUELS = ('Benzina', 'Gasolio', 'Metano', 'GPL', 'GNL', 'L-GNC')
+FALLBACK_FUELS = ('Benzina', 'Gasolio', 'Metano', 'GPL', 'GNL', 'L-GNC')
 
 
 class TelegramHandlerFuel(models.AbstractModel):
@@ -206,7 +206,8 @@ class TelegramHandlerFuel(models.AbstractModel):
             [('current_price', '>', 0)], groupby=['fuel_type'], aggregates=['__count'],
             order='__count desc')
         available = [fuel_type for fuel_type, _count in groups]
-        pinned = [fuel for fuel in PINNED_FUELS if fuel in available]
+        families = self.env['fuel.type'].search([]).mapped('name') or list(FALLBACK_FUELS)
+        pinned = [fuel for fuel in families if fuel in available]
         return pinned + [fuel for fuel in available if fuel not in pinned]
 
     def _ask_fuel(self, chat):

@@ -62,6 +62,7 @@ class FuelStation(models.Model):
         other than 10 hide a pipe inside the address and get skipped. Stations missing
         from the CSV are archived: the file lists active stations only.
         """
+        self.env['fuel.type']._sync_fuel_types()
         lines = self._fetch_registry_csv().splitlines()[2:]
         rows = list(csv.reader(lines, delimiter='|'))
         bad = sum(1 for row in rows if len(row) != CSV_COLUMNS)

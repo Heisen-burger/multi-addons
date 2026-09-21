@@ -66,6 +66,11 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
 
+### 19.0.2.2.3
+
+- The fuel keyboard reads the families from `fuel.type`, the registry cache the
+  observatory fills, and falls back to the six known names when the cache is empty.
+
 ### 19.0.2.2.2
 
 - The six families of `GET /ospzApi/registry/fuels` (Benzina, Gasolio, Metano, GPL, GNL,

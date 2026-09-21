@@ -30,6 +30,9 @@ class TestFuelBot(FuelTelegramCase):
         self.assertIn('fuel:Benzina', self.last_buttons())
         self.assertIn('fuel:*', self.last_buttons())
         self.assertEqual(self.last_buttons()[:2], ['fuel:Benzina', 'fuel:Gasolio'], "everyday fuels lead")
+        self.env['fuel.type'].create({'code': 2, 'name': "Gasolio", 'sequence': 10})
+        self.assertEqual(self.env['telegram.handler.fuel']._fuel_choices()[0], "Gasolio",
+                         "the cached families drive the order")
         self.tap('fuel:Gasolio')
         self.assertEqual(self.chat().fuel_type, 'Gasolio')
         self.assertEqual(self.last_buttons(), ['mode:1', 'mode:0'], "self or served comes next")

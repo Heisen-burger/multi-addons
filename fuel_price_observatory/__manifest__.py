@@ -6,7 +6,7 @@
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'website': "https://github.com/Heisen-burger/multi-addons",
     'depends': ['mail'],
     'data': [
@@ -15,6 +15,7 @@
         'views/fuel_station_views.xml',
         'views/fuel_price_views.xml',
         'views/menus.xml',
+        'views/fuel_type_views.xml',
         'data/mail_message_subtype.xml',
         'data/ir_actions_server.xml',
         'data/ir_cron.xml',

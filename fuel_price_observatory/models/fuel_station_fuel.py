@@ -103,6 +103,7 @@ class FuelStationFuel(models.Model):
 
     @api.model
     def _cron_sync_prices(self):
+        self.env['fuel.type']._ensure_fuel_types()
         results = self._fetch_api()
         Station = self.env['fuel.station'].with_context(active_test=False)
         Price = self.env['fuel.price']

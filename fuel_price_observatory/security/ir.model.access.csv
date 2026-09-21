@@ -3,5 +3,7 @@ access_fuel_station_user,fuel.station user,model_fuel_station,base.group_user,1,
 access_fuel_station_system,fuel.station system,model_fuel_station,base.group_system,1,1,1,1
 access_fuel_station_fuel_user,fuel.station.fuel user,model_fuel_station_fuel,base.group_user,1,0,0,0
 access_fuel_station_fuel_system,fuel.station.fuel system,model_fuel_station_fuel,base.group_system,1,1,1,1
+access_fuel_type_user,fuel.type user,model_fuel_type,base.group_user,1,0,0,0
+access_fuel_type_system,fuel.type system,model_fuel_type,base.group_system,1,1,1,1
 access_fuel_price_user,fuel.price user,model_fuel_price,base.group_user,1,0,0,0
 access_fuel_price_system,fuel.price system,model_fuel_price,base.group_system,1,1,1,1

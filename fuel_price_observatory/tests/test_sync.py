@@ -116,6 +116,23 @@ class TestSync(TransactionCase):
         self.assertTrue(alerts.notification_ids.filtered(
             lambda n: n.res_partner_id == self.user.partner_id and n.notification_type == 'email'))
 
+    def test_fuel_types_cached_from_the_registry(self):
+        registry = [
+            {'id': '1-x', 'description': "Benzina"}, {'id': '1-1', 'description': "Benzina (Self)"},
+            {'id': '1-0', 'description': "Benzina (Servito)"},
+            {'id': '2-x', 'description': "Gasolio"}, {'id': '3-x', 'description': "Metano"},
+            {'id': 'bad', 'description': "Skip me"}, {'id': '4-x', 'description': ""},
+        ]
+        FuelType = self.env['fuel.type']
+        with patch.object(FuelType.__class__, '_fetch_registry', return_value=registry):
+            FuelType._sync_fuel_types()
+        cached = FuelType.search([])
+        self.assertEqual(cached.mapped('name'), ["Benzina", "Gasolio", "Metano"], "only the -x families")
+        self.assertEqual(cached.mapped('code'), [1, 2, 3])
+        with patch.object(FuelType.__class__, '_fetch_registry', return_value=registry):
+            FuelType._sync_fuel_types()
+        self.assertEqual(FuelType.search_count([]), 3, "the sync upserts")
+
     def test_csv_enriches_station_and_deactivates_missing(self):
         self._sync(self.dump)
         self._sync_csv(self.csv_text)
