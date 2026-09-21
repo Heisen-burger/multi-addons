@@ -86,6 +86,7 @@ msgstr "Configurazione"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__create_uid
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__create_uid
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__create_uid
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__create_uid
 msgid "Created by"
 msgstr "Creato da"
 
@@ -93,6 +94,7 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__create_date
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__create_date
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__create_date
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__create_date
 msgid "Created on"
 msgstr "Creato il"
 
@@ -120,6 +122,7 @@ msgstr "Data comunicazione"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__display_name
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__display_name
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__display_name
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
 
@@ -190,10 +193,17 @@ msgid "Fuel Station Price List"
 msgstr "Listino impianto carburante"
 
 #. module: fuel_price_observatory
+#: model:ir.model,name:fuel_price_observatory.model_fuel_type
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__fuel_type
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__fuel_type
 msgid "Fuel Type"
 msgstr "Tipo carburante"
+
+#. module: fuel_price_observatory
+#: model:ir.actions.act_window,name:fuel_price_observatory.action_fuel_type
+#: model:ir.ui.menu,name:fuel_price_observatory.menu_fuel_type
+msgid "Fuel Types"
+msgstr "Tipi carburante"
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,help:fuel_price_observatory.field_fuel_price__fuel_type
@@ -226,8 +236,18 @@ msgstr "Storico"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__id
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__id
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__id
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__id
 msgid "ID"
 msgstr "ID"
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_type__code
+msgid ""
+"Identifier MIMIT uses for this family (1 petrol, 2 diesel, 3 CNG, 4 LPG, "
+"...)."
+msgstr ""
+"Identificativo che il MIMIT usa per questa famiglia (1 benzina, 2 gasolio, 3 "
+"metano, 4 GPL, ...)."
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,help:fuel_price_observatory.field_fuel_station_fuel__mimit_price_id
@@ -253,6 +273,7 @@ msgstr "Segue"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__write_uid
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__write_uid
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__write_uid
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__write_uid
 msgid "Last Updated by"
 msgstr "Ultimo aggiornamento di"
 
@@ -260,6 +281,7 @@ msgstr "Ultimo aggiornamento di"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__write_date
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__write_date
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__write_date
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__write_date
 msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
 
@@ -274,6 +296,11 @@ msgstr "Latitudine"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__longitude
 msgid "Longitude"
 msgstr "Longitudine"
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__code
+msgid "MIMIT Code"
+msgstr "Codice MIMIT"
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__mimit_id
@@ -346,8 +373,14 @@ msgstr "Prezzo minimo"
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__name
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__name
 msgid "Name"
 msgstr "Nome"
+
+#. module: fuel_price_observatory
+#: model_terms:ir.actions.act_window,help:fuel_price_observatory.action_fuel_type
+msgid "No fuel type yet"
+msgstr "Nessun tipo carburante"
 
 #. module: fuel_price_observatory
 #: model_terms:ir.actions.act_window,help:fuel_price_observatory.action_fuel_station_fuel
@@ -379,6 +412,11 @@ msgstr "Numero di messaggi con errore di consegna"
 #: code:addons/fuel_price_observatory/static/src/fuel_map/fuel_map.js:0
 msgid "Open"
 msgstr "Apri"
+
+#. module: fuel_price_observatory
+#: model:ir.model.fields,help:fuel_price_observatory.field_fuel_type__sequence
+msgid "Order the registry lists the family in."
+msgstr "Ordine con cui il registro elenca la famiglia."
 
 #. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__previous_price
@@ -476,6 +514,11 @@ msgid "Served"
 msgstr "Servito"
 
 #. module: fuel_price_observatory
+#: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_type__sequence
+msgid "Sequence"
+msgstr "Sequenza"
+
+#. module: fuel_price_observatory
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_price__station_id
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station_fuel__station_id
 #: model_terms:ir.ui.view,arch_db:fuel_price_observatory.view_fuel_price_search
@@ -502,6 +545,16 @@ msgstr "Impianti"
 #: model:ir.model.fields,field_description:fuel_price_observatory.field_fuel_station__street
 msgid "Street"
 msgstr "Via"
+
+#. module: fuel_price_observatory
+#: model_terms:ir.actions.act_window,help:fuel_price_observatory.action_fuel_type
+msgid "The syncs cache the families MIMIT publishes."
+msgstr "Le sincronizzazioni memorizzano le famiglie pubblicate dal MIMIT."
+
+#. module: fuel_price_observatory
+#: model:ir.model.constraint,message:fuel_price_observatory.constraint_fuel_type_code_unique
+msgid "This fuel code is already registered."
+msgstr "Questo codice carburante è già registrato."
 
 #. module: fuel_price_observatory
 #: model:ir.model.constraint,message:fuel_price_observatory.constraint_fuel_price_key_unique
