@@ -66,6 +66,12 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
 
+### 19.0.3.1.0
+
+- `/lista`, `/prezzi`, the subscription card and the station card drop the monospaced
+  table: a handful of rows reads better as blocks, with the full station name, the price,
+  the price it replaced, the day and time of the communication and the alert rule.
+
 ### 19.0.3.0.0
 
 - Nearest stations, search results, `/lista` and `/prezzi` arrive as one monospaced table

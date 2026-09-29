@@ -7,6 +7,8 @@ from html import escape
 from odoo import _, fields, models
 from odoo.tools import formatLang
 
+from .telegram_bot import STATION_TZ
+
 NUMBER = r'(\d+(?:[.,]\d+)?)'
 RE_RANGE = re.compile(r'^\s*' + NUMBER + r'\s*[-–]\s*' + NUMBER + r'\s*$')
 RE_ABOVE = re.compile(r'^\s*(?:sopra|above|>)\s*' + NUMBER + r'\s*$', re.I)
@@ -62,6 +64,13 @@ class TelegramHandlerFuel(models.AbstractModel):
         if seconds < 172800:
             return _("%dh") % int(seconds // 3600)
         return _("%dd") % int(seconds // 86400)
+
+    def _stamp(self, value):
+        """Day, month, year and time of a communication, in Italian station time."""
+        if not value:
+            return ""
+        return fields.Datetime.context_timestamp(
+            self.with_context(tz=STATION_TZ), value).strftime('%d/%m/%Y %H:%M')
 
     def _when(self, value):
         """Relative time the Telegram client renders in the reader's language."""
@@ -198,31 +207,45 @@ class TelegramHandlerFuel(models.AbstractModel):
             return self._say_or_edit(
                 chat, _("No subscriptions yet. Send your location or a town name to find a station."),
                 message=message)
-        lines = []
-        for index, sub in enumerate(subs, 1):
-            fuel = sub.station_fuel_id
-            lines.append("%2d  %7s €  %-9s %s" % (index, self._fmt_price(fuel.current_price),
-                                                 self._trend(fuel), self._age(fuel.current_date)))
-            lines.append("    %s · %s" % (self._short(fuel.station_id.name, 18),
-                                          self._short(self._fuel_label(fuel), 18)))
         header = _("📋 Your subscriptions · %s") % len(subs)
+        blocks = [escape(header)]
+        for index, sub in enumerate(subs, 1):
+            blocks.append(self._subscription_lines(index, sub))
         keyboard = self._number_keyboard(['subd:%s' % sub.id for sub in subs])
-        self._say_or_edit(chat, "%s\n%s" % (escape(header), self._block(lines)),
-                          keyboard=keyboard, message=message)
+        self._say_or_edit(chat, "\n\n".join(blocks), keyboard=keyboard, message=message)
+
+    def _subscription_lines(self, index, sub):
+        """One readable block per subscription: station, fuel, price, when, alert rule."""
+        fuel = sub.station_fuel_id
+        town = ", ".join(p for p in (fuel.station_id.city, fuel.station_id.province) if p)
+        lines = ["<b>%s · %s</b>" % (index, escape(fuel.station_id.name))]
+        if town:
+            lines.append("📍 %s" % escape(town))
+        lines.append("%s · <b>%s €</b>%s" % (escape(self._fuel_label(fuel)),
+                                             self._fmt_price(fuel.current_price), self._move(fuel)))
+        lines.append("🕒 %s" % escape(self._stamp(fuel.current_date)))
+        lines.append("🔔 %s" % escape(sub._threshold_label()))
+        return "\n".join(lines)
+
+    def _move(self, fuel):
+        """' ▼ 1,849' after the price, empty while the first price holds."""
+        if not fuel.previous_price:
+            return ""
+        arrow = "▲" if fuel.current_price > fuel.previous_price else "▼"
+        return " %s %s" % (arrow, self._fmt_price(fuel.previous_price))
 
     def _cmd_prezzi(self, chat):
         subs = chat.subscription_ids
         if not subs:
             return chat._say(_("No subscriptions yet. Send your location or a town name to find a station."))
-        lines = []
+        header = _("💶 Prices you follow · %s") % len(subs)
+        blocks = [escape(header)]
         for sub in subs:
             fuel = sub.station_fuel_id
-            lines.append("%7s €  %-9s %s" % (self._fmt_price(fuel.current_price), self._trend(fuel),
-                                             self._age(fuel.current_date)))
-            lines.append("  %s · %s" % (self._short(fuel.station_id.name, 18),
-                                        self._short(self._fuel_label(fuel), 18)))
-        header = _("💶 Prices you follow · %s") % len(subs)
-        chat._say("%s\n%s" % (escape(header), self._block(lines)))
+            blocks.append("<b>%s €</b>%s · %s\n%s · 🕒 %s" % (
+                self._fmt_price(fuel.current_price), self._move(fuel), escape(self._fuel_label(fuel)),
+                escape(fuel.station_id.name), escape(self._stamp(fuel.current_date))))
+        chat._say("\n\n".join(blocks))
 
     def _cmd_storico(self, chat):
         if not chat.last_station_id:
@@ -410,15 +433,12 @@ class TelegramHandlerFuel(models.AbstractModel):
         address = ", ".join(p for p in (station.street, station.city, station.province) if p) or station.address or ""
         lines = ["⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")),
                  "📍 %s" % escape(address)]
-        rows = []
-        no_change = _("no change yet")
+        lines.append("")
         for fuel in station.fuel_ids.filtered('current_price'):
-            previous = self._fmt_price(fuel.previous_price) if fuel.previous_price else no_change
-            rows.append("%-18s %7s €  %s" % (self._short(self._fuel_label(fuel), 18),
-                                             self._fmt_price(fuel.current_price), previous))
-        newest = max(station.fuel_ids.filtered('current_date').mapped('current_date'), default=None)
-        lines.append("🕒 %s" % self._when(newest))
-        lines.append(self._block(rows))
+            lines.append("%s · <b>%s €</b>%s\n🕒 %s" % (
+                escape(self._fuel_label(fuel)), self._fmt_price(fuel.current_price), self._move(fuel),
+                escape(self._stamp(fuel.current_date))))
+        lines.append("")
         lines.append(escape(_("Tap a fuel to follow it, tap again to stop.")))
         return "\n".join(lines)
 
@@ -440,15 +460,12 @@ class TelegramHandlerFuel(models.AbstractModel):
         previous = self._fmt_price(fuel.previous_price) if fuel.previous_price else _("no change yet")
         lines = ["⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")),
                  "📍 %s" % escape(", ".join(p for p in (station.street, station.city) if p) or station.address or ""),
-                 "🕒 %s" % self._when(fuel.current_date),
-                 self._block([
-                     "%-12s %s" % (_("fuel"), self._short(self._fuel_label(fuel), 18)),
-                     "%-12s %s €" % (_("now"), self._fmt_price(fuel.current_price)),
-                     "%-12s %s" % (_("before"), previous),
-                     "%-12s %s € / %s €" % (_("min / max"), self._fmt_price(fuel.min_price),
-                                            self._fmt_price(fuel.max_price)),
-                     "%-12s %s" % (_("alert"), sub._threshold_label()),
-                 ])]
+                 "",
+                 "%s · <b>%s €</b>" % (escape(self._fuel_label(fuel)), self._fmt_price(fuel.current_price)),
+                 "%s %s · %s %s / %s" % (escape(_("before")), escape(previous), escape(_("min / max")),
+                                         self._fmt_price(fuel.min_price), self._fmt_price(fuel.max_price)),
+                 "🕒 %s · %s" % (escape(self._stamp(fuel.current_date)), self._when(fuel.current_date)),
+                 "🔔 %s" % escape(sub._threshold_label())]
         keyboard = [
             [{'text': _("⚙️ Thresholds"), 'callback_data': 'thr:%s' % sub.id},
              {'text': _("🗑 Remove"), 'callback_data': 'del:%s' % sub.id}],
