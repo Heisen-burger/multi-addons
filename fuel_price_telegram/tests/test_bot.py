@@ -36,7 +36,9 @@ class TestFuelBot(FuelTelegramCase):
         self.assertTrue(self.chat().mode_chosen)
         self.assertEqual(len(self.sent()), 1, "the whole list travels in one message")
         text = self.last_text()
-        self.assertIn("<pre>", text)
+        self.assertIn("<b>1 · IP NAVIGLI</b>", text)
+        self.assertIn("🕒 18/09/2026 08:00", text)
+        self.assertNotIn("<pre>", text, "cards, not a monospaced table")
         # Torino sits 125 km away and stays out; cheapest first
         self.assertNotIn("TAMOIL TORINO", text)
         self.assertLess(text.index("1.749"), text.index("1.769"))
@@ -67,7 +69,7 @@ class TestFuelBot(FuelTelegramCase):
         self.tap('fuel:*')
         text = self.last_text()
         self.assertLess(text.index("ENI DUOMO"), text.index("IP NAVIGLI"), "by distance")
-        self.assertIn("Benzina 1.899", text)
+        self.assertIn("Benzina Self <b>1.899 €</b>", text)
         self.assertNotIn('mode:0', self.last_buttons())
 
     def test_text_search_by_city(self):
@@ -124,11 +126,12 @@ class TestFuelBot(FuelTelegramCase):
         self.calls.clear()
         self.tap('hist:%s' % self.duomo.id)
         history = self.last_text()
-        self.assertIn("1.849 → 1.799", history)
+        self.assertIn("1.849 → <b>1.799 €</b> ▼", history)
         self.assertIn("Gasolio Self", history)
+        self.assertIn("🕒 19/09/2026 08:00", history)
         self.calls.clear()
         self.send_text('/storico')
-        self.assertIn("1.849 → 1.799", self.last_text(), "the command reuses the last station")
+        self.assertIn("1.849 → <b>1.799 €</b>", self.last_text(), "the command reuses the last station")
 
     def test_storico_without_a_station(self):
         self.send_text('/storico')
@@ -174,7 +177,8 @@ class TestFuelBot(FuelTelegramCase):
         self.assertFalse(change(gasolio, 1.80, 101), "inside the range: silent")
         alerts = change(gasolio, 1.69, 102)
         self.assertEqual(len(alerts), 1, "below the range: one alert")
-        self.assertIn("1.800 →   1.690 ▼", alerts[0]['text'])
+        self.assertIn("1.800 → <b>1.690 €</b> ▼", alerts[0]['text'])
+        self.assertIn("🕒 19/09/2026 08:00", alerts[0]['text'])
         self.assertEqual(alerts[0]['chat_id'], 4242)
         self.assertEqual(alerts[0]['reply_markup']['inline_keyboard'][0][0]['callback_data'], 'st:%s' % self.duomo.id)
         self.assertTrue(change(gasolio, 1.90, 103), "above the range: alert")
@@ -196,8 +200,8 @@ class TestFuelBot(FuelTelegramCase):
         alerts = self.sent()
         self.assertEqual(len(alerts), 1, "one digest instead of a message per station")
         text = alerts[0]['text']
-        self.assertIn("1.799 →   1.700 ▼", text)
-        self.assertIn("1.879 →   1.950 ▲", text)
+        self.assertIn("1.799 → <b>1.700 €</b> ▼", text)
+        self.assertIn("1.879 → <b>1.950 €</b> ▲", text)
         self.assertIn("ENI DUOMO", text)
         self.assertIn("IP NAVIGLI", text)
         self.assertEqual(sorted(self.last_buttons()),

@@ -79,16 +79,10 @@ class TelegramHandlerFuel(models.AbstractModel):
         stamp = int(value.replace(tzinfo=timezone.utc).timestamp())
         return '<tg-time unix="%s" format="r">%s</tg-time>' % (stamp, self._age(value))
 
-    def _trend(self, fuel):
-        """Arrow and the price it replaced, or a dash while the first price holds."""
-        if not fuel.previous_price:
-            return "-"
-        arrow = "▲" if fuel.current_price > fuel.previous_price else "▼"
-        return "%s %s" % (arrow, self._fmt_price(fuel.previous_price))
-
-    def _block(self, lines):
-        """Monospaced block: columns stay aligned, no inline formatting inside."""
-        return "<pre>%s</pre>" % escape("\n".join(lines))
+    def _prices_line(self, station):
+        """Every price of a station on one line."""
+        return " · ".join("%s <b>%s €</b>" % (escape(self._fuel_label(row)), self._fmt_price(row.current_price))
+                          for row in station.fuel_ids.filtered('current_price'))
 
     def _number_keyboard(self, callbacks):
         buttons = [{'text': str(index), 'callback_data': data} for index, data in enumerate(callbacks, 1)]
@@ -257,25 +251,25 @@ class TelegramHandlerFuel(models.AbstractModel):
         if not station:
             return chat._say(_("Station not found."))
         chat.write({'last_station_id': station.id})
-        bot = chat.bot_id
         rows = self.env['fuel.price'].search([('station_id', '=', station.id)], limit=limit)
         if not rows:
             return chat._say(_("No price change recorded for %s yet.") % escape(station.name))
         lines = []
         for row in rows:
-            label = self._short(self._fuel_label(row.station_fuel_id), 16)
+            label = escape(self._fuel_label(row.station_fuel_id))
+            when = escape(self._stamp(row.date_communicated))
             if row.previous_price:
-                lines.append("%s  %s  %s → %s" % (bot._fmt_station_dt(row.date_communicated), label,
-                                                  self._fmt_price(row.previous_price),
-                                                  self._fmt_price(row.price)))
+                arrow = "▲" if row.price > row.previous_price else "▼"
+                lines.append("🕒 %s · %s\n%s → <b>%s €</b> %s" % (
+                    when, label, self._fmt_price(row.previous_price), self._fmt_price(row.price), arrow))
             else:
-                lines.append("%s  %s  %s %s" % (bot._fmt_station_dt(row.date_communicated), label,
-                                                self._fmt_price(row.price), _("first price")))
-        header = _("📈 %s · last changes") % self._short(station.name, 26)
-        body = self._block(lines)
+                lines.append("🕒 %s · %s\n<b>%s €</b> %s" % (
+                    when, label, self._fmt_price(row.price), escape(_("first price"))))
+        header = _("📈 %s · last changes") % station.name
+        body = "\n\n".join(lines)
         if len(lines) > QUOTE_FROM:
             body = "<blockquote expandable>%s</blockquote>" % body
-        chat._say("%s\n%s" % (escape(header), body), keyboard=self._station_buttons(chat, station))
+        chat._say("%s\n\n%s" % (escape(header), body), keyboard=self._station_buttons(chat, station))
 
     def _cmd_soglia(self, chat, station_id=None):
         subs = chat.subscription_ids
@@ -357,17 +351,15 @@ class TelegramHandlerFuel(models.AbstractModel):
         header = _("⛽ %(fuel)s %(mode)s · %(order)s · %(count)s stations",
                    fuel=fuel_label, mode="" if all_fuels else self._mode_label(chat),
                    order=order_label, count=len(cards))
-        lines = []
+        blocks = [escape(header)]
         for index, (station, km, fuel) in enumerate(cards, 1):
+            lines = ["<b>%s · %s</b> · %s" % (index, escape(station.name), escape(self._km(km)))]
             if fuel is not None:
-                lines.append("%2d  %7s €  %-9s %s" % (index, self._fmt_price(fuel.current_price),
-                                                     self._trend(fuel), self._age(fuel.current_date)))
-                lines.append("    %s · %s" % (self._short(station.name, 18), self._km(km)))
+                lines.append("<b>%s €</b>%s · 🕒 %s" % (self._fmt_price(fuel.current_price), self._move(fuel),
+                                                       escape(self._stamp(fuel.current_date))))
             else:
-                lines.append("%2d  %s · %s" % (index, self._short(station.name, 18), self._km(km)))
-                prices = "  ".join("%s %s" % (self._short(row.fuel_type, 10), self._fmt_price(row.current_price))
-                                   for row in station.fuel_ids.filtered('current_price'))
-                lines.append("    %s" % prices)
+                lines.append(self._prices_line(station))
+            blocks.append("\n".join(lines))
         keyboard = self._number_keyboard(['st:%s:near' % station.id for station, _km, _fuel in cards])
         toggle_label = _("💶 By price") if by_distance else _("📏 By distance")
         mode_label = _("Served") if chat.is_self else _("Self service")
@@ -377,8 +369,7 @@ class TelegramHandlerFuel(models.AbstractModel):
             row.insert(0, {'text': mode_label, 'callback_data': 'mode:0' if chat.is_self else 'mode:1'})
             row.insert(0, {'text': toggle_label, 'callback_data': 'near:price' if by_distance else 'near:dist'})
         keyboard.append(row)
-        self._say_or_edit(chat, "%s\n%s" % (escape(header), self._block(lines)),
-                          keyboard=keyboard, message=message)
+        self._say_or_edit(chat, "\n\n".join(blocks), keyboard=keyboard, message=message)
 
     def _km(self, km):
         return _("%.1f km") % km
@@ -392,16 +383,14 @@ class TelegramHandlerFuel(models.AbstractModel):
             return chat._say(_("No station found for \"%s\". Try a town name or send your location.") % escape(text),
                              reply_keyboard=self._location_keyboard())
         chat.write({'last_search': text})
-        lines = []
-        for index, station in enumerate(stations, 1):
-            lines.append("%2d  %s · %s" % (index, self._short(station.name, 18), self._short(station.city or "", 12)))
-            prices = "  ".join("%s %s" % (self._short(row.fuel_type, 10), self._fmt_price(row.current_price))
-                               for row in station.fuel_ids.filtered('current_price'))
-            lines.append("    %s" % prices)
         header = _("🔎 %(text)s · %(count)s stations", text=self._short(text, 20), count=len(stations))
+        blocks = [escape(header)]
+        for index, station in enumerate(stations, 1):
+            town = ", ".join(p for p in (station.city, station.province) if p)
+            blocks.append("<b>%s · %s</b>\n📍 %s\n%s" % (index, escape(station.name), escape(town),
+                                                        self._prices_line(station)))
         keyboard = self._number_keyboard(['st:%s:search' % station.id for station in stations])
-        self._say_or_edit(chat, "%s\n%s" % (escape(header), self._block(lines)),
-                          keyboard=keyboard, message=message)
+        self._say_or_edit(chat, "\n\n".join(blocks), keyboard=keyboard, message=message)
 
     # ------------------------------------------------------------------
     # station card and subscriptions

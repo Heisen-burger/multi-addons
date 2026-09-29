@@ -68,26 +68,28 @@ class TelegramSubscription(models.Model):
             else:
                 self._notify_many(chat, rows)
 
-    def _change_row(self, change, with_station=True):
-        """One monospaced line: old price, arrow, new price, then what moved."""
+    def _change_block(self, change, with_station=True):
+        """One card: what moved, the two prices with the arrow, day and time."""
         handler = self.env['telegram.handler.fuel']
         arrow = "▲" if change.price > change.previous_price else "▼"
-        row = "%7s → %7s %s" % (handler._fmt_price(change.previous_price),
-                                handler._fmt_price(change.price), arrow)
-        label = handler._short(handler._fuel_label(change.station_fuel_id), 16)
+        fuel = change.station_fuel_id
+        lines = []
         if with_station:
-            label = "%s · %s" % (handler._short(change.station_fuel_id.station_id.name, 18), label)
-        return row, label
+            lines.append("<b>%s</b>" % escape(fuel.station_id.name))
+        lines.append("%s · %s → <b>%s €</b> %s" % (
+            escape(handler._fuel_label(fuel)), handler._fmt_price(change.previous_price),
+            handler._fmt_price(change.price), arrow))
+        lines.append("🕒 %s" % escape(handler._stamp(change.date_communicated)))
+        return "\n".join(lines)
 
     def _notify_one(self, chat, change):
         handler = self.env['telegram.handler.fuel']
         station = change.station_fuel_id.station_id
-        row, label = self._change_row(change, with_station=False)
         station_label = _("⛽ Station")
         history_label = _("📈 History")
-        header = _("⛽ %(station)s · %(fuel)s", station=station.name, fuel=label)
-        text = "%s\n%s\n🕒 %s" % (escape(header), handler._block([row]),
-                                 handler._when(change.date_communicated))
+        header = _("⛽ %s") % station.name
+        text = "%s\n%s" % (escape(header), self._change_block(change, with_station=False))
+        text += " · %s" % handler._when(change.date_communicated)
         chat._say(text, keyboard=[[{'text': station_label, 'callback_data': 'st:%s' % station.id},
                                    {'text': history_label, 'callback_data': 'hist:%s' % station.id}]])
 
@@ -96,18 +98,13 @@ class TelegramSubscription(models.Model):
         handler = self.env['telegram.handler.fuel']
         changes = changes.sorted(lambda c: (c.station_fuel_id.station_id.name, c.station_fuel_id.fuel_type))
         header = _("⛽ %s prices changed") % len(changes)
-        lines = []
-        for change in changes[:MAX_LINES]:
-            row, label = self._change_row(change)
-            lines.append(row)
-            lines.append("  %s" % label)
+        blocks = [self._change_block(change) for change in changes[:MAX_LINES]]
         if len(changes) > MAX_LINES:
-            lines.append(_("and %s more") % (len(changes) - MAX_LINES))
-        body = handler._block(lines)
+            blocks.append(escape(_("and %s more") % (len(changes) - MAX_LINES)))
+        body = "\n\n".join(blocks)
         if len(changes) > 4:
             body = "<blockquote expandable>%s</blockquote>" % body
         buttons = [{'text': "⛽ %s" % handler._short(station.name, 18), 'callback_data': 'st:%s' % station.id}
                    for station in changes.station_fuel_id.station_id[:MAX_BUTTONS]]
         keyboard = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
-        text = "%s\n%s\n🕒 %s" % (escape(header), body, handler._when(changes[0].date_communicated))
-        chat._say(text, keyboard=keyboard)
+        chat._say("%s\n\n%s" % (escape(header), body), keyboard=keyboard)
