@@ -628,31 +628,13 @@ msgstr ""
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_handler.py:0
-msgid "alert"
-msgstr ""
-
-#. module: fuel_price_telegram
-#. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "before"
 msgstr ""
 
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_handler.py:0
-msgid "fuel"
-msgstr ""
-
-#. module: fuel_price_telegram
-#. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "min / max"
-msgstr ""
-
-#. module: fuel_price_telegram
-#. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
-msgid "now"
 msgstr ""
 
 #. module: fuel_price_telegram

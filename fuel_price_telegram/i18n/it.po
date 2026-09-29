@@ -645,32 +645,14 @@ msgstr "fuori da %(low).3f-%(high).3f"
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_handler.py:0
-msgid "alert"
-msgstr "avviso"
-
-#. module: fuel_price_telegram
-#. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "before"
 msgstr "prima"
 
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_handler.py:0
-msgid "fuel"
-msgstr "carburante"
-
-#. module: fuel_price_telegram
-#. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
 msgid "min / max"
 msgstr "min / max"
-
-#. module: fuel_price_telegram
-#. odoo-python
-#: code:addons/fuel_price_telegram/models/telegram_handler.py:0
-msgid "now"
-msgstr "ora"
 
 #. module: fuel_price_telegram
 #. odoo-python
