@@ -72,7 +72,7 @@ class TestFuelBot(FuelTelegramCase):
 
     def test_text_search_by_city(self):
         self.send_text('monza')
-        self.assertEqual(self.last_buttons(), ['st:%s' % self.monza.id])
+        self.assertEqual(self.last_buttons(), ['st:%s:search' % self.monza.id])
         self.assertIn("Q8 MONZA", self.last_text())
         self.send_text('nowhere')
         self.assertIn("nowhere", self.last_text())

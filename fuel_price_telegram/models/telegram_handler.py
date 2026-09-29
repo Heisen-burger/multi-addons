@@ -114,12 +114,15 @@ class TelegramHandlerFuel(models.AbstractModel):
     # callbacks
     # ------------------------------------------------------------------
     def _cb_st(self, chat, arg, message):
+        # only a card opened from a list takes its place; an alert keeps its message
         station_id, _sep, origin = arg.partition(':')
-        self._show_station(chat, int(station_id), message=message, origin=origin)
+        self._show_station(chat, int(station_id), message=message if origin else None, origin=origin)
 
     def _cb_back(self, chat, arg, message):
         if arg == 'list':
             return self._cmd_lista(chat, message=message)
+        if arg == 'search':
+            return self._search_stations(chat, chat.last_search or '', message=message)
         self._send_nearest(chat, message=message)
 
     def _cb_subd(self, chat, arg, message):
@@ -357,7 +360,7 @@ class TelegramHandlerFuel(models.AbstractModel):
     def _km(self, km):
         return _("%.1f km") % km
 
-    def _search_stations(self, chat, text):
+    def _search_stations(self, chat, text, message=None):
         # never name this _search: it would shadow the ORM method
         stations = self.env['fuel.station'].search(
             ['&', ('fuel_ids.current_price', '>', 0), '|', ('city', 'ilike', text), ('name', 'ilike', text)],
@@ -365,6 +368,7 @@ class TelegramHandlerFuel(models.AbstractModel):
         if not stations:
             return chat._say(_("No station found for \"%s\". Try a town name or send your location.") % escape(text),
                              reply_keyboard=self._location_keyboard())
+        chat.write({'last_search': text})
         lines = []
         for index, station in enumerate(stations, 1):
             lines.append("%2d  %s · %s" % (index, self._short(station.name, 18), self._short(station.city or "", 12)))
@@ -372,8 +376,9 @@ class TelegramHandlerFuel(models.AbstractModel):
                                for row in station.fuel_ids.filtered('current_price'))
             lines.append("    %s" % prices)
         header = _("🔎 %(text)s · %(count)s stations", text=self._short(text, 20), count=len(stations))
-        keyboard = self._number_keyboard(['st:%s' % station.id for station in stations])
-        chat._say("%s\n%s" % (escape(header), self._block(lines)), keyboard=keyboard)
+        keyboard = self._number_keyboard(['st:%s:search' % station.id for station in stations])
+        self._say_or_edit(chat, "%s\n%s" % (escape(header), self._block(lines)),
+                          keyboard=keyboard, message=message)
 
     # ------------------------------------------------------------------
     # station card and subscriptions
