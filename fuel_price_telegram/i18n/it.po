@@ -669,8 +669,8 @@ msgstr "⛽ %(fuel)s %(mode)s · %(order)s · %(count)s impianti"
 #. module: fuel_price_telegram
 #. odoo-python
 #: code:addons/fuel_price_telegram/models/telegram_subscription.py:0
-msgid "⛽ %(station)s · %(fuel)s"
-msgstr "⛽ %(station)s · %(fuel)s"
+msgid "⛽ %s"
+msgstr "⛽ %s"
 
 #. module: fuel_price_telegram
 #. odoo-python
