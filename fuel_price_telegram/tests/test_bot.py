@@ -7,6 +7,13 @@ from .common import FuelTelegramCase
 
 @tagged('post_install', '-at_install')
 class TestFuelBot(FuelTelegramCase):
+    def last_edit(self):
+        return self.sent('editMessageText')[-1]
+
+    def edit_buttons(self, payload):
+        rows = payload.get('reply_markup', {}).get('inline_keyboard', [])
+        return [button['callback_data'] for row in rows for button in row if 'callback_data' in button]
+
     def test_start_offers_location_keyboard(self):
         self.send_text('/start')
         keyboard = self.sent()[-1]['reply_markup']['keyboard']
@@ -14,18 +21,7 @@ class TestFuelBot(FuelTelegramCase):
         self.send_text('/aiuto')
         self.assertIn("/vicini", self.last_text())
 
-    def station_cards(self):
-        """(text, station callback, navigate url) of every station card sent since the last clear."""
-        cards = []
-        for payload in self.sent():
-            rows = payload.get('reply_markup', {}).get('inline_keyboard', [])
-            buttons = [button for row in rows for button in row]
-            card = [b['callback_data'] for b in buttons if b.get('callback_data', '').startswith('st:')]
-            if card and len(buttons) == 2:
-                cards.append((payload['text'], card[0], buttons[0].get('url')))
-        return cards
-
-    def test_location_asks_fuel_mode_then_one_card_per_station(self):
+    def test_location_asks_fuel_mode_then_one_compact_list(self):
         self.send_location(45.4642, 9.1900)
         self.assertIn('fuel:Benzina', self.last_buttons())
         self.assertIn('fuel:*', self.last_buttons())
@@ -34,41 +30,84 @@ class TestFuelBot(FuelTelegramCase):
         self.assertEqual(self.env['telegram.handler.fuel']._fuel_choices()[0], "Gasolio",
                          "the cached families drive the order")
         self.tap('fuel:Gasolio')
-        self.assertEqual(self.chat().fuel_type, 'Gasolio')
         self.assertEqual(self.last_buttons(), ['mode:1', 'mode:0'], "self or served comes next")
         self.calls.clear()
         self.tap('mode:1')
         self.assertTrue(self.chat().mode_chosen)
-        cards = self.station_cards()
-        # Torino sits 125 km away and stays out; cheapest first, one message each
-        self.assertEqual([card[1] for card in cards],
-                         ['st:%s' % self.navigli.id, 'st:%s' % self.monza.id, 'st:%s' % self.duomo.id])
-        self.assertTrue(cards[0][0].startswith("🥇 <b>1.749 €</b> · Gasolio Self"))
-        self.assertIn("📍 MILANO · 2.", cards[0][0])
-        self.assertIn("destination=45.45,9.17", cards[0][2])
-        self.assertIn('near:dist', self.last_buttons(), "footer carries the toggles")
-        self.assertIn('mode:0', self.last_buttons())
+        self.assertEqual(len(self.sent()), 1, "the whole list travels in one message")
+        text = self.last_text()
+        self.assertIn("<pre>", text)
+        # Torino sits 125 km away and stays out; cheapest first
+        self.assertNotIn("TAMOIL TORINO", text)
+        self.assertLess(text.index("1.749"), text.index("1.769"))
+        buttons = self.last_buttons()
+        self.assertEqual(buttons[:3], ['st:%s:near' % self.navigli.id, 'st:%s:near' % self.monza.id,
+                                       'st:%s:near' % self.duomo.id])
+        self.assertIn('near:dist', buttons)
+        self.assertIn('mode:0', buttons)
 
-    def test_near_by_distance_and_vicini(self):
+    def test_order_toggle_rewrites_the_same_message(self):
         self.send_location(45.4642, 9.1900)
         self.tap('fuel:Gasolio')
         self.tap('mode:1')
         self.calls.clear()
         self.tap('near:dist')
-        self.assertEqual(self.station_cards()[0][1], 'st:%s' % self.duomo.id)
-        self.assertNotIn("🥇", self.station_cards()[0][0], "no medals when sorted by distance")
+        self.assertFalse(self.sent(), "no new message, the list is rewritten")
+        payload = self.last_edit()
+        self.assertEqual(payload['message_id'], 12)
+        self.assertEqual(self.edit_buttons(payload)[0], 'st:%s:near' % self.duomo.id, "nearest first")
+        self.assertEqual(self.chat().last_order, 'dist', "the choice sticks")
         self.calls.clear()
         self.send_text('/vicini')
-        self.assertEqual(self.station_cards()[0][1], 'st:%s' % self.navigli.id, "back to price order")
+        self.assertEqual(self.last_buttons()[0], 'st:%s:near' % self.duomo.id, "and survives the command")
 
-    def test_all_fuels_skips_mode_and_lists_by_distance(self):
+    def test_all_fuels_skips_mode_and_lists_every_price(self):
         self.send_location(45.4642, 9.1900)
         self.calls.clear()
         self.tap('fuel:*')
-        cards = self.station_cards()
-        self.assertEqual(cards[0][1], 'st:%s' % self.duomo.id)
-        self.assertIn("• Benzina Self <b>1.899 €</b>", cards[0][0])
+        text = self.last_text()
+        self.assertLess(text.index("ENI DUOMO"), text.index("IP NAVIGLI"), "by distance")
+        self.assertIn("Benzina 1.899", text)
         self.assertNotIn('mode:0', self.last_buttons())
+
+    def test_text_search_by_city(self):
+        self.send_text('monza')
+        self.assertEqual(self.last_buttons(), ['st:%s' % self.monza.id])
+        self.assertIn("Q8 MONZA", self.last_text())
+        self.send_text('nowhere')
+        self.assertIn("nowhere", self.last_text())
+        self.assertIn('reply_markup', self.sent()[-1])
+
+    def test_station_card_and_subscription_toggle(self):
+        self.tap('st:%s' % self.duomo.id)
+        gasolio = self.fuel(self.duomo, 'Gasolio')
+        text = self.last_text()
+        self.assertIn("ENI DUOMO", text)
+        self.assertIn("1.799", text)
+        self.assertIn('sub:%s' % gasolio.id, self.last_buttons())
+        self.assertNotIn('thrst:%s' % self.duomo.id, self.last_buttons())
+        self.assertNotIn('back:near', self.last_buttons(), "no back button without a list behind")
+        self.tap('sub:%s' % gasolio.id)
+        sub = self.Sub.search([('chat_id', '=', self.chat().id), ('station_fuel_id', '=', gasolio.id)])
+        self.assertTrue(sub.active)
+        markup = self.sent('editMessageReplyMarkup')[-1]['reply_markup']['inline_keyboard']
+        labels = {row[0].get('callback_data'): row[0]['text'] for row in markup}
+        self.assertTrue(labels['sub:%s' % gasolio.id].startswith("✅"))
+        self.assertEqual([b['callback_data'] for b in markup[-1]],
+                         ['hist:%s' % self.duomo.id, 'thrst:%s' % self.duomo.id])
+        self.tap('sub:%s' % gasolio.id)
+        self.assertFalse(sub.active)
+
+    def test_station_opened_from_a_list_goes_back(self):
+        self.send_location(45.4642, 9.1900)
+        self.tap('fuel:Gasolio')
+        self.tap('mode:1')
+        self.calls.clear()
+        self.tap('st:%s:near' % self.duomo.id)
+        self.assertIn('back:near', self.edit_buttons(self.last_edit()), "the card carries the way back")
+        self.calls.clear()
+        self.tap('back:near')
+        self.assertIn('near:dist', self.edit_buttons(self.last_edit()), "and the list comes back in place")
 
     def test_previous_price_and_history(self):
         gasolio = self.fuel(self.duomo, 'Gasolio')
@@ -79,52 +118,20 @@ class TestFuelBot(FuelTelegramCase):
         gasolio.write({'previous_price': 1.849})
         self.calls.clear()
         self.tap('st:%s' % self.duomo.id)
-        self.assertIn("<b>1.799</b> (prev. 1.849)", self.last_text(), "station card shows the previous price")
-        self.assertIn("<b>1.899</b> <i>(", self.last_text(), "a fuel with no recorded change says so")
+        self.assertIn("1.849", self.last_text(), "the station card shows the price it replaced")
         self.assertIn('hist:%s' % self.duomo.id, self.last_buttons())
         self.calls.clear()
         self.tap('hist:%s' % self.duomo.id)
         history = self.last_text()
-        self.assertIn("1.849 → <b>1.799</b> (-0.050)", history)
+        self.assertIn("1.849 → 1.799", history)
         self.assertIn("Gasolio Self", history)
         self.calls.clear()
         self.send_text('/storico')
-        self.assertIn("1.849 → <b>1.799</b>", self.last_text(), "the command reuses the last station")
-        self.send_location(45.4642, 9.1900)
-        self.tap('fuel:Gasolio')
-        self.tap('mode:1')
-        self.assertIn("(prev. 1.849)", self.station_cards()[-1][0], "the nearest card shows it too")
+        self.assertIn("1.849 → 1.799", self.last_text(), "the command reuses the last station")
 
     def test_storico_without_a_station(self):
         self.send_text('/storico')
         self.assertIn("station", self.last_text())
-
-    def test_text_search_by_city(self):
-        self.send_text('monza')
-        self.assertEqual([card[1] for card in self.station_cards()], ['st:%s' % self.monza.id])
-        self.assertIn("⛽ <b>Q8 MONZA</b>", self.station_cards()[0][0])
-        self.send_text('nowhere')
-        self.assertIn("nowhere", self.last_text())
-        self.assertIn('reply_markup', self.sent()[-1])
-
-    def test_station_card_and_subscription_toggle(self):
-        self.tap('st:%s' % self.duomo.id)
-        self.assertEqual(self.sent('sendVenue')[0]['title'], "ENI DUOMO")
-        gasolio = self.fuel(self.duomo, 'Gasolio')
-        self.assertIn('sub:%s' % gasolio.id, self.last_buttons())
-        self.assertNotIn('thrst:%s' % self.duomo.id, self.last_buttons())
-        self.tap('sub:%s' % gasolio.id)
-        sub = self.Sub.search([('chat_id', '=', self.chat().id), ('station_fuel_id', '=', gasolio.id)])
-        self.assertTrue(sub.active)
-        markup = self.sent('editMessageReplyMarkup')[-1]['reply_markup']['inline_keyboard']
-        self.assertIn('url', markup[0][0], "first row navigates to the station")
-        labels = {row[0].get('callback_data'): row[0]['text'] for row in markup}
-        self.assertTrue(labels['sub:%s' % gasolio.id].startswith("✅"))
-        self.assertTrue(labels['sub:%s' % self.fuel(self.duomo, 'Benzina').id].startswith("➕"))
-        self.assertEqual([b['callback_data'] for b in markup[-1]],
-                         ['hist:%s' % self.duomo.id, 'thrst:%s' % self.duomo.id])
-        self.tap('sub:%s' % gasolio.id)
-        self.assertFalse(sub.active)
 
     def test_threshold_parser(self):
         gasolio = self.fuel(self.duomo, 'Gasolio')
@@ -166,7 +173,7 @@ class TestFuelBot(FuelTelegramCase):
         self.assertFalse(change(gasolio, 1.80, 101), "inside the range: silent")
         alerts = change(gasolio, 1.69, 102)
         self.assertEqual(len(alerts), 1, "below the range: one alert")
-        self.assertIn("1.800 → <b>1.690</b> (-0.110)", alerts[0]['text'])
+        self.assertIn("1.800 →   1.690 ▼", alerts[0]['text'])
         self.assertEqual(alerts[0]['chat_id'], 4242)
         self.assertEqual(alerts[0]['reply_markup']['inline_keyboard'][0][0]['callback_data'], 'st:%s' % self.duomo.id)
         self.assertTrue(change(gasolio, 1.90, 103), "above the range: alert")
@@ -188,22 +195,38 @@ class TestFuelBot(FuelTelegramCase):
         alerts = self.sent()
         self.assertEqual(len(alerts), 1, "one digest instead of a message per station")
         text = alerts[0]['text']
-        self.assertIn("1.799 → <b>1.700</b> (-0.099)", text)
-        self.assertIn("1.879 → <b>1.950</b> (+0.071)", text)
+        self.assertIn("1.799 →   1.700 ▼", text)
+        self.assertIn("1.879 →   1.950 ▲", text)
         self.assertIn("ENI DUOMO", text)
         self.assertIn("IP NAVIGLI", text)
         self.assertEqual(sorted(self.last_buttons()),
                          sorted(['st:%s' % self.duomo.id, 'st:%s' % self.navigli.id]))
 
-    def test_lista_prezzi_delete_stop(self):
+    def test_lista_opens_a_subscription_in_place(self):
         gasolio = self.fuel(self.duomo, 'Gasolio')
         self.tap('sub:%s' % gasolio.id)
         sub = self.Sub.search([('station_fuel_id', '=', gasolio.id)])
+        self.calls.clear()
         self.send_text('/lista')
         self.assertIn("ENI DUOMO", self.last_text())
-        self.assertEqual(self.last_buttons(), ['thr:%s' % sub.id, 'del:%s' % sub.id, 'st:%s' % self.duomo.id])
+        self.assertEqual(self.last_buttons(), ['subd:%s' % sub.id])
+        self.calls.clear()
+        self.tap('subd:%s' % sub.id)
+        payload = self.last_edit()
+        self.assertIn("1.799", payload['text'])
+        self.assertEqual(self.edit_buttons(payload),
+                         ['thr:%s' % sub.id, 'del:%s' % sub.id, 'hist:%s' % self.duomo.id,
+                          'st:%s' % self.duomo.id, 'back:list'])
+        self.calls.clear()
+        self.tap('back:list')
+        self.assertEqual(self.edit_buttons(self.last_edit()), ['subd:%s' % sub.id])
+
+    def test_prezzi_delete_stop(self):
+        gasolio = self.fuel(self.duomo, 'Gasolio')
+        self.tap('sub:%s' % gasolio.id)
+        sub = self.Sub.search([('station_fuel_id', '=', gasolio.id)])
         self.send_text('/prezzi')
-        self.assertIn("<b>1.799</b>", self.last_text())
+        self.assertIn("1.799", self.last_text())
         self.tap('del:%s' % sub.id)
         self.assertFalse(sub.active)
         self.tap('sub:%s' % gasolio.id)

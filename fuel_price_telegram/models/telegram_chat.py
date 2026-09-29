@@ -15,6 +15,8 @@ class TelegramChat(models.Model):
     fuel_type = fields.Char(help="Fuel used when the chat sends a location. '*' means every fuel.")
     is_self = fields.Boolean("Self Service", default=True)
     mode_chosen = fields.Boolean(help="The chat answered the self/served question at least once.")
+    last_order = fields.Selection([('price', "By price"), ('dist', "By distance")], default='price',
+                                  help="How the chat wants the nearest list sorted.")
     last_latitude = fields.Float(digits=(10, 6))
     last_longitude = fields.Float(digits=(10, 6))
     subscription_ids = fields.One2many('fuel.telegram.subscription', 'chat_id', string="Subscriptions")

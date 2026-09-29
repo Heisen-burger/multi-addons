@@ -66,6 +66,19 @@ Fuel Prices > Telegram > Bots, Chats, Subscriptions.
 
 ## Changelog
 
+### 19.0.3.0.0
+
+- Nearest stations, search results, `/lista` and `/prezzi` arrive as one monospaced table
+  per answer instead of one message per station, with a numbered keyboard: tap a number to
+  open that station or subscription.
+- The station card and the subscription card replace the list in place, and a Back button
+  returns to it, so the conversation stays two messages long.
+- Prices follow the reader's locale (1,749 in Italian), the previous price sits behind a
+  ▲ or ▼ arrow, and ages read 40m, 6h, 3d.
+- Times use the Telegram relative clock, so "2 hours ago" is rendered by the client.
+- History and long digests sit in an expandable quote.
+- The venue pin on the station card is gone: the Navigate button already opens the maps.
+
 ### 19.0.2.2.3
 
 - The fuel keyboard reads the families from `fuel.type`, the registry cache the

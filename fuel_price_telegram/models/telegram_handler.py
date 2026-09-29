@@ -1,9 +1,11 @@
 # STeSI Consulting - Michele Di Croce
 # License OPL-1 (https://www.odoo.com/documentation/user/19.0/legal/licenses/licenses.html).
 import re
+from datetime import timezone
 from html import escape
 
-from odoo import _, models
+from odoo import _, fields, models
+from odoo.tools import formatLang
 
 NUMBER = r'(\d+(?:[.,]\d+)?)'
 RE_RANGE = re.compile(r'^\s*' + NUMBER + r'\s*[-–]\s*' + NUMBER + r'\s*$')
@@ -14,6 +16,10 @@ ALL_FUELS = '*'
 # fuel.type caches the families MIMIT publishes; they lead the keyboard and the commercial
 # blends (Blue Diesel, HVOlution, ...) follow by how many stations sell them
 FALLBACK_FUELS = ('Benzina', 'Gasolio', 'Metano', 'GPL', 'GNL', 'L-GNC')
+# a monospaced line wider than this wraps on a phone
+NAME_WIDTH = 22
+BUTTONS_PER_ROW = 5
+QUOTE_FROM = 6
 
 
 class TelegramHandlerFuel(models.AbstractModel):
@@ -36,6 +42,59 @@ class TelegramHandlerFuel(models.AbstractModel):
         return super()._commands() + list(own.items())
 
     # ------------------------------------------------------------------
+    # formatting
+    # ------------------------------------------------------------------
+    def _fmt_price(self, value):
+        """Price in the reader's locale: 1,749 in Italian, 1.749 in English."""
+        return formatLang(self.env, value, digits=3)
+
+    def _short(self, text, width=NAME_WIDTH):
+        text = text or ""
+        return text if len(text) <= width else text[:width - 1] + "…"
+
+    def _age(self, value):
+        """Compact age of a price: 40m, 6h, 3d."""
+        if not value:
+            return ""
+        seconds = (fields.Datetime.now() - value).total_seconds()
+        if seconds < 3600:
+            return _("%dm") % max(int(seconds // 60), 1)
+        if seconds < 172800:
+            return _("%dh") % int(seconds // 3600)
+        return _("%dd") % int(seconds // 86400)
+
+    def _when(self, value):
+        """Relative time the Telegram client renders in the reader's language."""
+        if not value:
+            return ""
+        stamp = int(value.replace(tzinfo=timezone.utc).timestamp())
+        return '<tg-time unix="%s" format="r">%s</tg-time>' % (stamp, self._age(value))
+
+    def _trend(self, fuel):
+        """Arrow and the price it replaced, or a dash while the first price holds."""
+        if not fuel.previous_price:
+            return "-"
+        arrow = "▲" if fuel.current_price > fuel.previous_price else "▼"
+        return "%s %s" % (arrow, self._fmt_price(fuel.previous_price))
+
+    def _block(self, lines):
+        """Monospaced block: columns stay aligned, no inline formatting inside."""
+        return "<pre>%s</pre>" % escape("\n".join(lines))
+
+    def _number_keyboard(self, callbacks):
+        buttons = [{'text': str(index), 'callback_data': data} for index, data in enumerate(callbacks, 1)]
+        return [buttons[i:i + BUTTONS_PER_ROW] for i in range(0, len(buttons), BUTTONS_PER_ROW)]
+
+    def _say_or_edit(self, chat, text, keyboard=None, message=None):
+        """Rewrite the message the button belongs to, or send a new one."""
+        if not message:
+            return chat._say(text, keyboard=keyboard)
+        return chat.bot_id._call('editMessageText', chat_id=chat.chat_id, message_id=message['message_id'],
+                                 text=text, parse_mode='HTML',
+                                 link_preview_options={'is_disabled': True},
+                                 reply_markup={'inline_keyboard': keyboard or []})
+
+    # ------------------------------------------------------------------
     # routing hooks
     # ------------------------------------------------------------------
     def _on_free_text(self, chat, text):
@@ -55,7 +114,16 @@ class TelegramHandlerFuel(models.AbstractModel):
     # callbacks
     # ------------------------------------------------------------------
     def _cb_st(self, chat, arg, message):
-        self._show_station(chat, int(arg))
+        station_id, _sep, origin = arg.partition(':')
+        self._show_station(chat, int(station_id), message=message, origin=origin)
+
+    def _cb_back(self, chat, arg, message):
+        if arg == 'list':
+            return self._cmd_lista(chat, message=message)
+        self._send_nearest(chat, message=message)
+
+    def _cb_subd(self, chat, arg, message):
+        self._show_subscription(chat, int(arg), message=message)
 
     def _cb_sub(self, chat, arg, message):
         self._toggle_subscription(chat, int(arg), message)
@@ -67,7 +135,7 @@ class TelegramHandlerFuel(models.AbstractModel):
         self._cmd_soglia(chat, station_id=int(arg))
 
     def _cb_del(self, chat, arg, message):
-        self._remove_subscription(chat, int(arg))
+        self._remove_subscription(chat, int(arg), message=message)
 
     def _cb_fuel(self, chat, arg, message):
         if not arg:
@@ -82,7 +150,8 @@ class TelegramHandlerFuel(models.AbstractModel):
         self._send_nearest_or_ask_location(chat)
 
     def _cb_near(self, chat, arg, message):
-        self._send_nearest(chat, order=arg)
+        chat.write({'last_order': arg})
+        self._send_nearest(chat, message=message)
 
     def _cb_hist(self, chat, arg, message):
         self._send_history(chat, int(arg))
@@ -120,39 +189,37 @@ class TelegramHandlerFuel(models.AbstractModel):
     def _cmd_carburante(self, chat):
         self._ask_fuel(chat)
 
-    def _cmd_lista(self, chat):
+    def _cmd_lista(self, chat, message=None):
         subs = chat.subscription_ids
         if not subs:
-            return chat._say(_("No subscriptions yet. Send your location or a town name to find a station."))
-        bot = chat.bot_id
+            return self._say_or_edit(
+                chat, _("No subscriptions yet. Send your location or a town name to find a station."),
+                message=message)
         lines = []
-        keyboard = []
         for index, sub in enumerate(subs, 1):
             fuel = sub.station_fuel_id
-            lines.append("%s. <b>%s</b> %s: <b>%.3f</b>%s · %s\n   %s · %s" % (
-                index, escape(fuel.station_id.name), escape(self._fuel_label(fuel)), fuel.current_price,
-                self._previous(fuel), bot._fmt_station_dt(fuel.current_date), escape(sub._threshold_label()),
-                bot._navigate(fuel.station_id)))
-            keyboard.append([
-                {'text': "⚙️ %s" % index, 'callback_data': 'thr:%s' % sub.id},
-                {'text': "🗑 %s" % index, 'callback_data': 'del:%s' % sub.id},
-                {'text': "⛽ %s" % index, 'callback_data': 'st:%s' % fuel.station_id.id},
-            ])
-        chat._say("\n".join(lines), keyboard=keyboard)
+            lines.append("%2d  %7s €  %-9s %s" % (index, self._fmt_price(fuel.current_price),
+                                                 self._trend(fuel), self._age(fuel.current_date)))
+            lines.append("    %s · %s" % (self._short(fuel.station_id.name, 18),
+                                          self._short(self._fuel_label(fuel), 18)))
+        header = _("📋 Your subscriptions · %s") % len(subs)
+        keyboard = self._number_keyboard(['subd:%s' % sub.id for sub in subs])
+        self._say_or_edit(chat, "%s\n%s" % (escape(header), self._block(lines)),
+                          keyboard=keyboard, message=message)
 
     def _cmd_prezzi(self, chat):
         subs = chat.subscription_ids
         if not subs:
             return chat._say(_("No subscriptions yet. Send your location or a town name to find a station."))
-        bot = chat.bot_id
         lines = []
         for sub in subs:
             fuel = sub.station_fuel_id
-            lines.append("<b>%.3f</b>%s %s %s · %s · %s" % (
-                fuel.current_price, self._previous(fuel), escape(fuel.station_id.name),
-                escape(self._fuel_label(fuel)), bot._fmt_station_dt(fuel.current_date),
-                bot._navigate(fuel.station_id)))
-        chat._say("\n".join(lines))
+            lines.append("%7s €  %-9s %s" % (self._fmt_price(fuel.current_price), self._trend(fuel),
+                                             self._age(fuel.current_date)))
+            lines.append("  %s · %s" % (self._short(fuel.station_id.name, 18),
+                                        self._short(self._fuel_label(fuel), 18)))
+        header = _("💶 Prices you follow · %s") % len(subs)
+        chat._say("%s\n%s" % (escape(header), self._block(lines)))
 
     def _cmd_storico(self, chat):
         if not chat.last_station_id:
@@ -168,17 +235,21 @@ class TelegramHandlerFuel(models.AbstractModel):
         rows = self.env['fuel.price'].search([('station_id', '=', station.id)], limit=limit)
         if not rows:
             return chat._say(_("No price change recorded for %s yet.") % escape(station.name))
-        lines = ["📈 <b>%s</b>" % escape(station.name)]
+        lines = []
         for row in rows:
-            label = escape(self._fuel_label(row.station_fuel_id))
+            label = self._short(self._fuel_label(row.station_fuel_id), 16)
             if row.previous_price:
-                lines.append("%s · %s: %.3f → <b>%.3f</b> (%+.3f)" % (
-                    bot._fmt_station_dt(row.date_communicated), label, row.previous_price, row.price,
-                    row.price - row.previous_price))
+                lines.append("%s  %s  %s → %s" % (bot._fmt_station_dt(row.date_communicated), label,
+                                                  self._fmt_price(row.previous_price),
+                                                  self._fmt_price(row.price)))
             else:
-                lines.append("%s · %s: <b>%.3f</b> %s" % (
-                    bot._fmt_station_dt(row.date_communicated), label, row.price, escape(_("first price"))))
-        chat._say("\n".join(lines), keyboard=self._station_buttons(chat, station))
+                lines.append("%s  %s  %s %s" % (bot._fmt_station_dt(row.date_communicated), label,
+                                                self._fmt_price(row.price), _("first price")))
+        header = _("📈 %s · last changes") % self._short(station.name, 26)
+        body = self._block(lines)
+        if len(lines) > QUOTE_FROM:
+            body = "<blockquote expandable>%s</blockquote>" % body
+        chat._say("%s\n%s" % (escape(header), body), keyboard=self._station_buttons(chat, station))
 
     def _cmd_soglia(self, chat, station_id=None):
         subs = chat.subscription_ids
@@ -188,7 +259,7 @@ class TelegramHandlerFuel(models.AbstractModel):
             return chat._say(_("Follow a fuel first: open a station and tap the fuel."))
         if len(subs) == 1:
             return self._ask_threshold(chat, subs.id)
-        keyboard = [[{'text': "%s %s" % (s.station_id.name, self._fuel_label(s.station_fuel_id)),
+        keyboard = [[{'text': "%s %s" % (self._short(s.station_id.name, 16), self._fuel_label(s.station_fuel_id)),
                       'callback_data': 'thr:%s' % s.id}] for s in subs]
         chat._say(_("Which subscription?"), keyboard=keyboard)
 
@@ -235,29 +306,10 @@ class TelegramHandlerFuel(models.AbstractModel):
         return [[{'text': navigate, 'url': chat.bot_id._maps_link(station)},
                  {'text': card, 'callback_data': 'st:%s' % station.id}]]
 
-    def _station_message(self, chat, station, km=None, fuel=None, rank=None):
-        """One card per station: price line (or every price), name, address, distance, time."""
-        bot = chat.bot_id
-        lines = []
-        if fuel is not None:
-            medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "%s." % rank if rank else "")
-            lines.append("%s <b>%.3f €</b>%s · %s" % (medal, fuel.current_price, self._previous(fuel),
-                                                     escape(self._fuel_label(fuel))))
-        lines.append("⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")))
-        address = ", ".join(p for p in (station.street, station.city) if p) or station.address or ""
-        distance = " · %.1f km" % km if km is not None else ""
-        lines.append("📍 %s%s" % (escape(address), distance))
-        if fuel is not None:
-            lines.append("🕒 %s" % bot._fmt_station_dt(fuel.current_date))
-        else:
-            for row in station.fuel_ids.filtered('current_price'):
-                lines.append("• %s <b>%.3f €</b>%s · %s" % (escape(self._fuel_label(row)), row.current_price,
-                                                           self._previous(row), bot._fmt_station_dt(row.current_date)))
-        return "\n".join(lines)
-
-    def _send_nearest(self, chat, order='price'):
+    def _send_nearest(self, chat, message=None):
         lat, lng = chat.last_latitude, chat.last_longitude
         all_fuels = chat.fuel_type == ALL_FUELS
+        order = chat.last_order or 'price'
         if all_fuels:
             cards = [(station, km, None) for km, station in self.env['fuel.station']._nearest(lat, lng, self._limit())]
         else:
@@ -269,27 +321,41 @@ class TelegramHandlerFuel(models.AbstractModel):
             cards = [(fuel.station_id, km, fuel) for km, fuel in ranked]
         if not cards:
             change_fuel = _("Change fuel")
-            return chat._say(_("No station with %s within 100 km of this point.") % escape(chat.fuel_type or ""),
-                             keyboard=[[{'text': change_fuel, 'callback_data': 'fuel:'}]])
+            return self._say_or_edit(
+                chat, _("No station with %s within 100 km of this point.") % escape(chat.fuel_type or ""),
+                keyboard=[[{'text': change_fuel, 'callback_data': 'fuel:'}]], message=message)
         # labels first: a parenthesis opened right after a _() call confuses the term extractor
         by_distance = order == 'dist' or all_fuels
         fuel_label = _("All fuels") if all_fuels else chat.fuel_type
         order_label = _("by distance") if by_distance else _("by price")
-        header = _("%(fuel)s %(mode)s, %(order)s", fuel=fuel_label,
-                   mode="" if all_fuels else self._mode_label(chat), order=order_label)
-        chat._say("<b>%s</b>" % escape(header))
-        for rank, (station, km, fuel) in enumerate(cards, 1):
-            chat._say(self._station_message(chat, station, km=km, fuel=fuel, rank=None if by_distance else rank),
-                      keyboard=self._station_buttons(chat, station))
+        header = _("⛽ %(fuel)s %(mode)s · %(order)s · %(count)s stations",
+                   fuel=fuel_label, mode="" if all_fuels else self._mode_label(chat),
+                   order=order_label, count=len(cards))
+        lines = []
+        for index, (station, km, fuel) in enumerate(cards, 1):
+            if fuel is not None:
+                lines.append("%2d  %7s €  %-9s %s" % (index, self._fmt_price(fuel.current_price),
+                                                     self._trend(fuel), self._age(fuel.current_date)))
+                lines.append("    %s · %s" % (self._short(station.name, 18), self._km(km)))
+            else:
+                lines.append("%2d  %s · %s" % (index, self._short(station.name, 18), self._km(km)))
+                prices = "  ".join("%s %s" % (self._short(row.fuel_type, 10), self._fmt_price(row.current_price))
+                                   for row in station.fuel_ids.filtered('current_price'))
+                lines.append("    %s" % prices)
+        keyboard = self._number_keyboard(['st:%s:near' % station.id for station, _km, _fuel in cards])
         toggle_label = _("💶 By price") if by_distance else _("📏 By distance")
         mode_label = _("Served") if chat.is_self else _("Self service")
-        fuel_button = _("Fuel")
-        footer = _("Change the list:")
-        keyboard = [[{'text': fuel_button, 'callback_data': 'fuel:'}]]
+        fuel_button = _("⛽ Fuel")
+        row = [{'text': fuel_button, 'callback_data': 'fuel:'}]
         if not all_fuels:
-            keyboard[0].insert(0, {'text': mode_label, 'callback_data': 'mode:0' if chat.is_self else 'mode:1'})
-            keyboard[0].insert(0, {'text': toggle_label, 'callback_data': 'near:price' if by_distance else 'near:dist'})
-        chat._say(footer, keyboard=keyboard)
+            row.insert(0, {'text': mode_label, 'callback_data': 'mode:0' if chat.is_self else 'mode:1'})
+            row.insert(0, {'text': toggle_label, 'callback_data': 'near:price' if by_distance else 'near:dist'})
+        keyboard.append(row)
+        self._say_or_edit(chat, "%s\n%s" % (escape(header), self._block(lines)),
+                          keyboard=keyboard, message=message)
+
+    def _km(self, km):
+        return _("%.1f km") % km
 
     def _search_stations(self, chat, text):
         # never name this _search: it would shadow the ORM method
@@ -299,8 +365,15 @@ class TelegramHandlerFuel(models.AbstractModel):
         if not stations:
             return chat._say(_("No station found for \"%s\". Try a town name or send your location.") % escape(text),
                              reply_keyboard=self._location_keyboard())
-        for station in stations:
-            chat._say(self._station_message(chat, station), keyboard=self._station_buttons(chat, station))
+        lines = []
+        for index, station in enumerate(stations, 1):
+            lines.append("%2d  %s · %s" % (index, self._short(station.name, 18), self._short(station.city or "", 12)))
+            prices = "  ".join("%s %s" % (self._short(row.fuel_type, 10), self._fmt_price(row.current_price))
+                               for row in station.fuel_ids.filtered('current_price'))
+            lines.append("    %s" % prices)
+        header = _("🔎 %(text)s · %(count)s stations", text=self._short(text, 20), count=len(stations))
+        keyboard = self._number_keyboard(['st:%s' % station.id for station in stations])
+        chat._say("%s\n%s" % (escape(header), self._block(lines)), keyboard=keyboard)
 
     # ------------------------------------------------------------------
     # station card and subscriptions
@@ -308,17 +381,10 @@ class TelegramHandlerFuel(models.AbstractModel):
     def _fuel_label(self, fuel):
         return "%s %s" % (fuel.fuel_type, _("Self") if fuel.is_self else _("Served"))
 
-    def _previous(self, fuel):
-        """' (prev. 1.799)' when the price moved once, empty while the first price holds."""
-        if not fuel.previous_price:
-            return ""
-        label = _("prev. %.3f") % fuel.previous_price
-        return " (%s)" % label
-
     def _mode_label(self, chat):
         return _("Self") if chat.is_self else _("Served")
 
-    def _station_keyboard(self, chat, station):
+    def _station_keyboard(self, chat, station, origin=''):
         followed = set(chat.subscription_ids.mapped('station_fuel_id').ids)
         navigate = _("🧭 Navigate")
         keyboard = [[{'text': navigate, 'url': chat.bot_id._maps_link(station)}]]
@@ -330,28 +396,63 @@ class TelegramHandlerFuel(models.AbstractModel):
         if followed & set(station.fuel_ids.ids):
             row.append({'text': _("⚙️ Thresholds"), 'callback_data': 'thrst:%s' % station.id})
         keyboard.append(row)
+        if origin:
+            back = _("🔙 List")
+            keyboard.append([{'text': back, 'callback_data': 'back:%s' % origin}])
         return keyboard
 
-    def _show_station(self, chat, station_id):
+    def _station_text(self, chat, station):
+        address = ", ".join(p for p in (station.street, station.city, station.province) if p) or station.address or ""
+        lines = ["⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")),
+                 "📍 %s" % escape(address)]
+        rows = []
+        no_change = _("no change yet")
+        for fuel in station.fuel_ids.filtered('current_price'):
+            previous = self._fmt_price(fuel.previous_price) if fuel.previous_price else no_change
+            rows.append("%-18s %7s €  %s" % (self._short(self._fuel_label(fuel), 18),
+                                             self._fmt_price(fuel.current_price), previous))
+        newest = max(station.fuel_ids.filtered('current_date').mapped('current_date'), default=None)
+        lines.append("🕒 %s" % self._when(newest))
+        lines.append(self._block(rows))
+        lines.append(escape(_("Tap a fuel to follow it, tap again to stop.")))
+        return "\n".join(lines)
+
+    def _show_station(self, chat, station_id, message=None, origin=''):
         station = self.env['fuel.station'].browse(station_id).exists()
         if not station:
             return chat._say(_("Station not found."))
         chat.write({'last_station_id': station.id})
-        bot = chat.bot_id
-        address = ", ".join(p for p in (station.street, station.city) if p) or station.address or ""
-        bot._call('sendVenue', chat_id=chat.chat_id, latitude=station.latitude, longitude=station.longitude,
-                  title=station.name, address=address)
-        lines = ["<b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")),
-                 "📍 " + escape(", ".join(p for p in (station.street, station.city, station.province) if p)
-                               or station.address or ""),
-                 ""]
-        no_change = _("no change yet")
-        for fuel in station.fuel_ids.filtered('current_price'):
-            move = self._previous(fuel) or " <i>(%s)</i>" % escape(no_change)
-            lines.append("%s: <b>%.3f</b>%s · %s" % (escape(self._fuel_label(fuel)), fuel.current_price,
-                                                     move, bot._fmt_station_dt(fuel.current_date)))
-        lines += ["", escape(_("Tap a fuel to follow it, tap again to stop."))]
-        chat._say("\n".join(lines), keyboard=self._station_keyboard(chat, station))
+        self._say_or_edit(chat, self._station_text(chat, station),
+                          keyboard=self._station_keyboard(chat, station, origin=origin), message=message)
+
+    def _show_subscription(self, chat, sub_id, message=None):
+        sub = chat.subscription_ids.filtered(lambda s: s.id == sub_id)
+        if not sub:
+            return self._cmd_lista(chat, message=message)
+        fuel = sub.station_fuel_id
+        station = fuel.station_id
+        chat.write({'last_station_id': station.id})
+        previous = self._fmt_price(fuel.previous_price) if fuel.previous_price else _("no change yet")
+        lines = ["⛽ <b>%s</b> · %s" % (escape(station.name), escape(station.brand or "")),
+                 "📍 %s" % escape(", ".join(p for p in (station.street, station.city) if p) or station.address or ""),
+                 "🕒 %s" % self._when(fuel.current_date),
+                 self._block([
+                     "%-12s %s" % (_("fuel"), self._short(self._fuel_label(fuel), 18)),
+                     "%-12s %s €" % (_("now"), self._fmt_price(fuel.current_price)),
+                     "%-12s %s" % (_("before"), previous),
+                     "%-12s %s € / %s €" % (_("min / max"), self._fmt_price(fuel.min_price),
+                                            self._fmt_price(fuel.max_price)),
+                     "%-12s %s" % (_("alert"), sub._threshold_label()),
+                 ])]
+        keyboard = [
+            [{'text': _("⚙️ Thresholds"), 'callback_data': 'thr:%s' % sub.id},
+             {'text': _("🗑 Remove"), 'callback_data': 'del:%s' % sub.id}],
+            [{'text': _("📈 History"), 'callback_data': 'hist:%s' % station.id},
+             {'text': _("🧭 Navigate"), 'url': chat.bot_id._maps_link(station)}],
+            [{'text': _("⛽ Station"), 'callback_data': 'st:%s' % station.id},
+             {'text': _("🔙 List"), 'callback_data': 'back:list'}],
+        ]
+        self._say_or_edit(chat, "\n".join(lines), keyboard=keyboard, message=message)
 
     def _toggle_subscription(self, chat, station_fuel_id, message):
         fuel = self.env['fuel.station.fuel'].browse(station_fuel_id).exists()
@@ -373,29 +474,28 @@ class TelegramHandlerFuel(models.AbstractModel):
         chat.bot_id._call('editMessageReplyMarkup', chat_id=chat.chat_id, message_id=message['message_id'],
                           reply_markup={'inline_keyboard': self._station_keyboard(chat, fuel.station_id)})
 
-    def _remove_subscription(self, chat, sub_id):
+    def _remove_subscription(self, chat, sub_id, message=None):
         sub = chat.subscription_ids.filtered(lambda s: s.id == sub_id)
         if sub:
             name = sub.station_fuel_id.display_name
             sub.write({'active': False})
             chat._say(_("Unfollowed %s.") % escape(name))
         chat.invalidate_recordset(['subscription_ids'])
-        if chat.subscription_ids:
-            self._cmd_lista(chat)
+        self._cmd_lista(chat, message=message)
 
     def _ask_threshold(self, chat, sub_id):
         sub = self.env['fuel.telegram.subscription'].browse(sub_id).exists()
         if not sub or sub.chat_id != chat:
             return chat._say(_("Subscription not found."))
         chat.write({'state': 'threshold', 'pending_subscription_id': sub.id})
-        chat._say(_("%(name)s, now %(price).3f, alert %(rule)s.\n"
+        chat._say(_("%(name)s, now %(price)s, alert %(rule)s.\n"
                     "Send the new rule:\n"
                     "<code>sopra 1.85</code> alert above 1.85\n"
                     "<code>sotto 1.70</code> alert below 1.70\n"
                     "<code>1.70-1.85</code> alert outside the range\n"
                     "<code>nessuna</code> alert at every change",
-                    name=escape(sub.station_fuel_id.display_name), price=sub.current_price,
-                    rule=escape(sub._threshold_label())))
+                    name=escape(sub.station_fuel_id.display_name),
+                    price=self._fmt_price(sub.current_price), rule=escape(sub._threshold_label())))
 
     def _set_threshold(self, chat, text):
         sub = chat.pending_subscription_id
