@@ -100,6 +100,7 @@ journalctl -u upsmon-odoo-push -f
 
 ## Changelog
 
+- 19.0.1.0.1: outage lowest charge looks one minute past each edge, so a short self-test no longer reports 0 %.
 - 19.0.1.0.0: first release.
 
 # Credits
