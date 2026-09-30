@@ -1,0 +1,26 @@
+<section style="font-family: sans-serif; max-width: 900px; margin: 0 auto; padding: 16px;">
+    <h1 style="color: #F1972B;">UPS Monitor</h1>
+    <p>A Raspberry Pi reads an APC UPS through NUT and pushes the data to Odoo. Odoo stores the time series, detects mains outages and shows charts, outage history and events.</p>
+
+    <h2 style="color: #F1972B;">Features</h2>
+    <ul>
+        <li><b>UPS cards:</b> status, battery charge, load, mains voltage and agent state at a glance.</li>
+        <li><b>Charts:</b> mains voltage, battery charge and load over time, with pivot and list views.</li>
+        <li><b>Mains outages:</b> start, end, duration, lowest battery charge and low-battery flag for each outage, plus a monthly bar graph.</li>
+        <li><b>Events:</b> status changes and UPS communication losses reported by the collector.</li>
+        <li><b>Alerts:</b> chatter messages (emailed to followers) when mains fails, returns, or the Raspberry agent goes silent.</li>
+    </ul>
+
+    <h2 style="color: #F1972B;">Resilient by design</h2>
+    <p>The Raspberry keeps every sample in SQLite and advances its cursors only after Odoo confirms. If Odoo is down the agent backs off (60 s up to 15 min, with jitter) and sends the backlog in batches once Odoo answers. Resending a batch never creates duplicates.</p>
+
+    <h2 style="color: #F1972B;">Setup</h2>
+    <ol>
+        <li>Install the module. It creates the shared token in the system parameter <code>ups_monitor.token</code>.</li>
+        <li>Copy the <code>agent/</code> folder to the Raspberry and run <code>install.sh</code>.</li>
+        <li>Enter the Odoo URL and the token in <code>/etc/upsmon/odoo-push.env</code>.</li>
+        <li>Add the users who should receive alerts as followers of the UPS.</li>
+    </ol>
+
+    <p style="color: #666;">Maintained by <a href="https://stesi.consulting" style="color: #F1972B;">STeSI Consulting</a>. License OPL-1.</p>
+</section>

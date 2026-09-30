@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ups_root" name="UPS Monitor" web_icon="ups_monitor,static/description/icon.png" sequence="90"/>
+    <menuitem id="menu_ups_device" name="UPS" parent="menu_ups_root" action="action_ups_device" sequence="10"/>
+    <menuitem id="menu_ups_charts" name="Charts" parent="menu_ups_root" sequence="20"/>
+    <menuitem id="menu_ups_chart_voltage" name="Mains voltage" parent="menu_ups_charts" action="action_ups_chart_voltage" sequence="10"/>
+    <menuitem id="menu_ups_chart_battery" name="Battery charge" parent="menu_ups_charts" action="action_ups_chart_battery" sequence="20"/>
+    <menuitem id="menu_ups_chart_load" name="Load" parent="menu_ups_charts" action="action_ups_chart_load" sequence="30"/>
+    <menuitem id="menu_ups_outage" name="Mains outages" parent="menu_ups_root" action="action_ups_outage" sequence="30"/>
+    <menuitem id="menu_ups_event" name="Events" parent="menu_ups_root" action="action_ups_event" sequence="40"/>
+</odoo>

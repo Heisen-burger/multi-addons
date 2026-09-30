@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ups_device_user,ups.device user,model_ups_device,base.group_user,1,0,0,0
+access_ups_device_manager,ups.device manager,model_ups_device,base.group_system,1,1,1,1
+access_ups_sample_user,ups.sample user,model_ups_sample,base.group_user,1,0,0,0
+access_ups_sample_manager,ups.sample manager,model_ups_sample,base.group_system,1,1,1,1
+access_ups_event_user,ups.event user,model_ups_event,base.group_user,1,0,0,0
+access_ups_event_manager,ups.event manager,model_ups_event,base.group_system,1,1,1,1
+access_ups_outage_user,ups.outage user,model_ups_outage,base.group_user,1,0,0,0
+access_ups_outage_manager,ups.outage manager,model_ups_outage,base.group_system,1,1,1,1

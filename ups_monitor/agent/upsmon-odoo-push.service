@@ -1,0 +1,24 @@
+[Unit]
+Description=Push UPS data from upsmon SQLite to Odoo
+After=upsmon-collector.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=upsmon
+Group=upsmon
+EnvironmentFile=/etc/upsmon/odoo-push.env
+ExecStart=/usr/bin/python3 /opt/upsmon/ups_odoo_push.py
+Restart=always
+RestartSec=15
+StateDirectory=upsmon-push
+Nice=10
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+# SQLite in WAL mode needs write access to the -shm file even for a read-only connection
+ReadWritePaths=/var/lib/upsmon
+
+[Install]
+WantedBy=multi-user.target

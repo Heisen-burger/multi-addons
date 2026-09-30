@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ups_outage_list" model="ir.ui.view">
+        <field name="name">ups.outage.list</field>
+        <field name="model">ups.outage</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="not end">
+                <field name="device_id"/>
+                <field name="start"/>
+                <field name="end"/>
+                <field name="duration" string="Duration (min)"/>
+                <field name="min_charge"/>
+                <field name="low_battery"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ups_outage_form" model="ir.ui.view">
+        <field name="name">ups.outage.form</field>
+        <field name="model">ups.outage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="device_id"/>
+                            <field name="start"/>
+                            <field name="end"/>
+                        </group>
+                        <group>
+                            <field name="duration"/>
+                            <field name="min_charge"/>
+                            <field name="low_battery"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ups_outage_graph" model="ir.ui.view">
+        <field name="name">ups.outage.graph</field>
+        <field name="model">ups.outage</field>
+        <field name="arch" type="xml">
+            <graph string="Outages" type="bar">
+                <field name="start" interval="month"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_ups_outage_search" model="ir.ui.view">
+        <field name="name">ups.outage.search</field>
+        <field name="model">ups.outage</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="device_id"/>
+                <filter name="ongoing" string="Ongoing" domain="[('end', '=', False)]"/>
+                <filter name="low_battery" string="Low battery" domain="[('low_battery', '=', True)]"/>
+                <separator/>
+                <filter name="group_device" string="UPS" context="{'group_by': 'device_id'}"/>
+                <filter name="group_month" string="Month" context="{'group_by': 'start:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ups_outage" model="ir.actions.act_window">
+        <field name="name">Mains outages</field>
+        <field name="res_model">ups.outage</field>
+        <field name="view_mode">list,form,graph</field>
+    </record>
+</odoo>

@@ -1,0 +1,597 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ups_monitor
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20260908\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 13:12+0000\n"
+"PO-Revision-Date: 2026-09-30 13:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_kanban
+msgid "<span>Battery</span>"
+msgstr "<span>Batteria</span>"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_kanban
+msgid "<span>Last seen</span>"
+msgstr "<span>Ultimo contatto</span>"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_kanban
+msgid "<span>Load</span>"
+msgstr "<span>Carico</span>"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_kanban
+msgid "<span>Mains</span>"
+msgstr "<span>Rete</span>"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_kanban
+msgid "<span>Runtime</span>"
+msgstr "<span>Autonomia</span>"
+
+#. module: ups_monitor
+#: model:ir.model.constraint,message:ups_monitor.constraint_ups_device_serial_uniq
+msgid "A UPS with this serial already exists."
+msgstr "Esiste già un UPS con questo numero di serie."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_needaction
+msgid "Action Needed"
+msgstr "Azione richiesta"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__active
+msgid "Active"
+msgstr "Attivo"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__agent_state
+msgid "Agent State"
+msgstr "Stato agente"
+
+#. module: ups_monitor
+#: model:ir.model.fields.selection,name:ups_monitor.selection__ups_device__agent_state__offline
+msgid "Agent offline"
+msgstr "Agente offline"
+
+#. module: ups_monitor
+#: model:ir.model.fields.selection,name:ups_monitor.selection__ups_device__agent_state__online
+msgid "Agent online"
+msgstr "Agente online"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
+msgid "Archived"
+msgstr "Archiviato"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_attachment_count
+msgid "Attachment Count"
+msgstr "Numero di allegati"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__battery_charge
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_charge
+msgid "Battery Charge"
+msgstr "Carica batteria"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__battery_runtime
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_runtime
+msgid "Battery Runtime"
+msgstr "Autonomia batteria"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__battery_voltage
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_voltage
+msgid "Battery Voltage"
+msgstr "Tensione batteria"
+
+#. module: ups_monitor
+#: model:ir.actions.act_window,name:ups_monitor.action_ups_chart_battery
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_chart_battery
+msgid "Battery charge"
+msgstr "Carica batteria"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__battery_charge
+msgid "Battery charge (%)."
+msgstr "Carica della batteria (%)."
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__battery_voltage
+msgid "Battery voltage (V)."
+msgstr "Tensione della batteria (V)."
+
+#. module: ups_monitor
+#. odoo-python
+#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
+#: code:addons/ups_monitor/models/ups_device.py:0
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_charts
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
+msgid "Charts"
+msgstr "Grafici"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_event_search
+msgid "Communication"
+msgstr "Comunicazione"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__create_uid
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__create_uid
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__create_date
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__create_date
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "Day"
+msgstr "Giorno"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__detail
+msgid "Detail"
+msgstr "Dettaglio"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__device_id
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__device_id
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__device_id
+msgid "Device"
+msgstr "Dispositivo"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__display_name
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__display_name
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__display_name
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__duration
+msgid "Duration"
+msgstr "Durata"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_list
+msgid "Duration (min)"
+msgstr "Durata (min)"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_outage__end
+msgid "Empty while the UPS still runs on battery."
+msgstr "Vuoto finché l'UPS funziona a batteria."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__end
+msgid "End"
+msgstr "Fine"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__battery_runtime
+msgid "Estimated runtime on battery (seconds)."
+msgstr "Autonomia stimata a batteria (secondi)."
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_event__remote_id
+msgid "Event id in the Raspberry SQLite database; makes retries idempotent."
+msgstr "ID dell'evento nel database SQLite del Raspberry; rende idempotenti i nuovi invii."
+
+#. module: ups_monitor
+#: model:ir.actions.act_window,name:ups_monitor.action_ups_event
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_event
+msgid "Events"
+msgstr "Eventi"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_follower_ids
+msgid "Followers"
+msgstr "Follower"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Follower (partner)"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__has_message
+msgid "Has Message"
+msgstr "Ha un messaggio"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "Hour"
+msgstr "Ora"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__id
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__id
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__id
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__id
+msgid "ID"
+msgstr "ID"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Se selezionato, nuovi messaggi richiedono la tua attenzione."
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Se selezionato, alcuni messaggi hanno un errore di consegna."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__input_voltage
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__input_voltage
+msgid "Input Voltage"
+msgstr "Tensione di ingresso"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_is_follower
+msgid "Is Follower"
+msgstr "È un follower"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__kind
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_event_search
+msgid "Kind"
+msgstr "Tipo"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "Last 24 hours"
+msgstr "Ultime 24 ore"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "Last 30 days"
+msgstr "Ultimi 30 giorni"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "Last 7 days"
+msgstr "Ultimi 7 giorni"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__last_seen
+msgid "Last Seen"
+msgstr "Ultimo contatto"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__write_uid
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__write_uid
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__write_date
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__write_date
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__write_date
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__last_seen
+msgid "Last time the Raspberry agent reached Odoo."
+msgstr "Ultima volta che l'agente sul Raspberry ha contattato Odoo."
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
+msgid "Latest values"
+msgstr "Ultimi valori"
+
+#. module: ups_monitor
+#: model:ir.actions.act_window,name:ups_monitor.action_ups_chart_load
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__ups_load
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__ups_load
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_chart_load
+msgid "Load"
+msgstr "Carico"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__low_battery
+msgid "Low Battery"
+msgstr "Batteria scarica"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_search
+msgid "Low battery"
+msgstr "Batteria scarica"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_outage__min_charge
+msgid "Lowest battery charge during the outage (%)."
+msgstr "Carica minima della batteria durante il blackout (%)."
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__input_voltage
+msgid "Mains input voltage (V)."
+msgstr "Tensione di rete in ingresso (V)."
+
+#. module: ups_monitor
+#: model:ir.actions.act_window,name:ups_monitor.action_ups_outage
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_outage
+msgid "Mains outages"
+msgstr "Blackout di rete"
+
+#. module: ups_monitor
+#. odoo-python
+#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
+#: code:addons/ups_monitor/models/ups_device.py:0
+msgid "Mains power lost: the UPS runs on battery."
+msgstr "Rete elettrica assente: l'UPS funziona a batteria."
+
+#. module: ups_monitor
+#. odoo-python
+#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
+#: code:addons/ups_monitor/models/ups_device.py:0
+msgid "Mains power restored after %.1f minutes."
+msgstr "Rete elettrica ripristinata dopo %.1f minuti."
+
+#. module: ups_monitor
+#: model:ir.actions.act_window,name:ups_monitor.action_ups_chart_voltage
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_chart_voltage
+msgid "Mains voltage"
+msgstr "Tensione di rete"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__manufacturer
+msgid "Manufacturer"
+msgstr "Produttore"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_has_error
+msgid "Message Delivery error"
+msgstr "Errore di consegna del messaggio"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_ids
+msgid "Messages"
+msgstr "Messaggi"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__min_charge
+msgid "Min Charge"
+msgstr "Carica minima"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "Minute"
+msgstr "Minuto"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_outage__duration
+msgid "Minutes on battery."
+msgstr "Minuti a batteria."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__model
+msgid "Model"
+msgstr "Modello"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_search
+msgid "Month"
+msgstr "Mese"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__vars_json
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
+msgid "NUT variables"
+msgstr "Variabili NUT"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__new_status
+msgid "New Status"
+msgstr "Nuovo stato"
+
+#. module: ups_monitor
+#. odoo-python
+#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
+#: code:addons/ups_monitor/models/ups_device.py:0
+msgid "No data from the Raspberry agent for %s minutes."
+msgstr "Nessun dato dall'agente sul Raspberry da %s minuti."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Numero di azioni"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_has_error_counter
+msgid "Number of errors"
+msgstr "Numero di errori"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Numero di messaggi che richiedono un'azione"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Numero di messaggi con errore di consegna"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__old_status
+msgid "Old Status"
+msgstr "Vecchio stato"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__on_battery
+msgid "On Battery"
+msgstr "A batteria"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_search
+msgid "Ongoing"
+msgstr "In corso"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__outage_count
+msgid "Outage Count"
+msgstr "Numero di blackout"
+
+#. module: ups_monitor
+#. odoo-python
+#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
+#: code:addons/ups_monitor/models/ups_device.py:0
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_graph
+msgid "Outages"
+msgstr "Blackout"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__status
+msgid ""
+"Raw NUT status: OL online, OB on battery, LB low battery, CHRG, DISCHRG."
+msgstr ""
+"Stato NUT grezzo: OL in rete, OB a batteria, LB batteria scarica, CHRG in "
+"carica, DISCHRG in scarica."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__remote_id
+msgid "Remote"
+msgstr "ID remoto"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__serial
+msgid "Serial"
+msgstr "Numero di serie"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__start
+msgid "Start"
+msgstr "Inizio"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__status
+msgid "Status"
+msgstr "Stato"
+
+#. module: ups_monitor
+#: model:ir.model.fields.selection,name:ups_monitor.selection__ups_event__kind__status_change
+msgid "Status change"
+msgstr "Cambio di stato"
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_event_search
+msgid "Status changes"
+msgstr "Cambi di stato"
+
+#. module: ups_monitor
+#. odoo-python
+#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
+#: code:addons/ups_monitor/models/ups_device.py:0
+msgid "The Raspberry agent is back online."
+msgstr "L'agente sul Raspberry è di nuovo online."
+
+#. module: ups_monitor
+#: model:ir.model.constraint,message:ups_monitor.constraint_ups_sample_device_timestamp_uniq
+msgid "The UPS already has a sample at this time."
+msgstr "L'UPS ha già un campione a questo orario."
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_outage__low_battery
+msgid "The UPS raised the low-battery flag."
+msgstr "L'UPS ha segnalato la batteria scarica."
+
+#. module: ups_monitor
+#: model:ir.model.constraint,message:ups_monitor.constraint_ups_event_device_remote_uniq
+msgid "This event was already received."
+msgstr "Questo evento è già stato ricevuto."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_event__timestamp
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__timestamp
+msgid "Timestamp"
+msgstr "Data e ora"
+
+#. module: ups_monitor
+#: model:ir.actions.act_window,name:ups_monitor.action_ups_device
+#: model:ir.model,name:ups_monitor.model_ups_device
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_device
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_event_search
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_search
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
+msgid "UPS"
+msgstr "UPS"
+
+#. module: ups_monitor
+#: model:ir.model,name:ups_monitor.model_ups_event
+msgid "UPS Event"
+msgstr "Evento UPS"
+
+#. module: ups_monitor
+#: model:ir.model,name:ups_monitor.model_ups_outage
+msgid "UPS Mains Outage"
+msgstr "Blackout di rete UPS"
+
+#. module: ups_monitor
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_root
+msgid "UPS Monitor"
+msgstr "Monitor UPS"
+
+#. module: ups_monitor
+#: model:ir.actions.server,name:ups_monitor.ir_cron_check_agents_ir_actions_server
+msgid "UPS Monitor: flag silent agents"
+msgstr "Monitor UPS: segnala agenti silenziosi"
+
+#. module: ups_monitor
+#: model:ir.actions.server,name:ups_monitor.ir_cron_purge_samples_ir_actions_server
+msgid "UPS Monitor: purge old samples"
+msgstr "Monitor UPS: elimina i campioni vecchi"
+
+#. module: ups_monitor
+#: model:ir.model,name:ups_monitor.model_ups_sample
+msgid "UPS Sample"
+msgstr "Campione UPS"
+
+#. module: ups_monitor
+#: model:ir.model.fields.selection,name:ups_monitor.selection__ups_event__kind__comm_lost
+msgid "UPS communication lost"
+msgstr "Comunicazione con l'UPS persa"
+
+#. module: ups_monitor
+#: model:ir.model.fields.selection,name:ups_monitor.selection__ups_event__kind__comm_ok
+msgid "UPS communication restored"
+msgstr "Comunicazione con l'UPS ripristinata"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__ups_load
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__ups_load
+msgid "UPS load (%)."
+msgstr "Carico dell'UPS (%)."
+
+#. module: ups_monitor
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_graph
+msgid "UPS trend"
+msgstr "Andamento UPS"

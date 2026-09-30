@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ups_sample_list" model="ir.ui.view">
+        <field name="name">ups.sample.list</field>
+        <field name="model">ups.sample</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="timestamp"/>
+                <field name="device_id"/>
+                <field name="battery_charge"/>
+                <field name="battery_runtime"/>
+                <field name="battery_voltage"/>
+                <field name="input_voltage"/>
+                <field name="ups_load"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ups_sample_graph" model="ir.ui.view">
+        <field name="name">ups.sample.graph</field>
+        <field name="model">ups.sample</field>
+        <field name="arch" type="xml">
+            <graph string="UPS trend" type="line">
+                <field name="timestamp" interval="hour"/>
+                <field name="input_voltage" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_ups_sample_pivot" model="ir.ui.view">
+        <field name="name">ups.sample.pivot</field>
+        <field name="model">ups.sample</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="timestamp" interval="day" type="row"/>
+                <field name="input_voltage" type="measure"/>
+                <field name="battery_charge" type="measure"/>
+                <field name="ups_load" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_ups_sample_search" model="ir.ui.view">
+        <field name="name">ups.sample.search</field>
+        <field name="model">ups.sample</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="device_id"/>
+                <filter name="last_24h" string="Last 24 hours"
+                        domain="[('timestamp', '&gt;=', (datetime.datetime.now() - relativedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter name="last_7d" string="Last 7 days"
+                        domain="[('timestamp', '&gt;=', (datetime.datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter name="last_30d" string="Last 30 days"
+                        domain="[('timestamp', '&gt;=', (datetime.datetime.now() - relativedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <separator/>
+                <filter name="group_device" string="UPS" context="{'group_by': 'device_id'}"/>
+                <filter name="group_minute" string="Minute" context="{'group_by': 'timestamp:minute'}"/>
+                <filter name="group_hour" string="Hour" context="{'group_by': 'timestamp:hour'}"/>
+                <filter name="group_day" string="Day" context="{'group_by': 'timestamp:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ups_chart_voltage" model="ir.actions.act_window">
+        <field name="name">Mains voltage</field>
+        <field name="res_model">ups.sample</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_last_24h': 1, 'graph_measure': 'input_voltage', 'graph_mode': 'line'}</field>
+    </record>
+
+    <record id="action_ups_chart_battery" model="ir.actions.act_window">
+        <field name="name">Battery charge</field>
+        <field name="res_model">ups.sample</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_last_24h': 1, 'graph_measure': 'battery_charge', 'graph_mode': 'line'}</field>
+    </record>
+
+    <record id="action_ups_chart_load" model="ir.actions.act_window">
+        <field name="name">Load</field>
+        <field name="res_model">ups.sample</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_last_24h': 1, 'graph_measure': 'ups_load', 'graph_mode': 'line'}</field>
+    </record>
+</odoo>

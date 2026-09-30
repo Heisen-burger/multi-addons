@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ups_event_list" model="ir.ui.view">
+        <field name="name">ups.event.list</field>
+        <field name="model">ups.event</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" decoration-danger="kind == 'comm_lost'">
+                <field name="timestamp"/>
+                <field name="device_id"/>
+                <field name="kind"/>
+                <field name="old_status"/>
+                <field name="new_status"/>
+                <field name="detail"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ups_event_search" model="ir.ui.view">
+        <field name="name">ups.event.search</field>
+        <field name="model">ups.event</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="device_id"/>
+                <field name="new_status"/>
+                <filter name="status_change" string="Status changes" domain="[('kind', '=', 'status_change')]"/>
+                <filter name="comm" string="Communication" domain="[('kind', '!=', 'status_change')]"/>
+                <separator/>
+                <filter name="group_device" string="UPS" context="{'group_by': 'device_id'}"/>
+                <filter name="group_kind" string="Kind" context="{'group_by': 'kind'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ups_event" model="ir.actions.act_window">
+        <field name="name">Events</field>
+        <field name="res_model">ups.event</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
