@@ -147,6 +147,34 @@ def push_all(state):
         time.sleep(1)
 
 
+def backfill_hourly():
+    """One-shot: send the hourly averages that predate the oldest minute snapshot.
+
+    The collector rolls raw samples into hourly buckets and prunes snapshots after
+    30 days. Both sources together cover the whole history. Cursors stay untouched.
+    """
+    con = open_db()
+    try:
+        current = live_vars(con)
+        oldest = con.execute("SELECT COALESCE(MIN(ts), strftime('%s','now')) FROM snapshots").fetchone()[0]
+        by_ts = {}
+        for row in con.execute(
+                "SELECT ts, metric, avg FROM samples_hourly WHERE ts < ? AND metric IN (%s) ORDER BY ts"
+                % ",".join("?" * len(KEEP)), (int(oldest), *KEEP)):
+            by_ts.setdefault(row["ts"], {})[row["metric"]] = row["avg"]
+        state = load_state()
+        samples = [{"ts": ts, "m": m} for ts, m in by_ts.items()]
+        for i in range(0, len(samples), BATCH):
+            chunk = samples[i:i + BATCH]
+            payload = build_batch(con, {**state, "sample_ts": 2 ** 62, "event_id": 2 ** 62}, current)
+            payload["samples"] = chunk
+            post(payload)
+            LOG.info("hourly backfill: sent %d of %d", i + len(chunk), len(samples))
+            time.sleep(1)
+    finally:
+        con.close()
+
+
 def newest_event_id():
     con = open_db()
     try:
@@ -158,6 +186,8 @@ def newest_event_id():
 def main():
     logging.basicConfig(level=os.environ.get("PUSH_LOGLEVEL", "INFO"),
                         format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    if "--backfill-hourly" in sys.argv:
+        return backfill_hourly()
     signal.signal(signal.SIGTERM, _stop)
     signal.signal(signal.SIGINT, _stop)
     state = load_state()

@@ -98,8 +98,22 @@ sudo sh install.sh                                   # installs and starts upsmo
 journalctl -u upsmon-odoo-push -f
 ```
 
+## Import the old history
+
+The collector keeps minute snapshots for 30 days and hourly averages for 3 years. The service
+sends the snapshots on its own. Older data goes out once, as hourly points, with:
+
+```bash
+sudo -u upsmon sh -c 'set -a; . /etc/upsmon/odoo-push.env; python3 /opt/upsmon/ups_odoo_push.py --backfill-hourly'
+```
+
+Hourly points stop where the minute snapshots begin, so no hour is counted twice. To resend the
+minute snapshots too, stop the service and set `sample_ts` to `0` in `/var/lib/upsmon-push/state.json`.
+Odoo skips what it already has.
+
 ## Changelog
 
+- 19.0.1.1.0: `--backfill-hourly` imports the hourly history that predates the minute snapshots.
 - 19.0.1.0.1: outage lowest charge looks one minute past each edge, so a short self-test no longer reports 0 %.
 - 19.0.1.0.0: first release.
 
