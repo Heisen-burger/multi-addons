@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_ups_root" name="UPS Monitor" web_icon="ups_monitor,static/description/icon.png" sequence="90"/>
+    <record id="action_ups_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">ups_monitor.dashboard</field>
+    </record>
+    <menuitem id="menu_ups_dashboard" name="Dashboard" parent="menu_ups_root" action="action_ups_dashboard" sequence="5"/>
     <menuitem id="menu_ups_device" name="UPS" parent="menu_ups_root" action="action_ups_device" sequence="10"/>
     <menuitem id="menu_ups_charts" name="Charts" parent="menu_ups_root" sequence="20"/>
     <menuitem id="menu_ups_chart_voltage" name="Mains voltage" parent="menu_ups_charts" action="action_ups_chart_voltage" sequence="10"/>

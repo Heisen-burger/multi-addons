@@ -9,9 +9,11 @@ answers again.
 
 Flood control:
 - steady state: one POST per PUSH_INTERVAL (also serves as heartbeat);
-- a new event (mains failure) goes out at once, but never sooner than
-  MIN_GAP seconds after the previous attempt;
-- after a failure the delay doubles up to BACKOFF_MAX, with +-20% jitter;
+- a status change or new event (mains failure) goes out at once, but never
+  sooner than MIN_GAP seconds after the previous attempt;
+- while the UPS runs on battery the interval drops to BATTERY_INTERVAL;
+- after a failure the delay doubles up to BACKOFF_MAX (60 s on battery),
+  with +-20% jitter;
 - a backlog drains at one batch per second.
 
 Standard library only.
@@ -35,12 +37,13 @@ DB = os.environ.get("UPSMON_DB", "/var/lib/upsmon/upsmon.db")
 LIVE = os.environ.get("UPSMON_LIVE", "/run/upsmon/latest.json")
 STATE = os.environ.get("PUSH_STATE", "/var/lib/upsmon-push/state.json")
 PUSH_INTERVAL = int(os.environ.get("PUSH_INTERVAL", "60"))
-MIN_GAP = int(os.environ.get("PUSH_MIN_GAP", "10"))
+BATTERY_INTERVAL = int(os.environ.get("PUSH_BATTERY_INTERVAL", "10"))
+MIN_GAP = int(os.environ.get("PUSH_MIN_GAP", "2"))
 BACKOFF_MAX = int(os.environ.get("PUSH_BACKOFF_MAX", "900"))
 BATCH = int(os.environ.get("PUSH_BATCH", "500"))
 BACKFILL_DAYS = int(os.environ.get("PUSH_BACKFILL_DAYS", "14"))
 TIMEOUT = int(os.environ.get("PUSH_TIMEOUT", "20"))
-TICK = 5
+TICK = 1
 
 # NUT variables Odoo stores as time series; keep in sync with ups_monitor/models/ups_sample.py
 KEEP = ("battery.charge", "battery.runtime", "battery.voltage", "input.voltage", "ups.load")
@@ -89,14 +92,36 @@ def live_vars(con):
     return json.loads(row["data"]) if row else {}
 
 
+def live_status():
+    """NUT status from the live file on tmpfs (no SD card access); None if unknown."""
+    try:
+        with open(LIVE) as fh:
+            live = json.load(fh)
+        return live["vars"]["ups.status"] if live.get("online") else None
+    except (OSError, ValueError, KeyError):
+        return None
+
+
 def build_batch(con, state, current):
     ts_rows = con.execute(
         "SELECT ts, data FROM snapshots WHERE ts > ? ORDER BY ts LIMIT ?",
         (state["sample_ts"], BATCH)).fetchall()
+    ranges = {}
+    if ts_rows:
+        # mean, minimum and maximum per flush; older rows only have the snapshot
+        for r in con.execute(
+                "SELECT ts, metric, avg, min, max FROM samples_range WHERE ts BETWEEN ? AND ? AND metric IN (%s)"
+                % ",".join("?" * len(KEEP)), (ts_rows[0]["ts"], ts_rows[-1]["ts"], *KEEP)):
+            ranges.setdefault(r["ts"], {})[r["metric"]] = r
     samples = []
     for row in ts_rows:
         data = json.loads(row["data"])
-        samples.append({"ts": row["ts"], "m": {k: data[k] for k in KEEP if k in data}})
+        found = ranges.get(row["ts"], {})
+        sample = {"ts": row["ts"], "m": {k: found[k]["avg"] if k in found else data[k] for k in KEEP if k in data}}
+        if found:
+            sample["lo"] = {k: v["min"] for k, v in found.items()}
+            sample["hi"] = {k: v["max"] for k, v in found.items()}
+        samples.append(sample)
     events = [dict(r) for r in con.execute(
         "SELECT id, ts, kind, old, new, detail FROM events WHERE id > ? ORDER BY id LIMIT ?",
         (state["event_id"], BATCH))]
@@ -192,19 +217,29 @@ def main():
     signal.signal(signal.SIGINT, _stop)
     state = load_state()
     last_attempt = 0.0
+    last_check = 0.0
     next_try = 0.0
     failures = 0
-    LOG.info("started, target %s, interval %ss", URL, PUSH_INTERVAL)
+    pending = False          # something new is waiting: send without waiting for the interval
+    last_status = live_status()
+    LOG.info("started, target %s, interval %ss (%ss on battery)", URL, PUSH_INTERVAL, BATTERY_INTERVAL)
     while _running:
         now = time.time()
-        try:
-            new_event = newest_event_id() > state["event_id"]
-        except sqlite3.Error as exc:
-            LOG.warning("SQLite not readable: %s", exc)
-            new_event = False
-        if now >= next_try and now - last_attempt >= MIN_GAP and (
-                new_event or now - last_attempt >= PUSH_INTERVAL):
+        status = live_status()   # tmpfs read, cheap enough for every tick
+        on_battery = "OB" in (status or "").split()
+        if status is not None and status != last_status:
+            last_status = status
+            pending = True       # the collector writes the event before it updates the live file
+        elif now - last_check >= 5:
+            last_check = now
+            try:
+                pending = pending or newest_event_id() > state["event_id"]
+            except sqlite3.Error as exc:
+                LOG.warning("SQLite not readable: %s", exc)
+        interval = BATTERY_INTERVAL if on_battery else PUSH_INTERVAL
+        if now >= next_try and now - last_attempt >= MIN_GAP and (pending or now - last_attempt >= interval):
             last_attempt = now
+            pending = False
             try:
                 push_all(state)
                 if failures:
@@ -213,7 +248,9 @@ def main():
                 next_try = 0.0
             except (urllib.error.URLError, OSError, RuntimeError, ValueError, sqlite3.Error) as exc:
                 failures += 1
-                delay = min(PUSH_INTERVAL * 2 ** failures, BACKOFF_MAX) * random.uniform(0.8, 1.2)
+                pending = True
+                # on battery the wait stays short: the Raspberry may lose power, so every second counts
+                delay = min(PUSH_INTERVAL * 2 ** failures, 60 if on_battery else BACKOFF_MAX) * random.uniform(0.8, 1.2)
                 next_try = time.time() + delay
                 LOG.warning("push failed (%s); retry in %ds, data stays queued in SQLite", exc, delay)
         time.sleep(TICK)

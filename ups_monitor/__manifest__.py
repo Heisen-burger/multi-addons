@@ -6,7 +6,7 @@
     'license': 'OPL-1',
     'author': "STeSI Consulting",
     'category': 'Tools',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'website': "https://github.com/Heisen-burger/multi-addons",
     'depends': ['mail'],
     'data': [
@@ -18,5 +18,10 @@
         'views/menus.xml',
         'data/ir_cron.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'ups_monitor/static/src/dashboard/**/*',
+        ],
+    },
     'post_init_hook': '_post_init_hook',
 }

@@ -12,7 +12,7 @@ def _payload(samples=(), events=(), status='OL CHRG'):
     return {
         'device': {'serial': 'TEST-1', 'manufacturer': 'APC', 'model': 'Back-UPS'},
         'vars': {'ups.status': status, 'battery.charge': '100', 'input.voltage': '229.0', 'ups.load': '17'},
-        'samples': [{'ts': ts, 'm': {'battery.charge': str(charge), 'input.voltage': '229'}} for ts, charge in samples],
+        'samples': [{'ts': ts, 'm': {'battery.charge': str(charge), 'input.voltage': '229', 'ups.load': '17'}} for ts, charge in samples],
         'events': [{'id': i, 'ts': ts, 'kind': 'status_change', 'old': old, 'new': new}
                    for i, ts, old, new in events],
     }
@@ -52,6 +52,36 @@ class TestIngest(TransactionCase):
         device.last_seen = '2000-01-01 00:00:00'
         self.env['ups.device']._cron_check_agents()
         self.assertEqual(device.agent_state, 'offline')
+
+    def test_min_max_are_stored(self):
+        payload = _payload()
+        payload['samples'] = [{
+            'ts': NOW - 60, 'm': {'input.voltage': '230'},
+            'lo': {'input.voltage': '190'}, 'hi': {'input.voltage': '236'}}]
+        self.env['ups.device']._ingest(payload)
+        sample = self.env['ups.sample'].search([('device_id.serial', '=', 'TEST-1')])
+        self.assertRecordValues(sample, [{'input_voltage': 230.0, 'input_voltage_min': 190.0, 'input_voltage_max': 236.0}])
+
+    def test_dashboard_data(self):
+        payload = _payload(
+            samples=[(NOW - 300, 100), (NOW - 240, 90), (NOW - 180, 95)],
+            events=[(1, NOW - 270, 'OL', 'OB DISCHRG'), (2, NOW - 250, 'OB DISCHRG', 'OL')])
+        payload['samples'][0].update(lo={'input.voltage': '190'}, hi={'input.voltage': '236'})
+        payload['vars'].update({'ups.realpower.nominal': '1000', 'ups.test.result': 'Done and passed'})
+        self.env['ups.device']._ingest(payload)
+        device = self.env['ups.device'].search([('serial', '=', 'TEST-1')])
+        data = self.env['ups.dashboard'].get_data(device.id, (NOW - 3600) * 1000, (NOW + 10) * 1000)
+        self.assertEqual(data['range']['bucket'], 'minute')
+        self.assertEqual(len(data['series']), 3)
+        self.assertEqual(data['device']['test_result'], 'Done and passed')
+        stats = data['stats']
+        self.assertEqual((stats['outages'], stats['outages_total']), (1, 1))
+        self.assertAlmostEqual(stats['on_battery_seconds'], 20)
+        self.assertAlmostEqual(stats['availability'], 100 * (1 - 20 / 3610), places=2)
+        self.assertEqual(stats['voltage']['min'], 190.0)
+        self.assertEqual(len(data['outages']), 1)
+        # every sample holds 17 % load of 1000 W for one minute: 120 s of data give 0.17 * 120 / 3600 kWh
+        self.assertAlmostEqual(stats['load']['kwh'], 0.17 * 120 / 3600, places=4)
 
     def test_missing_serial_is_refused(self):
         with self.assertRaises(ValueError):

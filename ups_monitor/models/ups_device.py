@@ -38,6 +38,9 @@ class UpsDevice(models.Model):
     battery_voltage = fields.Float(readonly=True)
     input_voltage = fields.Float(readonly=True)
     ups_load = fields.Float("Load", readonly=True, help="UPS load (%).")
+    nominal_power = fields.Float(readonly=True, help="Real power the UPS can deliver (W), used for the energy estimate.")
+    transfer_low = fields.Float(readonly=True, help="Mains voltage below which the UPS switches to battery (V).")
+    transfer_high = fields.Float(readonly=True, help="Mains voltage above which the UPS switches to battery (V).")
     vars_json = fields.Text("NUT variables", readonly=True)
     outage_count = fields.Integer(compute='_compute_outage_count')
 
@@ -60,6 +63,10 @@ class UpsDevice(models.Model):
             'domain': domain,
             'context': {'default_device_id': self.id},
         }
+
+    def action_open_dashboard(self):
+        self.ensure_one()
+        return {'type': 'ir.actions.client', 'tag': 'ups_monitor.dashboard', 'context': {'default_device_id': self.id}}
 
     def action_open_charts(self):
         self.ensure_one()
@@ -99,9 +106,12 @@ class UpsDevice(models.Model):
         parsed = {}
         for row in rows:
             try:
-                values = row['m']
-                parsed[_to_dt(row['ts'])] = {col: float(values[var]) for var, col in METRICS.items() if var in values}
-            except (KeyError, TypeError, ValueError):
+                vals = {}
+                for suffix, key in (('', 'm'), ('_min', 'lo'), ('_max', 'hi')):
+                    source = row.get(key) or {}
+                    vals.update({col + suffix: float(source[var]) for var, col in METRICS.items() if var in source})
+                parsed[_to_dt(row['ts'])] = vals
+            except (KeyError, TypeError, ValueError, AttributeError):
                 continue
         if not parsed:
             return 0
@@ -164,7 +174,8 @@ class UpsDevice(models.Model):
         if vars_:
             status = str(vars_.get('ups.status') or '')
             vals.update(status=status, on_battery='OB' in status.split(), vars_json=json.dumps(vars_, indent=1, sort_keys=True))
-            for var, col in METRICS.items():
+            for var, col in {**METRICS, 'ups.realpower.nominal': 'nominal_power',
+                             'input.transfer.low': 'transfer_low', 'input.transfer.high': 'transfer_high'}.items():
                 try:
                     vals[col] = float(vars_[var])
                 except (KeyError, TypeError, ValueError):
@@ -186,5 +197,5 @@ class UpsDevice(models.Model):
 
     @api.model
     def _cron_purge_samples(self):
-        days = int(self.env['ir.config_parameter'].sudo().get_param('ups_monitor.retention_days', 90))
+        days = int(self.env['ir.config_parameter'].sudo().get_param('ups_monitor.retention_days', 730))
         self.env['ups.sample'].search([('timestamp', '<', fields.Datetime.now() - timedelta(days=days))]).unlink()

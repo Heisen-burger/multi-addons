@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0-20260908\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 13:12+0000\n"
-"PO-Revision-Date: 2026-09-30 13:12+0000\n"
+"POT-Creation-Date: 2026-09-30 17:29+0000\n"
+"PO-Revision-Date: 2026-09-30 17:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -15,6 +15,42 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "1 hour"
+msgstr "1 ora"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "24 hours"
+msgstr "24 ore"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "30 days"
+msgstr "30 giorni"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "6 hours"
+msgstr "6 ore"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "7 days"
+msgstr "7 giorni"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "90 days"
+msgstr "90 giorni"
 
 #. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_kanban
@@ -72,6 +108,12 @@ msgid "Agent online"
 msgstr "Agente online"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "All"
+msgstr "Tutto"
+
+#. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
 msgid "Archived"
 msgstr "Archiviato"
@@ -82,10 +124,63 @@ msgid "Attachment Count"
 msgstr "Numero di allegati"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Availability"
+msgstr "Disponibilità"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Average"
+msgstr "Media"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Average charge"
+msgstr "Carica media"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Average load"
+msgstr "Carico medio"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Average outage"
+msgstr "Blackout medio"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Average runtime"
+msgstr "Autonomia media"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Battery"
+msgstr "Batteria"
+
+#. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__battery_charge
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_charge
 msgid "Battery Charge"
 msgstr "Carica batteria"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_charge_max
+msgid "Battery Charge Max"
+msgstr "Carica batteria max"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_charge_min
+msgid "Battery Charge Min"
+msgstr "Carica batteria min"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__battery_runtime
@@ -94,12 +189,34 @@ msgid "Battery Runtime"
 msgstr "Autonomia batteria"
 
 #. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_runtime_max
+msgid "Battery Runtime Max"
+msgstr "Autonomia batteria max"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_runtime_min
+msgid "Battery Runtime Min"
+msgstr "Autonomia batteria min"
+
+#. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__battery_voltage
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_voltage
 msgid "Battery Voltage"
 msgstr "Tensione batteria"
 
 #. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_voltage_max
+msgid "Battery Voltage Max"
+msgstr "Tensione batteria max"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__battery_voltage_min
+msgid "Battery Voltage Min"
+msgstr "Tensione batteria min"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
 #: model:ir.actions.act_window,name:ups_monitor.action_ups_chart_battery
 #: model:ir.ui.menu,name:ups_monitor.menu_ups_chart_battery
 msgid "Battery charge"
@@ -111,13 +228,24 @@ msgid "Battery charge (%)."
 msgstr "Carica della batteria (%)."
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Battery charge and load"
+msgstr "Carica batteria e carico"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Battery voltage (V)"
+msgstr "Tensione batteria (V)"
+
+#. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_sample__battery_voltage
 msgid "Battery voltage (V)."
 msgstr "Tensione della batteria (V)."
 
 #. module: ups_monitor
 #. odoo-python
-#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
 #: code:addons/ups_monitor/models/ups_device.py:0
 #: model:ir.ui.menu,name:ups_monitor.menu_ups_charts
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
@@ -144,6 +272,13 @@ msgid "Created on"
 msgstr "Creato il"
 
 #. module: ups_monitor
+#: model:ir.actions.client,name:ups_monitor.action_ups_dashboard
+#: model:ir.ui.menu,name:ups_monitor.menu_ups_dashboard
+#: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
+msgid "Dashboard"
+msgstr "Cruscotto"
+
+#. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
 msgid "Day"
 msgstr "Giorno"
@@ -161,6 +296,7 @@ msgid "Device"
 msgstr "Dispositivo"
 
 #. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_dashboard__display_name
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__display_name
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_event__display_name
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__display_name
@@ -169,6 +305,8 @@ msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__duration
 msgid "Duration"
 msgstr "Durata"
@@ -179,14 +317,28 @@ msgid "Duration (min)"
 msgstr "Durata (min)"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Earlier"
+msgstr "Precedente"
+
+#. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_outage__end
 msgid "Empty while the UPS still runs on battery."
 msgstr "Vuoto finché l'UPS funziona a batteria."
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__end
 msgid "End"
 msgstr "Fine"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Energy"
+msgstr "Energia"
 
 #. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_sample__battery_runtime
@@ -196,13 +348,21 @@ msgstr "Autonomia stimata a batteria (secondi)."
 #. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_event__remote_id
 msgid "Event id in the Raspberry SQLite database; makes retries idempotent."
-msgstr "ID dell'evento nel database SQLite del Raspberry; rende idempotenti i nuovi invii."
+msgstr ""
+"ID dell'evento nel database SQLite del Raspberry; rende idempotenti i nuovi "
+"invii."
 
 #. module: ups_monitor
 #: model:ir.actions.act_window,name:ups_monitor.action_ups_event
 #: model:ir.ui.menu,name:ups_monitor.menu_ups_event
 msgid "Events"
 msgstr "Eventi"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Firmware / built"
+msgstr "Firmware / produzione"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_follower_ids
@@ -220,11 +380,29 @@ msgid "Has Message"
 msgstr "Ha un messaggio"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "High warning"
+msgstr "Soglia alta"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Highest"
+msgstr "Massima"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__input_voltage_max
+msgid "Highest mains voltage seen during the sample interval (V)."
+msgstr "Tensione di rete più alta rilevata nell'intervallo del campione (V)."
+
+#. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
 msgid "Hour"
 msgstr "Ora"
 
 #. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_dashboard__id
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__id
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_event__id
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__id
@@ -247,6 +425,16 @@ msgstr "Se selezionato, alcuni messaggi hanno un errore di consegna."
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__input_voltage
 msgid "Input Voltage"
 msgstr "Tensione di ingresso"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__input_voltage_max
+msgid "Input Voltage Max"
+msgstr "Tensione di ingresso max"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__input_voltage_min
+msgid "Input Voltage Min"
+msgstr "Tensione di ingresso min"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_is_follower
@@ -294,9 +482,21 @@ msgid "Last Updated on"
 msgstr "Ultimo aggiornamento il"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Last self-test"
+msgstr "Ultimo autotest"
+
+#. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_device__last_seen
 msgid "Last time the Raspberry agent reached Odoo."
 msgstr "Ultima volta che l'agente sul Raspberry ha contattato Odoo."
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Later"
+msgstr "Successivo"
 
 #. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
@@ -304,6 +504,9 @@ msgid "Latest values"
 msgstr "Ultimi valori"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model:ir.actions.act_window,name:ups_monitor.action_ups_chart_load
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__ups_load
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__ups_load
@@ -312,19 +515,79 @@ msgid "Load"
 msgstr "Carico"
 
 #. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__ups_load_max
+msgid "Load Max"
+msgstr "Carico max"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__ups_load_min
+msgid "Load Min"
+msgstr "Carico min"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Load and energy"
+msgstr "Carico ed energia"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Longest outage"
+msgstr "Blackout più lungo"
+
+#. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__low_battery
 msgid "Low Battery"
 msgstr "Batteria scarica"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_search
 msgid "Low battery"
 msgstr "Batteria scarica"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Low warning"
+msgstr "Soglia bassa"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Lowest"
+msgstr "Minima"
+
+#. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_outage__min_charge
 msgid "Lowest battery charge during the outage (%)."
 msgstr "Carica minima della batteria durante il blackout (%)."
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Lowest battery voltage"
+msgstr "Tensione batteria minima"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Lowest charge"
+msgstr "Carica minima"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_sample__input_voltage_min
+msgid "Lowest mains voltage seen during the sample interval (V)."
+msgstr "Tensione di rete più bassa rilevata nell'intervallo del campione (V)."
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Mains availability"
+msgstr "Disponibilità della rete"
 
 #. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_sample__input_voltage
@@ -338,24 +601,47 @@ msgid "Mains outages"
 msgstr "Blackout di rete"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Mains outages in the period"
+msgstr "Blackout di rete nel periodo"
+
+#. module: ups_monitor
 #. odoo-python
-#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
 #: code:addons/ups_monitor/models/ups_device.py:0
 msgid "Mains power lost: the UPS runs on battery."
 msgstr "Rete elettrica assente: l'UPS funziona a batteria."
 
 #. module: ups_monitor
 #. odoo-python
-#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
 #: code:addons/ups_monitor/models/ups_device.py:0
 msgid "Mains power restored after %.1f minutes."
 msgstr "Rete elettrica ripristinata dopo %.1f minuti."
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model:ir.actions.act_window,name:ups_monitor.action_ups_chart_voltage
 #: model:ir.ui.menu,name:ups_monitor.menu_ups_chart_voltage
 msgid "Mains voltage"
 msgstr "Tensione di rete"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Mains voltage (average and min-max range)"
+msgstr "Tensione di rete (media e intervallo min-max)"
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__transfer_high
+msgid "Mains voltage above which the UPS switches to battery (V)."
+msgstr "Tensione di rete sopra la quale l'UPS passa a batteria (V)."
+
+#. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__transfer_low
+msgid "Mains voltage below which the UPS switches to battery (V)."
+msgstr "Tensione di rete sotto la quale l'UPS passa a batteria (V)."
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__manufacturer
@@ -378,9 +664,39 @@ msgid "Min Charge"
 msgstr "Carica minima"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Min-max range"
+msgstr "Intervallo min-max"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Minimum"
+msgstr "Minimo"
+
+#. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
 msgid "Minute"
 msgstr "Minuto"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Minutes above %s V"
+msgstr "Minuti sopra %s V"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Minutes at this voltage"
+msgstr "Minuti a questa tensione"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Minutes below %s V"
+msgstr "Minuti sotto %s V"
 
 #. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_outage__duration
@@ -414,11 +730,27 @@ msgid "New Status"
 msgstr "Nuovo stato"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "No UPS has reported data yet."
+msgstr "Nessun UPS ha ancora inviato dati."
+
+#. module: ups_monitor
 #. odoo-python
-#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
 #: code:addons/ups_monitor/models/ups_device.py:0
 msgid "No data from the Raspberry agent for %s minutes."
 msgstr "Nessun dato dall'agente sul Raspberry da %s minuti."
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "No outage in this period."
+msgstr "Nessun blackout in questo periodo."
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__nominal_power
+msgid "Nominal Power"
+msgstr "Potenza nominale"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_needaction_counter
@@ -451,6 +783,8 @@ msgid "On Battery"
 msgstr "A batteria"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_search
 msgid "Ongoing"
 msgstr "In corso"
@@ -462,12 +796,41 @@ msgstr "Numero di blackout"
 
 #. module: ups_monitor
 #. odoo-python
-#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
 #: code:addons/ups_monitor/models/ups_device.py:0
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_outage_graph
 msgid "Outages"
 msgstr "Blackout"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Outages ever recorded"
+msgstr "Blackout registrati in totale"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Outages in period"
+msgstr "Blackout nel periodo"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Peak at"
+msgstr "Picco alle"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Peak load"
+msgstr "Carico di picco"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Raspberry agent"
+msgstr "Agente Raspberry"
 
 #. module: ups_monitor
 #: model:ir.model.fields,help:ups_monitor.field_ups_device__status
@@ -478,9 +841,45 @@ msgstr ""
 "carica, DISCHRG in scarica."
 
 #. module: ups_monitor
+#: model:ir.model.fields,help:ups_monitor.field_ups_device__nominal_power
+msgid "Real power the UPS can deliver (W), used for the energy estimate."
+msgstr ""
+"Potenza reale che l'UPS può erogare (W), usata per la stima dell'energia."
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Red bands mark the periods on battery."
+msgstr "Le fasce rosse indicano i periodi a batteria."
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Refresh"
+msgstr "Aggiorna"
+
+#. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_event__remote_id
 msgid "Remote"
 msgstr "ID remoto"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Runtime"
+msgstr "Autonomia"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Runtime (min)"
+msgstr "Autonomia (min)"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Runtime and battery voltage"
+msgstr "Autonomia e tensione batteria"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__serial
@@ -488,11 +887,27 @@ msgid "Serial"
 msgstr "Numero di serie"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Since last outage"
+msgstr "Dall'ultimo blackout"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Standard deviation"
+msgstr "Deviazione standard"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_outage__start
 msgid "Start"
 msgstr "Inizio"
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__status
 msgid "Status"
 msgstr "Stato"
@@ -509,7 +924,6 @@ msgstr "Cambi di stato"
 
 #. module: ups_monitor
 #. odoo-python
-#: code:addons/multi-addons/ups_monitor/models/ups_device.py:0
 #: code:addons/ups_monitor/models/ups_device.py:0
 msgid "The Raspberry agent is back online."
 msgstr "L'agente sul Raspberry è di nuovo online."
@@ -530,10 +944,32 @@ msgid "This event was already received."
 msgstr "Questo evento è già stato ricevuto."
 
 #. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "Time on battery"
+msgstr "Tempo a batteria"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Time spent at each mains voltage"
+msgstr "Tempo trascorso a ogni tensione di rete"
+
+#. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_event__timestamp
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__timestamp
 msgid "Timestamp"
 msgstr "Data e ora"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__transfer_high
+msgid "Transfer High"
+msgstr "Soglia di trasferimento alta"
+
+#. module: ups_monitor
+#: model:ir.model.fields,field_description:ups_monitor.field_ups_device__transfer_low
+msgid "Transfer Low"
+msgstr "Soglia di trasferimento bassa"
 
 #. module: ups_monitor
 #: model:ir.actions.act_window,name:ups_monitor.action_ups_device
@@ -544,6 +980,11 @@ msgstr "Data e ora"
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_search
 msgid "UPS"
 msgstr "UPS"
+
+#. module: ups_monitor
+#: model:ir.model,name:ups_monitor.model_ups_dashboard
+msgid "UPS Dashboard"
+msgstr "Cruscotto UPS"
 
 #. module: ups_monitor
 #: model:ir.model,name:ups_monitor.model_ups_event
@@ -595,3 +1036,21 @@ msgstr "Carico dell'UPS (%)."
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_sample_graph
 msgid "UPS trend"
 msgstr "Andamento UPS"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "one point per day"
+msgstr "un punto al giorno"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "one point per hour"
+msgstr "un punto all'ora"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
+msgid "one point per minute"
+msgstr "un punto al minuto"

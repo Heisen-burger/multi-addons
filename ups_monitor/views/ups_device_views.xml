@@ -55,6 +55,7 @@
             <form>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="action_open_dashboard" type="object" class="oe_stat_button" icon="fa-tachometer" string="Dashboard"/>
                         <button name="action_open_charts" type="object" class="oe_stat_button" icon="fa-line-chart" string="Charts"/>
                         <button name="action_open_outages" type="object" class="oe_stat_button" icon="fa-bolt">
                             <field name="outage_count" widget="statinfo" string="Outages"/>
@@ -85,6 +86,9 @@
                         <group>
                             <field name="input_voltage"/>
                             <field name="ups_load"/>
+                            <field name="nominal_power"/>
+                            <field name="transfer_low"/>
+                            <field name="transfer_high"/>
                         </group>
                     </group>
                     <notebook>

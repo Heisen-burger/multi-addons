@@ -16,20 +16,43 @@ UPS --USB--> NUT --> upsmon-collector --> SQLite (buffer) --> upsmon-odoo-push -
 
 | Menu | Content |
 |---|---|
+| UPS Monitor > Dashboard | Live tiles, charts and statistics for one period (see below). |
 | UPS Monitor > UPS | One card per UPS: status, battery, load, mains voltage, agent state. Chatter receives the alerts. |
-| UPS Monitor > Charts | Mains voltage, battery charge and load over time (graph, pivot, list; last 24 h by default). |
+| UPS Monitor > Charts | Plain Odoo graph, pivot and list views of the samples, for ad-hoc grouping and export. |
 | UPS Monitor > Mains outages | One record per outage: start, end, duration, lowest battery charge, low-battery flag. Bar graph per month. |
 | UPS Monitor > Events | Status changes and UPS communication losses reported by the collector. |
 
 An outage opens when the NUT status contains `OB` (on battery) and closes when `OB` disappears.
 A status such as `OL DISCHRG` (self-test on mains) is not an outage.
 
+## Dashboard
+
+Presets: 1 hour, 6 hours, 24 hours, 7 days, 30 days, 90 days, all. The arrows move the window back and
+forth. The page refreshes itself every 30 s, every 5 s while the UPS runs on battery.
+
+- **Live tiles:** status, mains voltage, battery charge, load (also in watts), runtime, agent state.
+- **Mains voltage:** average line and a shaded min-max band. A dip of a few seconds shows in the band
+  even when the minute average stays flat. Dashed lines mark the warning thresholds.
+- **Battery charge and load**, with their lowest and peak values as dotted lines.
+- **Runtime and battery voltage.**
+- **Voltage histogram:** minutes spent at each 2 V band, log scale, out-of-threshold bands in red.
+- **Red bands** behind every chart mark the periods on battery.
+- **Statistics:** availability %, outages (count, total, longest, average, time since the last),
+  voltage average / lowest / highest / standard deviation and minutes outside the thresholds,
+  average and peak load in % and W, energy in kWh, lowest and average battery charge, average runtime,
+  lowest battery voltage, last self-test result.
+
+One point per minute up to 2 days, per hour up to 120 days, per day beyond. Hours and days keep the
+lowest and highest value of their minutes. Energy uses the load times the nominal power of the UPS
+(`ups.realpower.nominal`), summed over the time between samples; gaps longer than one hour count as zero.
+Rows older than the min-max feature (before 2026-09-30) fall back to the average.
+
 ## Models
 
 | Model | Purpose |
 |---|---|
 | `ups.device` | One UPS, keyed by serial number. Latest values, agent state, chatter. Created on first contact. |
-| `ups.sample` | One row per minute: battery charge, runtime, battery voltage, input voltage, load. Unique per (device, timestamp). |
+| `ups.sample` | One row per minute: mean, minimum and maximum of battery charge, runtime, battery voltage, input voltage and load. Unique per (device, timestamp). |
 | `ups.event` | Status change or communication event. Unique per (device, remote id). |
 | `ups.outage` | Mains outage derived from status-change events. |
 
@@ -48,7 +71,9 @@ Events older than one hour never notify. A backlog delivered after a downtime th
 |---|---|---|
 | `ups_monitor.token` | random, set at install | Shared secret the agent sends in the `X-Auth-Token` header. Rotate it by editing the value. |
 | `ups_monitor.offline_minutes` | 5 | Minutes without contact before the agent counts as offline. |
-| `ups_monitor.retention_days` | 90 | Samples older than this are purged daily. Events and outages stay. |
+| `ups_monitor.retention_days` | 730 | Samples older than this are purged daily. Events and outages stay. |
+| `ups_monitor.volt_low` | 207 | Mains voltage below which a minute counts as under-voltage (230 V -10 %). |
+| `ups_monitor.volt_high` | 253 | Mains voltage above which a minute counts as over-voltage (230 V +10 %). |
 
 Add the users who should receive alerts as followers of the UPS.
 
@@ -60,12 +85,16 @@ Add the users who should receive alerts as followers of the UPS.
 {
   "device":  {"serial": "9B2428A19448", "manufacturer": "American Power Conversion", "model": "Back-UPS BGM2200-GR"},
   "vars":    {"ups.status": "OL CHRG", "battery.charge": "100", "input.voltage": "229.0"},
-  "samples": [{"ts": 1790000000, "m": {"battery.charge": "100", "input.voltage": "229.0", "ups.load": "17"}}],
+  "samples": [{"ts": 1790000000,
+               "m":  {"battery.charge": "100", "input.voltage": "229.0", "ups.load": "17"},
+               "lo": {"input.voltage": "226.0"},
+               "hi": {"input.voltage": "231.0"}}],
   "events":  [{"id": 12, "ts": 1790000000, "kind": "status_change", "old": "OL", "new": "OB DISCHRG", "detail": null}]
 }
 ```
 
-`ts` is a Unix time in UTC. A body without samples and events works as a heartbeat. Answers:
+`ts` is a Unix time in UTC. `m` holds the mean of the interval, `lo` and `hi` its minimum and maximum
+(both optional). A body without samples and events works as a heartbeat. Answers:
 `200 {"status": "ok", "samples": n, "events": n}`, `400` invalid body, `403` bad token, `500` server error.
 The endpoint is idempotent: resending a batch inserts nothing twice. Limits per request: 2000 samples, 500 events.
 
@@ -79,13 +108,30 @@ Store and forward, with flood control:
 - SQLite is the buffer. The agent moves two cursors (last sample time, last event id) only after
   Odoo answered `ok`. An Odoo outage loses nothing while the collector keeps its retention (14 days).
 - Steady state: one request per `PUSH_INTERVAL` (60 s), which doubles as heartbeat.
-- A new event (mains failure) goes out at once, but at least `PUSH_MIN_GAP` (10 s) after the previous attempt.
-- After a failure the wait doubles up to `PUSH_BACKOFF_MAX` (15 min) with ±20 % jitter.
+- Mains failure: the agent reads the collector live file (tmpfs, once per second). A change of the
+  NUT status or a new event goes out at once, at least `PUSH_MIN_GAP` (2 s) after the previous attempt.
+- On battery: one request every `PUSH_BATTERY_INTERVAL` (10 s), and the collector writes a sample every 10 s.
+- After a failure the wait doubles up to `PUSH_BACKOFF_MAX` (15 min, 60 s on battery) with ±20 % jitter.
 - After recovery the backlog drains at one 500-sample batch per second.
 - First start backfills `PUSH_BACKFILL_DAYS` (14) of history.
 
-Samples come from the collector `snapshots` table, so each minute carries the instantaneous value
-of the last poll, not the one-minute mean.
+Each sample carries the mean, minimum and maximum of its interval, read from the `samples_range`
+table that `collector-minmax.patch` adds. Without the patch the agent falls back to the snapshot
+value and sends no min or max.
+
+## Collector patch
+
+The stock collector keeps only the mean of each minute. `collector-minmax.patch` adds the
+`samples_range` table (mean, minimum, maximum per flush) and shortens the flush interval to
+10 s while the UPS runs on battery. Apply it once, then poll faster so short dips are seen:
+
+```bash
+cd / && sudo patch -p1 --backup < /tmp/ups_monitor_agent/collector-minmax.patch
+echo 'UPSMON_POLL_INTERVAL=2' | sudo tee -a /etc/upsmon/upsmon.env    # was 10
+sudo systemctl restart upsmon-collector upsmon-odoo-push
+```
+
+`patch --backup` keeps the original files as `*.orig`.
 
 ## Install
 
@@ -113,6 +159,9 @@ Odoo skips what it already has.
 
 ## Changelog
 
+- 19.0.1.2.0: dashboard with live tiles, min-max band, outage bands, histogram and statistics;
+  per-minute minimum and maximum; immediate push on a status change and every 10 s on battery;
+  `collector-minmax.patch`; `ups_monitor.retention_days` default raised to 730.
 - 19.0.1.1.0: `--backfill-hourly` imports the hourly history that predates the minute snapshots.
 - 19.0.1.0.1: outage lowest charge looks one minute past each edge, so a short self-test no longer reports 0 %.
 - 19.0.1.0.0: first release.

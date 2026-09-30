@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ups_monitor.Dashboard">
+        <div class="o_ups_dashboard d-flex flex-column h-100 overflow-auto p-3 gap-3">
+            <t t-if="!state.data || !state.data.device">
+                <div class="alert alert-info m-0">No UPS has reported data yet.</div>
+            </t>
+            <t t-else="">
+                <t t-set="device" t-value="state.data.device"/>
+
+                <!-- toolbar -->
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <select t-if="state.data.devices.length > 1" class="form-select w-auto" t-on-change="selectDevice">
+                        <option t-foreach="state.data.devices" t-as="dev" t-key="dev.id"
+                                t-att-value="dev.id" t-att-selected="dev.id === device.id" t-out="dev.name"/>
+                    </select>
+                    <h4 t-else="" class="m-0" t-out="device.name"/>
+                    <div class="btn-group">
+                        <button t-foreach="presets" t-as="preset" t-key="preset.key" type="button"
+                                class="btn btn-sm"
+                                t-att-class="state.preset === preset.key ? 'btn-primary' : 'btn-outline-secondary'"
+                                t-on-click="() => this.selectPreset(preset.key)" t-out="preset.label"/>
+                    </div>
+                    <div class="btn-group" t-if="canMove">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" title="Earlier"
+                                t-on-click="() => this.move(1)"><i class="fa fa-chevron-left"/></button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" title="Later"
+                                t-att-disabled="state.shift === 0"
+                                t-on-click="() => this.move(-1)"><i class="fa fa-chevron-right"/></button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" title="Refresh" t-on-click="reload">
+                        <i class="fa fa-refresh" t-att-class="{'fa-spin': state.loading}"/>
+                    </button>
+                    <span class="text-muted small ms-auto">
+                        <t t-out="periodLabel"/> (<t t-out="bucketLabel"/>)
+                    </span>
+                </div>
+
+                <!-- live tiles -->
+                <div class="row g-2">
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="card h-100"><div class="card-body p-2 text-center">
+                            <div class="text-muted small">Status</div>
+                            <span class="badge fs-6" t-att-class="statusClass" t-out="device.status || '-'"/>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="card h-100"><div class="card-body p-2 text-center">
+                            <div class="text-muted small">Mains voltage</div>
+                            <div class="fs-3 fw-bold"><t t-out="fmt(device.input_voltage, 0)"/><span t-translation="off"> V</span></div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="card h-100"><div class="card-body p-2 text-center">
+                            <div class="text-muted small">Battery</div>
+                            <div class="fs-3 fw-bold"><t t-out="fmt(device.battery_charge, 0)"/> %</div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" t-att-style="'width: ' + device.battery_charge + '%'"/>
+                            </div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="card h-100"><div class="card-body p-2 text-center">
+                            <div class="text-muted small">Load</div>
+                            <div class="fs-3 fw-bold"><t t-out="fmt(device.ups_load, 0)"/> %</div>
+                            <div class="text-muted small" t-if="device.nominal_power">
+                                <t t-out="fmt(device.ups_load * device.nominal_power / 100, 0)"/><span t-translation="off"> W</span>
+                            </div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="card h-100"><div class="card-body p-2 text-center">
+                            <div class="text-muted small">Runtime</div>
+                            <div class="fs-3 fw-bold"><t t-out="fmt(device.battery_runtime / 60, 0)"/><span t-translation="off"> min</span></div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="card h-100"><div class="card-body p-2 text-center">
+                            <div class="text-muted small">Raspberry agent</div>
+                            <span class="badge fs-6"
+                                  t-att-class="device.agent_state === 'online' ? 'text-bg-success' : 'text-bg-danger'"
+                                  t-out="device.agent_state"/>
+                            <div class="text-muted small"><t t-out="fmtDate(device.last_seen)"/></div>
+                        </div></div>
+                    </div>
+                </div>
+
+                <!-- charts -->
+                <div class="row g-3">
+                    <div class="col-12 col-xl-6">
+                        <div class="card"><div class="card-body">
+                            <h6 class="card-title">Mains voltage (average and min-max range)</h6>
+                            <div style="position: relative; height: 280px;"><canvas t-ref="voltage"/></div>
+                        </div></div>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <div class="card"><div class="card-body">
+                            <h6 class="card-title">Battery charge and load</h6>
+                            <div style="position: relative; height: 280px;"><canvas t-ref="battery"/></div>
+                        </div></div>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <div class="card"><div class="card-body">
+                            <h6 class="card-title">Runtime and battery voltage</h6>
+                            <div style="position: relative; height: 240px;"><canvas t-ref="runtime"/></div>
+                        </div></div>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <div class="card"><div class="card-body">
+                            <h6 class="card-title">Time spent at each mains voltage</h6>
+                            <div style="position: relative; height: 240px;"><canvas t-ref="histogram"/></div>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="text-muted small">Red bands mark the periods on battery.</div>
+
+                <!-- statistics -->
+                <div class="row g-3">
+                    <div t-foreach="statGroups" t-as="group" t-key="group.title" class="col-12 col-md-6 col-xl-3">
+                        <div class="card h-100"><div class="card-body">
+                            <h6 class="card-title" t-out="group.title"/>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr t-foreach="group.items" t-as="item" t-key="item.label">
+                                    <td class="text-muted" t-out="item.label"/>
+                                    <td class="text-end fw-bold" t-att-class="{'text-danger': item.warn}" t-out="item.value"/>
+                                </tr>
+                            </table>
+                        </div></div>
+                    </div>
+                </div>
+
+                <!-- outages -->
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Mains outages in the period</h6>
+                        <div t-if="!state.data.outages.length" class="text-muted">No outage in this period.</div>
+                        <table t-else="" class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th class="text-end">Duration</th>
+                                    <th class="text-end">Lowest charge</th>
+                                    <th>Low battery</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="state.data.outages" t-as="outage" t-key="outage.start">
+                                    <td t-out="fmtDate(outage.start)"/>
+                                    <td>
+                                        <span t-if="!outage.end" class="badge text-bg-danger">Ongoing</span>
+                                        <t t-else="" t-out="fmtDate(outage.end)"/>
+                                    </td>
+                                    <td class="text-end" t-out="fmtDuration(outage.duration * 60)"/>
+                                    <td class="text-end"><t t-out="fmt(outage.min_charge, 0)"/> %</td>
+                                    <td><i t-if="outage.low_battery" class="fa fa-exclamation-triangle text-danger"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="text-muted small">
+                    <t t-out="device.manufacturer"/> <t t-out="device.model"/> · <t t-out="device.serial"/>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

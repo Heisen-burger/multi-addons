@@ -3,6 +3,7 @@
 from odoo import fields, models
 
 # NUT variable -> column. Variables outside this map are dropped on ingest.
+# Each column also has a "_min" and a "_max" twin holding the extremes of the sample interval.
 METRICS = {
     'battery.charge': 'battery_charge',
     'battery.runtime': 'battery_runtime',
@@ -21,10 +22,22 @@ class UpsSample(models.Model):
     device_id = fields.Many2one('ups.device', required=True, index=True, ondelete='cascade')
     timestamp = fields.Datetime(required=True, index=True)
     battery_charge = fields.Float(aggregator='avg', help="Battery charge (%).")
+    battery_charge_min = fields.Float(aggregator='min')
+    battery_charge_max = fields.Float(aggregator='max')
     battery_runtime = fields.Float(aggregator='avg', help="Estimated runtime on battery (seconds).")
+    battery_runtime_min = fields.Float(aggregator='min')
+    battery_runtime_max = fields.Float(aggregator='max')
     battery_voltage = fields.Float(aggregator='avg', help="Battery voltage (V).")
+    battery_voltage_min = fields.Float(aggregator='min')
+    battery_voltage_max = fields.Float(aggregator='max')
     input_voltage = fields.Float(aggregator='avg', help="Mains input voltage (V).")
+    input_voltage_min = fields.Float(
+        aggregator='min', help="Lowest mains voltage seen during the sample interval (V).")
+    input_voltage_max = fields.Float(
+        aggregator='max', help="Highest mains voltage seen during the sample interval (V).")
     ups_load = fields.Float("Load", aggregator='avg', help="UPS load (%).")
+    ups_load_min = fields.Float("Load Min", aggregator='min')
+    ups_load_max = fields.Float("Load Max", aggregator='max')
 
     _device_timestamp_uniq = models.Constraint(
         'unique (device_id, timestamp)',

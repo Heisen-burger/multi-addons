@@ -1,0 +1,66 @@
+--- a/opt/upsmon/collector.py
++++ b/opt/upsmon/collector.py
+@@ -110,6 +110,7 @@
+             return
+         means = {m: a[0] / a[3] for m, a in self.acc.items()}
+         db.write_samples(self.con, ts, means)
++        db.write_ranges(self.con, ts, {m: (means[m], a[1], a[2]) for m, a in self.acc.items()})
+         db.write_snapshot(self.con, ts, vars_)
+         self.acc = {}
+         self.last_write = time.time()
+@@ -162,8 +163,10 @@
+                 self.live_broken = False
+
+         # persist on schedule, or immediately when the UPS changes state so a
+-        # power event is never lost to the aggregation window
+-        if status_changed or (now - self.last_write) >= self.conf["write"]:
++        # power event is never lost to the aggregation window; on battery the
++        # window shrinks to 10 s so an outage is followed closely
++        window = min(self.conf["write"], 10) if "OB" in vars_.get("ups.status", "").split() else self.conf["write"]
++        if status_changed or (now - self.last_write) >= window:
+             self._flush(ts, vars_)
+
+     def run(self):
+--- a/opt/upsmon/db.py
++++ b/opt/upsmon/db.py
+@@ -33,6 +33,17 @@
+     PRIMARY KEY (metric, ts)
+ ) WITHOUT ROWID;
+
++-- per-flush mean, minimum and maximum: a dip shorter than the write interval
++-- survives here, while `samples` keeps the mean only
++CREATE TABLE IF NOT EXISTS samples_range (
++    ts     INTEGER NOT NULL,
++    metric TEXT    NOT NULL,
++    avg    REAL    NOT NULL,
++    min    REAL    NOT NULL,
++    max    REAL    NOT NULL,
++    PRIMARY KEY (ts, metric)
++) WITHOUT ROWID;
++
+ CREATE TABLE IF NOT EXISTS snapshots (
+     ts   INTEGER PRIMARY KEY,
+     data TEXT NOT NULL
+@@ -102,6 +113,14 @@
+     )
+
+
++def write_ranges(con, ts, ranges):
++    """ranges: metric -> (avg, min, max)"""
++    con.executemany(
++        "INSERT OR REPLACE INTO samples_range(ts, metric, avg, min, max) VALUES (?,?,?,?,?)",
++        [(ts, m, a, lo, hi) for m, (a, lo, hi) in ranges.items()],
++    )
++
++
+ def write_snapshot(con, ts, vars_):
+     con.execute(
+         "INSERT OR REPLACE INTO snapshots(ts, data) VALUES (?,?)",
+@@ -150,6 +169,7 @@
+ def prune(con, raw_days, hourly_days, snapshot_days=30, event_days=365):
+     now = int(time.time())
+     con.execute("DELETE FROM samples WHERE ts < ?", (now - raw_days * 86400,))
++    con.execute("DELETE FROM samples_range WHERE ts < ?", (now - raw_days * 86400,))
+     con.execute("DELETE FROM samples_hourly WHERE ts < ?", (now - hourly_days * 86400,))
+     con.execute("DELETE FROM snapshots WHERE ts < ?", (now - snapshot_days * 86400,))
+     con.execute("DELETE FROM events WHERE ts < ?", (now - event_days * 86400,))
