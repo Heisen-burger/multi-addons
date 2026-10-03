@@ -21,6 +21,15 @@
                                 t-att-class="state.preset === preset.key ? 'btn-primary' : 'btn-outline-secondary'"
                                 t-on-click="() => this.selectPreset(preset.key)" t-out="preset.label"/>
                     </div>
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text">From</span>
+                        <input type="datetime-local" class="form-control" t-model="state.customFrom"/>
+                        <span class="input-group-text">To</span>
+                        <input type="datetime-local" class="form-control" t-model="state.customTo"/>
+                        <button type="button" class="btn"
+                                t-att-class="state.preset === 'custom' ? 'btn-primary' : 'btn-outline-secondary'"
+                                t-att-disabled="!customValid" t-on-click="applyCustom">Apply</button>
+                    </div>
                     <div class="btn-group" t-if="canMove">
                         <button type="button" class="btn btn-sm btn-outline-secondary" title="Earlier"
                                 t-on-click="() => this.move(1)"><i class="fa fa-chevron-left"/></button>

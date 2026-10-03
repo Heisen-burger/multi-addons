@@ -28,7 +28,9 @@ A status such as `OL DISCHRG` (self-test on mains) is not an outage.
 ## Dashboard
 
 Presets: 1 hour, 6 hours, 24 hours, 7 days, 30 days, 90 days, all. The arrows move the window back and
-forth. The page refreshes itself every 30 s, every 5 s while the UPS runs on battery.
+forth. For any other period, set the From and To fields (date and time, browser time zone) and press
+Apply. The fields follow the preset, so they start from what the charts show. The page refreshes itself
+every 30 s, every 5 s while the UPS runs on battery; a custom period stays fixed.
 
 - **Live tiles:** status, mains voltage, battery charge, load (also in watts), runtime, agent state.
 - **Mains voltage:** average line and a shaded min-max band. A dip of a few seconds shows in the band
@@ -159,6 +161,7 @@ Odoo skips what it already has.
 
 ## Changelog
 
+- 19.0.1.3.0: dashboard accepts a custom date and time range.
 - 19.0.1.2.0: dashboard with live tiles, min-max band, outage bands, histogram and statistics;
   per-minute minimum and maximum; immediate push on a status change and every 10 s on battery;
   `collector-minmax.patch`; `ups_monitor.retention_days` default raised to 730.

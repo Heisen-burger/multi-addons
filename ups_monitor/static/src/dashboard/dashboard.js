@@ -80,6 +80,12 @@ function fmtDuration(seconds) {
     return `${s} s`;
 }
 
+/** Epoch milliseconds -> value of an <input type="datetime-local"> in the browser time zone. */
+function toLocalInput(ms) {
+    const d = new Date(ms - new Date(ms).getTimezoneOffset() * 60000);
+    return d.toISOString().slice(0, 16);
+}
+
 function fmtDate(ms) {
     return ms ? new Date(ms).toLocaleString() : "-";
 }
@@ -101,6 +107,8 @@ export class UpsDashboard extends Component {
             deviceId: this.props.action?.context?.default_device_id || null,
             preset: "24h",
             shift: 0, // how many periods back from now
+            customFrom: "", // datetime-local values of the custom range
+            customTo: "",
             data: null,
             loading: false,
         });
@@ -122,6 +130,9 @@ export class UpsDashboard extends Component {
 
     // -- data ---------------------------------------------------------------
     get period() {
+        if (this.state.preset === "custom") {
+            return { from: new Date(this.state.customFrom).getTime(), to: new Date(this.state.customTo).getTime() };
+        }
         const preset = PRESETS.find((p) => p.key === this.state.preset);
         if (!preset.ms) {
             return { from: null, to: null };
@@ -140,6 +151,11 @@ export class UpsDashboard extends Component {
                 date_to: to,
             });
             this.state.deviceId = this.state.data.device?.id || null;
+            if (this.state.preset !== "custom" && this.state.data.range) {
+                // the date fields follow the preset, so "Apply" starts from what the charts show
+                this.state.customFrom = toLocalInput(this.state.data.range.from);
+                this.state.customTo = toLocalInput(this.state.data.range.to);
+            }
         } finally {
             this.state.loading = false;
         }
@@ -150,7 +166,7 @@ export class UpsDashboard extends Component {
         clearTimeout(this.timer);
         const onBattery = this.state.data?.device?.on_battery;
         this.timer = setTimeout(async () => {
-            if (this.state.shift === 0) {
+            if (this.state.shift === 0 && this.state.preset !== "custom") {
                 try {
                     await this.load();
                 } catch {
@@ -172,6 +188,20 @@ export class UpsDashboard extends Component {
         return this.reload();
     }
 
+    get customValid() {
+        // an empty field gives NaN, and any comparison with NaN is false
+        return new Date(this.state.customFrom).getTime() < new Date(this.state.customTo).getTime();
+    }
+
+    applyCustom() {
+        if (!this.customValid) {
+            return;
+        }
+        this.state.preset = "custom";
+        this.state.shift = 0;
+        return this.reload();
+    }
+
     move(direction) {
         this.state.shift = Math.max(0, this.state.shift + direction);
         return this.reload();
@@ -184,7 +214,7 @@ export class UpsDashboard extends Component {
 
     // -- display helpers ------------------------------------------------------
     get canMove() {
-        return this.state.preset !== "all";
+        return this.state.preset !== "all" && this.state.preset !== "custom";
     }
 
     get periodLabel() {

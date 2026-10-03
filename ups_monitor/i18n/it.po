@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0-20260908\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 17:29+0000\n"
-"PO-Revision-Date: 2026-09-30 17:29+0000\n"
+"POT-Creation-Date: 2026-10-03 07:11+0000\n"
+"PO-Revision-Date: 2026-10-03 07:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -112,6 +112,12 @@ msgstr "Agente online"
 #: code:addons/ups_monitor/static/src/dashboard/dashboard.js:0
 msgid "All"
 msgstr "Tutto"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "Apply"
+msgstr "Applica"
 
 #. module: ups_monitor
 #: model_terms:ir.ui.view,arch_db:ups_monitor.view_ups_device_form
@@ -373,6 +379,12 @@ msgstr "Follower"
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__message_partner_ids
 msgid "Followers (Partners)"
 msgstr "Follower (partner)"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "From"
+msgstr "Da"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__has_message
@@ -960,6 +972,12 @@ msgstr "Tempo trascorso a ogni tensione di rete"
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_sample__timestamp
 msgid "Timestamp"
 msgstr "Data e ora"
+
+#. module: ups_monitor
+#. odoo-javascript
+#: code:addons/ups_monitor/static/src/dashboard/dashboard.xml:0
+msgid "To"
+msgstr "A"
 
 #. module: ups_monitor
 #: model:ir.model.fields,field_description:ups_monitor.field_ups_device__transfer_high
